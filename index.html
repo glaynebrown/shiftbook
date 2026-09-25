@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -1650,6 +1650,11 @@ const actions = {
       ${d.id === 'new' ? `<div class="grid2"><label class="f">Room #<input id="pt-room" value="" autocomplete="off"></label>
       <label class="f">Type<select id="pt-kind">${kindOptions(p.kind)}</select></label></div>`
       : `<label class="f">Type<select id="pt-kind">${kindOptions(p.kind)}</select></label>`}
+      ${d.id === 'new' ? `<div class="sec" style="margin-top:14px">Time slots</div>
+      <div class="seg" id="add-from" style="margin-top:6px">
+        <button class="on" data-a="addFrom" data-v="now">From now</button>
+        <button data-a="addFrom" data-v="all">Whole shift</button></div>` : ''}
+      ${!p.archivedAt && p.clockFrom ? `<button class="btn block" style="margin-top:12px" data-a="showAllSlots" data-id="${p.id}">Show earlier time slots</button>` : ''}
       ${p.deliveredAt ? `<button class="btn block" style="margin-top:12px" data-a="undeliver" data-id="${p.id}">Undo delivered</button>` : ''}
       ${p.dischargedAt ? `<button class="btn block" style="margin-top:12px" data-a="undischarge" data-id="${p.id}">Undo discharge</button>` : ''}
       ${p.archivedAt ? `<button class="btn block" style="margin-top:12px" data-a="patientRestore" data-id="${p.id}">Bring back to my rooms</button>` : ''}
@@ -1658,10 +1663,22 @@ const actions = {
       <button class="btn primary" data-a="patientSave" data-id="${p.id}">${d.id === 'new' ? 'Add' : 'Save'}</button></div>`);
     if (d.id === 'new') $('#pt-room').focus();
   },
+  addFrom(d) { $$('#add-from button').forEach(b => b.classList.toggle('on', b.dataset.v === d.v)); },
+  showAllSlots(d) {
+    const p = curPt(d.id); p.clockFrom = 0;
+    stripTags(false).forEach(g => { if (!p.tags.some(x => x.t === g.t && x.label === 'Strip')) p.tags.push(g); });
+    save(); closeSheet(); render();
+  },
   patientSave(d) {
     const room = $('#pt-room') ? $('#pt-room').value.trim() : curPt(d.id).room, kind = $('#pt-kind').value;
     if (!room) { toast('Add a room number'); return; }
-    if (d.id === 'new') { const p = newPatient(room, kind); p.tags = stripTags(true); state.shift.patients.push(p); state.shift.currentId = p.id; }
+    if (d.id === 'new') {
+      const p = newPatient(room, kind), fromNow = !$('#add-from [data-v="all"]').classList.contains('on');
+      p.tags = stripTags(fromNow);
+      // From now: hide the clock rows before the first slot that's still coming up
+      if (fromNow) { const first = gridTimes().find(t => slotMs(t) >= Date.now() - 30 * 60000); p.clockFrom = first ? sinceStart(first) : 0; }
+      state.shift.patients.push(p); state.shift.currentId = p.id;
+    }
     else {
       const p = curPt(d.id);
       if (p.kind !== kind) defaultTodos(kind).forEach(t => { if (!p.todos.some(x => x.text === t.text)) p.todos.push(t); });
@@ -2193,7 +2210,8 @@ function itemHtml(p, key, label, opts = {}) {
     </div>${open ? bundleHtml(state.lists[infoKey]) : ''}`;
 }
 function clockHtml(p) {
-  const base = gridTimes().filter((_, i) => i % 2 === 0); // the :30s
+  const base = gridTimes().filter((_, i) => i % 2 === 0) // the :30s
+    .filter(t => sinceStart(t) >= (p.clockFrom || 0)); // patients added mid-shift start from when they were added
   const inShift = p.tags.filter(g => sinceStart(g.t) < shiftLen());
   const times = [...new Set([...base, ...inShift.map(g => g.t)])].sort((a, b) => sinceStart(a) - sinceStart(b));
   const now = Date.now();
