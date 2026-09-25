@@ -939,7 +939,7 @@ const roomLabelOf = room => /^\d/.test(room) ? 'Rm ' + room : room;
 const roomLabel = p => /^\d/.test(p.room) ? 'Rm ' + p.room : (p.room || 'No room');
 
 const DEFAULT_LINKS = [
-  { id: 'l-timpani', label: 'Timpani Scheduler', url: 'https://ap.idf.medcity.net/IdentityFederationPortal/MFA/Analyze/HCA?ReturnUrl=%2FIdentityFederationPortal%2FLogin%2FValidate%2FHCA%3FAltConfig%3D2FA%26resume%3D%2Fidp%2FnVLX7BS8uY%2FresumeSAML20%2Fidp%2FSSO.ping%26spentity%3Durn%3Auuid%3Aef789313-74ab-423e-8265-bb28ef62bcdd', note: 'Opens in Safari. To see it like on a computer: tap aA in the address bar → Website Settings → turn on Request Desktop Website. Safari remembers it after that.' },
+  { id: 'l-timpani', label: 'Timpani Scheduler', url: 'https://hca.palantirfoundry.com/multipass/login/all', note: 'Opens in Safari. For the computer view: iPhone Settings → Apps → Safari → Request Desktop Website → turn on. Turning your phone sideways and Page Zoom (••• menu in Safari) help too.' },
   { id: 'l-healthstream', label: 'HealthStream', url: 'https://app.hstream.com/home', note: '' },
   { id: 'l-hranswers', label: 'HR Answers', url: 'https://mingle-portal.inforcloudsuite.com/HCAHEALTHCARE_PRD/097ed3d1-0326-4b54-9ad7-2ab8bf9fa598?favoriteContext=https:%2F%2Fhcm-hcahealthcare-prd.tam.inforcloudsuite.com%2Fhcm%2FEmployeeSelfService%2Fhtml%2FEmployeeSelfService%3Fcsk.lidkey%3D6c1c5c1ea968a432ae27aa06e4c73e17%26menu%3DHome%26csk.CHP%3DEMPLOYEE_EXPERIENCE1%26LogicalId%3Dlid%253A%252F%252Finfor.lawson-ghr.ghr110-prod-useast1&LogicalId=lid:%2F%2Finfor.lawson-ghr.ghr110-prod-useast1&siteId=097ed3d1-0326-4b54-9ad7-2ab8bf9fa598', note: '' },
 ];
@@ -981,7 +981,11 @@ function load() {
   try { saved = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
   state = Object.assign(defaults(), saved || {});
   state.links = mergeLinks(state.links); state.linksSeeded = true;
-  state.links.forEach(l => { if (l.note === 'Opens in Safari. Tap aA → Request Desktop Website so it looks like it does on a computer.') l.note = DEFAULT_LINKS[0].note; });
+  const OLD_TIMPANI = 'https://ap.idf.medcity.net/IdentityFederationPortal/MFA/Analyze/HCA?ReturnUrl=%2FIdentityFederationPortal%2FLogin%2FValidate%2FHCA%3FAltConfig%3D2FA%26resume%3D%2Fidp%2FnVLX7BS8uY%2FresumeSAML20%2Fidp%2FSSO.ping%26spentity%3Durn%3Auuid%3Aef789313-74ab-423e-8265-bb28ef62bcdd', OLD_TIPS = ['Opens in Safari. Tap aA → Request Desktop Website so it looks like it does on a computer.', 'Opens in Safari. To see it like on a computer: tap aA in the address bar → Website Settings → turn on Request Desktop Website. Safari remembers it after that.'];
+  state.links.forEach(l => {
+    if (l.url === OLD_TIMPANI) l.url = DEFAULT_LINKS[0].url;
+    if (OLD_TIPS.includes(l.note)) l.note = DEFAULT_LINKS[0].note;
+  });
   state.protocols = state.protocols.filter(p => !['bp-treat', 'bp-down', 'pit-pp', 'pit'].includes(p.id)); // removed protocols (info lives in Reference cards)
   // Recovery checks show as a two-column time grid, like fundals on the Shift page
   [...state.protocols, ...state.runs.map(r => r.proto)].forEach(p => { if (/^rec-/.test(p.id) && !p.style) p.style = 'grid'; });
