@@ -1,0 +1,2838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="L&amp;D Shift">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="apple-touch-icon.png">
+<meta name="theme-color" content="#f7f4f2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#171415" media="(prefers-color-scheme: dark)">
+<title>L&amp;D Shift</title>
+<style>
+:root{
+  --bg:#f7f4f2;--card:#ffffff;--ink:#231f20;--muted:#6f6769;--line:#e6dfdc;
+  --accent:#a8406a;--accent-ink:#ffffff;--accent-soft:#f6e3ea;
+  --done:#2f8a57;--done-soft:#e3f3e9;--due:#a86b12;--due-soft:#fdf0d5;--danger:#b3261e;--danger-soft:#fbe4e2;
+  --radius:14px;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#171415;--card:#221e1f;--ink:#f2eceb;--muted:#a89fa1;--line:#3a3234;
+  --accent:#e58bab;--accent-ink:#2a1019;--accent-soft:#3b2430;
+  --done:#62c98f;--done-soft:#1b3226;--due:#ebb65c;--due-soft:#3a2d15;--danger:#f2877f;--danger-soft:#3d1f1d;
+}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+  padding:env(safe-area-inset-top) 0 calc(76px + env(safe-area-inset-bottom))}
+header{padding:18px 16px 6px;max-width:680px;margin:0 auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:center}
+.hdr-right{justify-self:end;display:flex}
+#title.tap{cursor:pointer}
+#title .caret{font-size:16px;color:var(--muted);vertical-align:middle}
+#hdr-mid{text-align:center;display:flex;flex-direction:column;font-size:14px;line-height:1.2}
+#hdr-mid span{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+#settings-btn,.hdr-icon{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;color:var(--muted)}
+#settings-btn[hidden],.hdr-icon[hidden]{display:none}
+#settings-btn svg,.hdr-icon svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+header h1{margin:0;font-size:28px;letter-spacing:-.02em}
+main{max-width:680px;margin:0 auto;padding:6px 16px 24px}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:22px 4px 8px;font-weight:600}
+h3{margin:0;font-size:17px}
+h4{margin:12px 0 4px;font-size:14px;color:var(--accent)}
+p{margin:2px 0}
+ul{margin:2px 0;padding-left:20px}
+li{margin:2px 0}
+.gap{height:6px}
+.muted{color:var(--muted)}.small{font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:10px}
+.h-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-weight:600;font-size:15px}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.danger{color:var(--danger);border-color:var(--danger-soft)}
+.btn.block{width:100%}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn-row.end{justify-content:flex-end}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;width:100%;min-height:42px}
+textarea{resize:vertical;line-height:1.45}
+label.f{display:block;font-size:13px;color:var(--muted);font-weight:600;margin:10px 0 0}
+label.f>input,label.f>select,label.f>textarea{margin-top:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+details>summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:14px;margin-top:8px}
+.pill{display:inline-block;font-size:13px;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap;background:var(--accent-soft);color:var(--accent)}
+.pill.done{background:var(--done-soft);color:var(--done)}
+.pill.due{background:var(--due-soft);color:var(--due)}
+.pill.danger{background:var(--danger-soft);color:var(--danger)}
+
+/* protocol list */
+.proto{display:flex;align-items:center;gap:10px}
+.proto .grow{flex:1;min-width:0}
+.proto .name{font-weight:700}
+
+/* run timeline */
+.run-h{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left}
+.run-name{font-weight:700;font-size:17px}
+.tl{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+.run-top{display:flex;align-items:center;gap:8px}
+.run-top .run-h{flex:1;min-width:0}
+.tox-btn{flex:none;width:34px;height:34px;border-radius:50%;background:var(--danger-soft);color:var(--danger);font-size:17px;font-weight:800;display:grid;place-items:center}
+.run-in{background:var(--bg);margin:8px 0}
+.run.finished .run-name{color:var(--muted)}
+.countdown{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px;padding:10px 14px;border-radius:12px;background:var(--accent-soft);color:var(--accent)}
+.countdown .cd{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.row.pending{opacity:.75}
+.sub-label{font-size:13px;font-weight:700;margin:10px 2px 6px}
+.fnote{align-self:center;font-size:13px;color:var(--muted);font-style:italic}
+.tl-label{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;margin:8px 2px 0}
+.row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card)}
+.row .dot{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:14px;font-weight:800;color:#fff}
+.row .rm{flex:1;min-width:0}
+.row .rt{display:block;font-weight:600}
+.row .rd{display:block;font-size:13px;color:var(--muted)}
+.row .rtime{text-align:right;flex:none}
+.row .rtime b{display:block;font-variant-numeric:tabular-nums}
+.row .rtime small{font-size:12px;color:var(--muted)}
+.row.done{background:var(--done-soft);border-color:transparent}
+.row.done .dot{background:var(--done);border-color:var(--done)}
+.row.done .rt{color:var(--done)}
+.row.due{background:var(--due-soft);border-color:var(--due)}
+.row.due .dot{border-color:var(--due)}
+.row.due .rtime small{color:var(--due);font-weight:700}
+.row.next{border-color:var(--accent)}
+.row.next .rtime small{color:var(--accent);font-weight:700}
+
+/* reference */
+.search{margin-bottom:10px}
+.ref-h{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;font-weight:700;font-size:16px}
+.ref-h .chev{color:var(--muted);transition:transform .15s}
+.ref.open .chev{transform:rotate(90deg)}
+.ref-body{margin-top:8px;font-size:15px}
+
+/* shift */
+.chk{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-top:1px solid var(--line);font-size:15px}
+.chk:first-of-type{border-top:0}
+.chk.sub{padding-left:28px;font-size:14px}
+.chk input{width:22px;height:22px;min-height:0;flex:none;margin:0;accent-color:var(--done)}
+.chk.on span{color:var(--muted);text-decoration:line-through}
+.sec{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);font-weight:700;margin:12px 0 2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{min-width:58px;min-height:36px;padding:0 8px;border-radius:9px;border:1px solid var(--line);font-variant-numeric:tabular-nums;font-weight:600;font-size:14px}
+.chip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:3px}
+.seg button{min-height:38px;border-radius:8px;font-weight:600;color:var(--muted)}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.pt-row{display:grid;grid-template-columns:84px 1fr 44px;gap:8px;margin-top:8px}
+.pt-row .btn{padding:0}
+.rooms{position:sticky;top:0;z-index:3;background:var(--bg);display:flex;gap:8px;overflow-x:auto;padding:8px 0 10px;margin:0 -16px;padding-left:16px;padding-right:16px;scrollbar-width:none}
+.rooms::-webkit-scrollbar{display:none}
+.room-tab{flex:none;min-width:84px;display:flex;flex-direction:column;align-items:center;padding:8px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card)}
+.room-tab .rn{font-size:18px;font-weight:800;letter-spacing:-.01em}
+.room-tab .rk{font-size:12px;color:var(--muted);font-weight:600}
+.room-tab.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.room-tab.on .rk{color:var(--accent-ink);opacity:.85}
+.room-tab.add{border-style:dashed;color:var(--muted)}
+.pt-card{border-left:5px solid var(--accent)}
+.remind-banner{display:flex;flex-direction:column;gap:4px;margin:-2px 0 10px}
+.remind-item{display:flex;align-items:center;border-radius:10px;background:var(--accent-soft);color:var(--accent);font-size:14px}
+.remind-go{flex:1;text-align:left;padding:8px 12px}
+.remind-x{flex:none;width:36px;height:36px;color:inherit;opacity:.7}
+.remind-item.late{background:var(--due-soft);color:var(--due)}
+.remind-sel{width:auto;min-height:34px;padding:4px 6px;font-size:13px;flex:none}
+.daily-feet{display:flex;justify-content:center;margin-top:10px;color:var(--accent);opacity:.45}
+.daily-feet svg{fill:currentColor}
+.daily-line{margin:26px 12px 0;text-align:center;font-size:16px;line-height:1.5;color:var(--muted);font-style:italic}
+.ov-card{display:block;width:100%;text-align:left;border-left:5px solid var(--line)}
+.ov-room{font-size:22px;font-weight:800;letter-spacing:-.02em}
+.ov-lines{margin-top:6px;font-size:14px;line-height:1.5}
+.due-txt{color:var(--due)}.miss-txt{color:var(--accent)}
+.pt-card.archived{border-left-color:var(--muted)}
+.room-tab.prev{color:var(--muted)}
+.room-tab.prev.on{background:var(--muted);border-color:var(--muted);color:var(--card)}
+.room-tab.prev.on .rk{color:var(--card)}
+.pt-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.pt-room{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1;padding:2px 2px 6px 10px;border-left:3px solid var(--ink);border-bottom:3px solid var(--ink);border-bottom-left-radius:4px}
+.linkish{color:var(--accent);font-weight:600;font-size:14px;padding:4px 0}
+.pt-links{display:flex;gap:16px}
+.type-btn{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--muted);text-align:left;padding:2px 0}
+.type-btn svg{width:14px;height:14px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.it{display:flex;align-items:center;gap:6px;border-top:1px solid var(--line)}
+.it-main{flex:1;display:flex;align-items:center;gap:10px;padding:10px 0;text-align:left;min-width:0}
+.it .dot,.todo .dot{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:13px;font-weight:800;color:#fff}
+.it-l{flex:1;font-weight:600}
+.it-t{font-variant-numeric:tabular-nums;color:var(--muted);font-size:14px}
+.it.done .dot,.todo.done .dot{background:var(--done);border-color:var(--done)}
+.it.done .it-l{color:var(--done)}
+.it.due .dot{border-color:var(--due)}
+.it.due .it-t{color:var(--due);font-weight:700}
+.info-btn{flex:none;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--accent);color:var(--accent);font:italic 700 14px Georgia,serif}
+.info-btn.on{background:var(--accent);color:var(--accent-ink)}
+ul.bundle{margin:0 0 8px;padding:8px 12px 8px 30px;background:var(--bg);border-radius:10px;font-size:14px}
+ul.bundle li.sub{margin-left:16px;list-style:circle;color:var(--muted)}
+.pt-right{display:flex;align-items:center;gap:10px}
+.pt-head>div:first-child{flex:1;min-width:0}
+.pt-right{flex:none}
+.pt-room,.pencil-btn{white-space:nowrap}
+.pencil-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:9px;border:1px solid var(--accent);color:var(--accent);font-weight:700;font-size:14px}
+.pencil-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.todo-add+.chips .chip,.sheet-card .chip{min-width:0;padding:0 12px}
+.clock{border-top:1px solid var(--line);padding:4px 0}
+.tr{display:flex;align-items:center;gap:8px;min-height:44px;border-bottom:1px dashed var(--line)}
+.tr:last-child{border-bottom:0}
+body.std-time .tt{width:100px;font-size:15px}
+.tt{flex:none;width:74px;white-space:nowrap;height:34px;border-radius:9px;font-weight:700;font-size:16px;font-variant-numeric:tabular-nums;text-align:left;padding-left:8px}
+.tt.done{background:var(--done-soft);color:var(--done)}
+.tt.due{background:var(--due-soft);color:var(--due)}
+.tr.half .tt{font-size:14px;color:var(--muted);padding-left:18px}
+.tr.half .tt.done{color:var(--done)}.tr.half .tt.due{color:var(--due)}
+.dash{color:var(--muted)}
+.tags{flex:1;display:flex;flex-wrap:wrap;gap:6px;padding:5px 0}
+.tag{padding:5px 10px;border-radius:8px;background:var(--bg);border:1px solid var(--line);color:var(--ink);font-weight:700;font-size:14px}
+.tag.flag::before{content:'⚑ ';color:var(--accent)}
+.tag.missed{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tag.missed::before{color:var(--accent-ink)}
+.tag.done{background:var(--bg);border-color:var(--line);color:var(--muted);text-decoration:line-through;font-weight:500}
+.tag.done::before{color:var(--muted)}
+.flag-btn{flex:none;min-height:34px;padding:0 10px;border-radius:8px;border:1px solid var(--line);font-size:13px;font-weight:700;color:var(--muted)}
+.flag-btn.on{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.chk-line{display:flex;align-items:center;gap:10px;margin-top:12px;font-weight:600}
+.chk-line input{width:22px;height:22px;min-height:0;margin:0;accent-color:var(--accent)}
+.tr-add{flex:none;width:32px;height:32px;border-radius:8px;color:var(--muted);font-size:20px;border:1px solid transparent}
+.tr-add:active{border-color:var(--line)}
+.labor-toggle{display:block;width:100%;text-align:left;padding:12px 0;margin-top:6px;border-top:1px solid var(--line);font-weight:700;color:var(--accent)}
+.labor-old{opacity:.8}
+.todo{display:flex;align-items:center;gap:6px;border-top:1px solid var(--line);background:var(--card);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.todo.dragging{position:relative;z-index:2;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.18);border-top-color:transparent}
+.sheet-card.no-scroll{overflow:hidden;touch-action:none}
+.todo.done .it-l{color:var(--muted);text-decoration:line-through}
+.todo .x{flex:none;width:32px;height:32px;color:var(--muted)}
+.todo-add{display:flex;gap:8px;margin-top:8px}
+.plus-btn{width:34px;height:34px;border-radius:10px;font-size:26px;line-height:1;color:var(--accent);display:grid;place-items:center;flex:none}
+.sec-toggle{display:block;flex:1;text-align:left;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;margin:6px 4px 8px;padding:4px 0}
+.link-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.link-tile{position:relative;min-width:0}
+.link-tile a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:58px;padding:8px 6px;border-radius:12px;background:var(--card);border:1px solid var(--line);color:var(--accent);font-weight:700;font-size:14px;text-align:center;text-decoration:none;line-height:1.2}
+.link-tile .info-btn{position:absolute;top:-6px;right:-6px;background:var(--card)}
+.icon-btn{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;color:var(--muted)}
+.icon-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.code-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.code-tile{display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left;padding:7px 8px;border-radius:10px;background:var(--card);border:1px solid var(--line);min-height:50px;min-width:0}
+.code-tile .small{font-size:11px;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.code-tile .code{font-size:16px;letter-spacing:.02em}
+.code-tile.add{align-items:center;justify-content:center;border-style:dashed;color:var(--muted);font-weight:400;font-size:22px;line-height:1}
+.sticky-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sticky{display:flex;flex-direction:column;justify-content:space-between;gap:8px;min-height:110px;padding:12px;border-radius:4px 4px 14px 4px;text-align:left;color:#231f20;font-size:15px;line-height:1.35;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.sticky-date{font-size:11px;opacity:.55}
+.sticky{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+.ref{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.ref .ref-body{-webkit-user-select:text;user-select:text}
+.ref.dragging{position:relative;z-index:5;box-shadow:0 10px 24px rgba(0,0,0,.2)}
+.sticky.dragging{position:relative;z-index:5;box-shadow:0 10px 24px rgba(0,0,0,.25);transform-origin:center}
+body.no-scroll{overflow:hidden;touch-action:none}
+.swatches{display:flex;gap:10px;margin-top:12px}
+.swatch{width:34px;height:34px;border-radius:50%;border:2px solid rgba(0,0,0,.08)}
+.swatch.on{border-color:var(--ink);box-shadow:0 0 0 2px var(--card) inset}
+.qbl-total{font-size:26px;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums}
+.qbl-total span{font-size:30px}
+.qbl-total.over{color:var(--danger)}
+.qbl-alert{margin-top:8px;padding:8px 12px;border-radius:10px;background:var(--danger-soft);color:var(--danger);font-weight:700;font-size:14px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.qbl-alert[hidden]{display:none}
+.qbl-alert .linkish{color:var(--danger);text-decoration:underline}
+.eos-pt{padding:10px 0;border-top:1px solid var(--line);font-size:15px}
+.eos-pt ul{margin:4px 0 0;padding-left:20px;font-size:14px;color:var(--ink)}
+.eos-ok{color:var(--done);font-weight:700;font-size:14px}
+.qbl-over{color:var(--danger);font-weight:800}
+.qgrid{margin-top:10px}
+.qhead{display:grid;grid-template-columns:2fr 3fr;gap:8px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700;padding:0 2px 6px}
+.qhead.qtot{text-transform:none;letter-spacing:0;font-size:13px;padding-top:10px;border-top:1px solid var(--line);margin-top:10px}
+.qrow{display:grid;grid-template-columns:2fr 3fr;gap:8px;padding:10px 0;border-top:1px dashed var(--line)}
+.qcell{display:flex;flex-direction:column;gap:4px;min-width:0}
+.qcell input,.qcell select{min-height:38px;padding:6px 8px;font-size:15px}
+.qnone{align-items:center;justify-content:center;color:var(--muted);font-size:20px}
+.qlab{font-size:12px;color:var(--muted);font-weight:600;display:flex;align-items:center;justify-content:space-between}
+.qitem{display:grid;grid-template-columns:minmax(0,1fr) auto 54px 20px;gap:4px;align-items:center}
+.qitem select{font-size:13px;padding:6px 4px;min-width:0}
+.qitem input{padding:6px 6px;text-align:center}
+.qtimes{color:var(--muted);font-size:13px}
+.qx{color:var(--muted);font-size:13px;padding:2px 4px}
+.qadd{align-self:flex-start;color:var(--accent);font-weight:600;font-size:13px;padding:2px 0}
+.qres{grid-column:1 / -1;font-size:12px;color:var(--muted);text-align:right}
+.to-line{padding:8px 0;border-top:1px solid var(--line);font-size:15px;line-height:2}
+.to-line input{display:inline-block;width:auto;min-width:90px;max-width:100%;min-height:34px;padding:4px 8px;margin:0 4px}
+.to-script{font-size:20px;line-height:1.45;padding-left:26px;margin:10px 0}
+.to-script li{margin:6px 0}
+.to-script b{color:var(--accent)}
+.fundals{border-top:1px solid var(--line);padding:8px 0 10px}
+.fund-h{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:16px}
+.info-btn.sm{width:20px;height:20px;font-size:12px;display:inline-grid;place-items:center}
+.fedit{display:inline-flex;align-items:center;gap:5px}
+.fedit svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;grid-auto-flow:column;gap:6px 10px;margin-top:6px}
+.fgrid+.fgrid{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+.fcell{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;border:1px solid var(--line);font-weight:700;font-variant-numeric:tabular-nums}
+.fcell .dot{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:13px;font-weight:800;color:#fff}
+.fcell.done{background:var(--done-soft);border-color:transparent;color:var(--done)}
+.fcell.done .dot{background:var(--done);border-color:var(--done)}
+.fcell.due{background:var(--due-soft);border-color:var(--due);color:var(--due)}
+.eye-btn{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;color:var(--muted)}
+.eye-btn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.todo-bar{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px;margin:2px 0 8px;border-radius:12px;background:var(--bg);border:1px solid var(--line)}
+.todo-bar .grow{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* call-outs */
+.big{font-size:44px;font-weight:800;line-height:1;letter-spacing:-.02em}
+.bar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:14px 0 4px}
+.bar span{height:12px;border-radius:4px;background:var(--line)}
+.bar span.f1{background:var(--done)}.bar span.f2{background:var(--due)}.bar span.f3{background:var(--danger)}.bar span.f4{background:#1c1819;box-shadow:inset 0 0 0 1px #6f6769}
+.pill.black{background:#1c1819;color:#fff;box-shadow:inset 0 0 0 1px #6f6769}
+.bar-l{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;font-size:11px;color:var(--muted);text-align:center}
+.item{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;padding:10px 0;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+.item .grow{flex:1;min-width:0}
+.item.old{opacity:.55}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:20px;font-weight:700;letter-spacing:.04em}
+.link{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.link:first-child{border-top:0}
+.link a{flex:1;color:var(--accent);font-weight:700;text-decoration:none;font-size:17px}
+.pre{white-space:pre-wrap}
+.empty{color:var(--muted);font-size:14px;padding:4px 0}
+.memory{display:block;width:100%;text-align:left;font-size:16px;line-height:1.5}
+.memory .muted{margin-bottom:4px}
+.verify{font-size:13px;color:var(--muted);background:var(--accent-soft);border-radius:10px;padding:8px 12px;margin-bottom:10px}
+.verify b{color:var(--accent)}
+
+/* tab bar */
+nav{position:fixed;left:0;right:0;bottom:0;background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);
+  display:flex;justify-content:space-around;padding:6px 4px calc(6px + env(safe-area-inset-bottom));z-index:5}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:600;color:var(--muted);padding:4px 0}
+.nav-ico{position:relative;display:block;width:24px;height:24px}
+.badge{position:absolute;top:-4px;right:-10px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--due);color:#fff;font-size:11px;font-weight:800;line-height:17px;text-align:center}
+.badge[hidden]{display:none}
+nav button svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav button.on{color:var(--accent)}
+
+/* sheet */
+#sheet{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:10;display:flex;align-items:flex-end;justify-content:center}
+#sheet[hidden]{display:none}
+.sheet-card{background:var(--card);width:100%;max-width:680px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch}
+.step-ed{border:1px solid var(--line);border-radius:12px;padding:10px;margin-top:10px}
+.step-ed .h-row button{min-width:34px;min-height:34px;border-radius:8px;border:1px solid var(--line);font-size:15px}
+.hide{display:none!important}
+#toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;z-index:20;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw}
+#toast.show{opacity:1}
+</style>
+</head>
+<body>
+<header><h1 id="title">Protocols</h1><div id="hdr-mid"></div>
+<span class="hdr-right"><button id="settings-btn" data-a="shiftSettings" aria-label="Shift settings" hidden><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+  <button id="more-settings" class="hdr-icon" data-a="appSettings" aria-label="Settings" hidden><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+  <button id="notebook-btn" class="hdr-icon" data-a="admitQs" aria-label="Admission questions" hidden><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3v18"/><path d="M12 8h4M12 12h4"/></svg></button></span>
+</header>
+<main id="main"></main>
+
+<nav id="nav">
+  <button data-a="tab" data-t="reference"><svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg>Reference</button>
+  <button data-a="tab" data-t="running"><span class="nav-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2"/><path d="M10 2h4M12 2v3"/></svg><span class="badge" id="run-badge" hidden></span></span>Running</button>
+  <button data-a="tab" data-t="shift"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3h6v3H9z"/><path d="M9 13l2 2 4-4"/></svg>Shift</button>
+  <button data-a="tab" data-t="notes"><svg viewBox="0 0 24 24"><path d="M5 4h14v10l-6 6H5z"/><path d="M13 20v-6h6"/></svg>Notes</button>
+  <button data-a="tab" data-t="more"><svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="18" cy="12" r="1.3"/></svg>More</button>
+</nav>
+
+<div id="sheet" hidden></div>
+<div id="toast"></div>
+<input type="file" id="import-file" accept="application/json,.json" hidden>
+
+<script>
+/* ---------- helpers ---------- */
+const KEY = 'bellasbook-v1';
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const uid = () => Math.random().toString(36).slice(2, 10);
+const pad = n => String(n).padStart(2, '0');
+const ymd = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const today = () => ymd(new Date());
+const hhmm24 = t => { const d = new Date(t); return pad(d.getHours()) + ':' + pad(d.getMinutes()); }; // for time inputs
+// Display times follow Settings → Time format: military "14:30" / "1430", or standard "2:30 PM"
+const std = () => state && state.timeFormat === '12';
+const clock12 = (h, m) => `${h % 12 || 12}:${pad(m)} ${h < 12 ? 'AM' : 'PM'}`;
+const hhmm = t => { const d = new Date(t); return std() ? clock12(d.getHours(), d.getMinutes()) : hhmm24(t); };
+const fmtT = t => std() ? clock12(+t.slice(0, 2), +t.slice(2)) : t; // clock slots like "1430"
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const parseYmd = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const niceDate = s => s ? parseYmd(s).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+const clone = o => JSON.parse(JSON.stringify(o));
+
+function mins(m) {
+  m = Math.round(m);
+  if (m < 60) return m + ' min';
+  const h = Math.floor(m / 60), r = m % 60;
+  return h + 'h' + (r ? ' ' + r + 'm' : '');
+}
+function fmt(txt) {
+  const inline = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+  let html = '', inList = false;
+  for (const raw of String(txt || '').split('\n')) {
+    const l = raw.trimEnd();
+    if (/^\s*[-•]\s+/.test(l)) {
+      if (!inList) { html += '<ul>'; inList = true; }
+      html += '<li>' + inline(l.replace(/^\s*[-•]\s+/, '')) + '</li>';
+      continue;
+    }
+    if (inList) { html += '</ul>'; inList = false; }
+    if (/^#\s+/.test(l)) html += '<h4>' + inline(l.replace(/^#\s+/, '')) + '</h4>';
+    else if (!l.trim()) html += '<div class="gap"></div>';
+    else html += '<p>' + inline(l) + '</p>';
+  }
+  if (inList) html += '</ul>';
+  return html;
+}
+let toastTimer;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ---------- default content (from Bella's Book, 3/2026 + 9/2026 updates) ---------- */
+const S = (label, detail, kind, offset = 0, every = 0, count = 1) => ({ id: uid(), label, detail, kind, offset, every, count });
+
+function defaultProtocols() {
+  const d = '2026-09-24';
+  return [
+    { id: 'mag', name: 'Magnesium', goLabel: 'Start bolus', updated: d,
+      // Phase 0 = bolus/loading (20 min); phase 1 = maintenance, timed from when it starts
+      phases: [{ label: 'Loading', go: 'Start bolus', started: 'Bolus' }, { label: 'Maintenance', go: 'Start maintenance', started: 'Maintenance' }], info:
+`Therapeutic = 4–7 mg/dL
+# Bolus
+4 g/100 mL — pump duration 20 min (runs at 300 mL/hr)
+# Maintenance
+20 g/500 mL — pump 2 g/hr (runs at 50 mL/hr, duration 10 hrs)
+Can be 1 g/hr — depends on order
+# Fluids
+Total max 125 mL/hr (e.g. LR 75 + Mag 50 — if you add pit, decrease LR)`,
+      steps: [
+        S('Collect supplies', 'SCDs, hammer for reflexes, 2nd IV pump, bedside commode', 'before'),
+        S('Pre-mag assessment', 'V/S, DTRs, lungs', 'before'),
+        { ...S('V/S & DTRs', 'q5min', 'timed', 5, 5, 4), phase: 0 },
+        { ...S('V/S & DTRs', 'q15min', 'timed', 15, 15, 4), phase: 1 },
+        { ...S('Mag assessment', 'q1h', 'timed', 120, 60, 1), phase: 1, note: 'then q1h on your shift paper' },
+        { ...S('Urine', 'q4h', 'timed', 240, 240, 1), phase: 1, note: 'then q4h on your shift paper' },
+      ] },
+    { id: 'blood', name: 'Blood transfusion', goLabel: 'Start transfusion', updated: d, info:
+`Supplies: separate IV, blood consent, blood, NS, blood tubing, pump
+1. Prime tubing with NS, then clamp
+2. Spike blood, fill chamber ¼–½ way
+3. Prime tubing with blood
+4. Connect to IV by itself
+Must be infused within 4 hrs of receiving (150 mL/hr is fine)
+# Reaction signs
+- Temp ≥ 100.4 (or up 2°)
+- Chills, hives, itching
+- Respiratory distress
+- Hypotension
+- Lower back pain`,
+      steps: [
+        S('Collect supplies', '2nd IV, blood consent, blood, NS, blood tubing, pump', 'before'),
+        S('Set up', 'Prime tubing with NS, clamp → spike blood, fill chamber ¼–½ → prime tubing with blood → connect to 2nd IV', 'before'),
+        S('Pre-checklist charted', 'Within 30 min of picking up blood', 'before'),
+        S('V/S charted before starting', '', 'before'),
+        S('Running at 25 mL/hr', 'Watch for reaction', 'timed', 0, 0, 1),
+        S('15-min V/S', 'Then increase to ordered rate or 150 mL/hr', 'timed', 15, 0, 1),
+        S('V/S when done', '', 'end'),
+        S('Run pump / flush tubing to clear line', '', 'end'),
+      ] },
+    { id: 'rec-vag', name: 'Recovery — vaginal', short: 'vaginal', goLabel: 'Start recovery', style: 'grid', updated: d, info:
+`Start at delivery.
+q15min ×8 → check when up to MBU → repeated in 1 hr → q6h until 24 hrs PP`,
+      steps: [
+        S('Recovery check', 'q15min', 'timed', 15, 15, 8),
+        S('Recovery check', 'q30min', 'timed', 150, 0, 1),
+        S('Recovery check', 'q1h', 'timed', 210, 0, 1),
+        S('Recovery check', 'q6h until 24 hrs PP', 'timed', 570, 360, 3),
+      ] },
+    { id: 'rec-cs', name: 'Recovery — C/S', short: 'C/S', goLabel: 'Start recovery', style: 'grid', updated: d, info:
+`Start at delivery.
+q15min ×8 → q30min ×2 → q1h ×4 → q4h until 24 hrs PP`,
+      steps: [
+        S('Recovery check', 'q15min', 'timed', 15, 15, 8),
+        S('Recovery check', 'q30min', 'timed', 150, 30, 2),
+        S('Recovery check', 'q1h', 'timed', 240, 60, 4),
+        S('Recovery check', 'q4h until 24 hrs PP', 'timed', 660, 240, 4),
+      ] },
+  ];
+}
+
+// Reference is split into Meds and Other
+const MED_CARDS = ['Blood transfusion reaction', 'Magnesium toxicity', 'Fluids', 'Diluting IV meds', 'Betamethasone', 'Miso / Cytotec', 'Terbutaline', 'Meds & fluids', 'Pitocin', 'Magnesium', 'Epidural', 'PPH meds', 'Blood transfusion'];
+const refCat = title => MED_CARDS.includes(title) ? 'meds' : 'other';
+// Cards that can start a timed checklist
+const CARD_TIMERS = { 'Magnesium': ['mag'], 'Blood transfusion': ['blood'], 'Recovery fundals': ['rec-vag', 'rec-cs'] };
+// Default order: Meds A–Z; Other in the order below (cards you add go at the end of their section)
+const OTHER_ORDER = ['Phone extensions', 'Admit / triage', 'Bands', 'Prenatals', 'Labs & blood draws', 'Swabs', 'Values', 'Gestational Policies', 'Temp', 'BP Tx',
+  'Decels', 'IUPC / MVUs', 'Amnioinfusion', 'Cook balloon', 'QBL', 'JADA', 'Recovery fundals', 'Anesthesia staff', 'Surgical tech staff', 'C/S prep & OR', 'C/S timeout', 'After Delivery', 'Placenta/pathology form'];
+function sortRefs(list) {
+  const meds = list.filter(r => r.cat === 'meds').sort((a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: 'base' }));
+  const pos = r => { const i = OTHER_ORDER.indexOf(r.title); return i < 0 ? 999 : i; };
+  const other = list.filter(r => r.cat !== 'meds').map((r, i) => [r, i]).sort((a, b) => pos(a[0]) - pos(b[0]) || a[1] - b[1]).map(x => x[0]);
+  return [...meds, ...other];
+}
+function defaultRefs() {
+  const R = (title, body) => ({ id: uid(), title, body, cat: refCat(title), protos: CARD_TIMERS[title] || [], updated: '2026-09-25' });
+  return sortRefs([
+    R('Phone extensions',
+`NICU — *94985
+MBU — *94650
+4West (rooms 473+) — *94655
+Lab — *94720 (#1)
+MFM — *94972
+EVS — *33221
+Registration — *94515
+# Transfer a call
+Transfer button → dial Rm # (found in green book) → Transfer button again`),
+    R('Admit / triage',
+`# Registration terms
+- Direct admit / induction = "activate a pre-in"
+- Admit from triage = "make an OBED in-pt"
+# Phone call from pt coming in
+Name, doctor, G/P, gestation, reason for visit
+# Admission questions
+- EDC · G __ P __ (SAB/TAB?) · prior pregnancies
+- Ctx? onset · ROM? time · bleeding? · fetal movement
+- Pregnancy complications (anemia, GDM, GHTN)
+- PMHx (asthma? STIs?) · allergies · meds · surgeries · anesthesia complications?
+- Height / weight / pre-preg weight
+- FoB · girl/boy (circ?) · breast/bottle/both
+- Epidural? / preferences
+- Last appt · cervical exam? · IVF/IUI pregnancy?
+- GBS +/- · RhoGAM?
+- Tdap, COVID, flu vaccines
+- S/S in last 10 days?
+- Sex in last 24 hours?
+- Smoke / alcohol / drug use?
+- Thoughts of harming self/others? Safe at home?`),
+    R('Labs & blood draws',
+`- **Purple** = CBC — order CBC w/out diff (unless specifically requested or pt is sick/septic)
+- **Pink** = Type & Screen
+- **Green** = BMP (compMet) and troponin
+- **Gray** = lactic acid — no restricting band; put in cup of ice on way to lab
+- **Cultures** = bottles sent from lab, new stick, blood directly into bottles (same as tubes) until liquid is "bloody"
+After delivery: draw pink and purple`),
+    R('Values',
+`- P/C ratio < 0.3 (0.3+ is pre-eclampsia)
+- Rubella immune > 0.99
+- BG (per hospital policy) = 70–110
+- Cord pH < 7.2 = acidotic (decreased oxygenation)
+# RhoGAM
+Given at 26–28 wks and within 72 hrs after delivery — "RHIG" order
+# BPP (biophysical profile) — max 10/10
+2 pts each: fetal movement, fetal tone, fetal breathing, AFI, fetal HR (if FHR not included, scored /8)
+# AFI
+- Normal = 5–25
+- Oligo < 5
+- Poly > 25`),
+    R('Fluids',
+`Maintenance fluids max = **125 mL/hr** total
+e.g. LR 75 + Mag 50 — if you add pit, decrease LR`),
+    R('Diluting IV meds',
+`Dilute in a flush:
+- Benadryl
+- Pepcid
+- Nubain
+- Dilaudid
+- Morphine`),
+    R('Betamethasone',
+`Blue needle (1–1½", 22–25g), IM in R/L hip. Don't squeeze skin (avoid injecting SUBQ)`),
+    R('Miso / Cytotec',
+`Contraindicated if 3+ ctx/10 min`),
+    R('Terbutaline',
+`0.25 mg SUBQ (q15min ×4 PRN)
+Gray-capped SUBQ syringe, draw up 0.25 mL, back of arm`),
+    R('Pitocin',
+`# Pre-pit/Cytotec checklist (make sure charted)
+- Adequate pelvis
+- Cephalic presentation
+- EFW < 4500 g
+- Cervical exam done
+# Running
+- In-use checklist q30min & every dose change
+- Can increase by 2 mU/min q30+ min PRN
+# After delivery
+334 mL/hr × 30 min, then 95 mL/hr for remaining 4 hrs — does not run with LR`),
+    R('Blood transfusion reaction',
+`**If suspected: stop the blood transfusion and notify the provider. Follow orders for Tx.**
+# Signs
+- Temp ≥ 100.4 (or up 2°)
+- Chills, hives, itching
+- Respiratory distress
+- Hypotension
+- Lower back pain
+# If suspected
+- Stop the transfusion
+- Keep the IV open with NS on new tubing
+- Stay with the patient, take V/S
+- Notify the provider
+- Follow orders for Tx/Interventions`),
+    R('Magnesium toxicity',
+`# Watch for
+- Loss of DTRs (first sign)
+- Respiratory depression — RR < 12
+- Decreased UOP (< 30 mL/hr)
+- Decreased LOC, slurred speech, extreme drowsiness
+- Chest pain, SOB, hypotension, arrhythmia
+# If suspected
+- Stop the mag infusion
+- Notify provider, call for help
+- Mag level per order
+# Antidote
+**Calcium gluconate** 1 g IV (10 mL of 10%) slowly over ~3 min — per order.`),
+    R('Magnesium',
+`Therapeutic = 4–7 mg/dL
+# Bolus
+4 g/100 mL — pump duration 20 min (runs at 300 mL/hr)
+# Maintenance
+20 g/500 mL — pump 2 g/hr (runs at 50 mL/hr, duration 10 hrs). Can be 1 g/hr per order
+# Charting/assessments
+- Pre-mag = V/S, DTRs, lungs
+- Loading = V/S & DTRs q5min for the 20-min bolus, then q15min ×4
+- q1h = mag assessment (V/S, DTRs, lungs)
+- q4h = in-use checklist (urine & temp)`),
+    R('Epidural',
+`# Supplies
+Anesthesia tray, 2 Tegaderm, ChloraPrep, blue tubing, tubing pack (for us)
+# Charting
+- Anesthesia in room
+- Sitting up for epidural & pulse ox applied
+- Epidural placed by ___
+- Test dose & loading dose
+- Epidural completed, pt in ___ position, stay in bed and stay tilted, BP monitoring per order
+# Pump settings (11/19/24 and after)
+Fentanyl 2 mcg/mL – Bupivacaine 0.0625%
+- PIEB (intermittent bolus) 10 mL, interval 45 min
+- PCEA (pt controlled) 5 mL, lockout 15 min
+# Hypotension
+- SBP 90s = fluid bolus and monitor (if baby/mom tolerating well)
+- SBP 80s = 1 cc Neo IVP
+- SBP 70s = 1 cc Neo IVP + ephedrine IM; contact anesthesia`),
+    R('PPH meds',
+`- **Miso/Cytotec** 800–1000 mcg PR, SL, PO — may cause elevated temp
+- **TXA** 1 g/10 mL vial, diluted in 100 mL NS IVPB over 10 min. Can repeat ×1 if bleeding after 30 min. May cause hypotension
+- **Methergine** 0.2 mg IM — caution with HTN
+- **Hemabate** 250 mcg IM — caution with asthma`),
+    R('Blood transfusion',
+`Pre-checklist completed within 30 min of picking up blood
+Supplies: separate IV, blood consent, blood, NS, blood tubing, pump
+1. Prime tubing with NS, then clamp
+2. Spike blood, fill chamber ¼–½ way
+3. Prime tubing with blood
+4. Connect to IV by itself
+5. 25 mL/hr for first 15 min while observing for reaction
+6. Chart checklist and V/S before starting blood
+7. Chart V/S again at 15 min and when done
+8. Change infusion rate after the first 15 min — must be in within 4 hrs of receiving (150 mL/hr is fine)
+9. After — run pump or flush tubing to clear line
+# Transfusion reaction
+- Temp ≥ 100.4 (or up 2°)
+- Chills, hives, itching
+- Respiratory distress
+- Hypotension
+- Lower back pain`),
+    R('JADA',
+`- Set vacuum to 80 mm Hg
+- Remove air from cervical seal
+- Insert JADA
+- Fill cervical seal with 60 mL
+- Connect to vacuum tubing and tape to pt's thigh
+- Stay on vacuum 1+ hr after bleeding controlled
+- Disconnect from vacuum, leave in place, monitor 30 min
+- Confirm tone and remove JADA`),
+    R('QBL',
+`Dry weights (g)
+- Thin blue chux — ~40
+- Green chux — 37
+- Peripad — 11
+- Blue towels — 54
+- Mini lap — 8
+- Green pad — 422
+- Ice pack — 223
+- Under buttocks drape — 141
+- Lap counter — 21
+- Lap — 19
+- White chux — 118
+- Disposable OR sheet — 285
+- Disposable draw sheet — 120`),
+    R('Swabs',
+`# AmniSure (ROM)
+New ROM kit (as of Nov 2024) kept at nurses station. 15 sec in vagina (2–3 in insertion), then break swab in vial. Label date, time, initials, "vaginal" and walk to lab.
+Can test with "some" blood/semen (not very red/saturated)
+# GBS (36–38 wks)
+Red tube with swab from cart. Swipe vagina to anus, put swab in tube, label, send to lab.
+# Wet prep (BV, yeast, trich)
+White tube with a little saline. Swab discharge, break swab off in tube, label, walk to lab.
+# FFN
+Possible delivery within 2 wks (negative result is more important). Bag has swab and tube — break off in tube, label, walk to lab.`),
+    R('Gestational Policies',
+`- Term = 36 wks (35.6 = preterm)
+- < 36 wks goes to NICU — call them for delivery
+- Must be at least 36 wks for Novii monitor`),
+    R('Temp',
+`- q4h if intact
+- q2h if ROM
+- q1h if temp > 99.0 (until < 99.0)`),
+    R('BP Tx',
+`Treat after 2 BPs > 160/110, 15 min apart. Treat, cycle BP 20 min later, then follow orders if you need to re-treat.
+# Once < 160/110
+q10min ×1 hr → q15min ×1 hr → q30min ×1 hr → q1h ×4 hrs`),
+    R('Decels',
+`# Early — head compression
+Gradual decrease, onset→nadir ≥ 30 sec, nadir matches peak of ctx
+# Late — placental insufficiency
+Gradual decrease, onset→nadir ≥ 30 sec, nadir after peak of ctx
+→ Position change, fluids, O2
+# Variable — cord compression
+15+ beats, lasting 15+ sec, onset→nadir < 30 sec
+→ Trendelenburg and/or consider amnioinfusion`),
+    R('IUPC / MVUs',
+`- Adequate = 180–220 MVUs (can't be > 300; resting tone can't be > 25)
+- Each box = 5
+- Resting tone: count from 0 to baseline
+- MVUs: baseline to peak of each ctx in a 10-min window (counting by 5s)
+- Must have ROM to use IUPC
+- Resting tone > 25 → recalibrate: reference, disconnect, flush w/ 10 cc`),
+    R('Amnioinfusion',
+`Supplies: NS and tubing, separate pump
+- Prime tubing, then connect to IUPC (placed by provider)
+- Bolus (usually 300–500 mL/hr) half the bag
+- Maintenance rate per provider order
+- Change pads and regularly monitor output`),
+    R('Cook balloon',
+`Get balloon from stock room with sterile water, 50 cc syringe, graduated cylinder. Speculum might be used.
+Inflate "U" first, then "V" (40–80 cc each). 60/60 = standard, but depends on provider.`),
+    R('Recovery fundals',
+`# Vaginal
+q15min ×8 → check when up to MBU → repeated in 1 hr → q6h until 24 hrs PP
+# C/S
+q15min ×8 → q30min ×2 → q1h ×4 → q4h until 24 hrs PP`),
+    R('C/S prep & OR',
+`# Prep
+- Contact anesthesia; fluid bolus with anesthesia tubing
+- Disconnect from epidural pump if needed
+- Scrub, clip, SCDs, hair net, remove metal/jewelry
+- Scrubs, hair net, shoe coverings for partner
+# Once in OR
+- Start filling in Dr's cheat sheet, OR book, white board
+- Write out time out
+- Prep baby stuff, blood/cord tubes, footprints
+- Count with scrub
+- Check FHR after spinal
+- Scrub after foley and legs tucked, then set timer — 3 min to drape
+- Tie gown of Dr and assist
+- Time out after curtain up
+# Expanse charting
+- Phase 1 times
+- Intraoperative record — equipment: OB Bovie, SCD, smoke
+- Delivery summary
+- QBL & urine in I&O
+- Recovery record ×8
+Pre-op Dx = reason for C/S · Post-op Dx = "same as above and delivered"`),
+    R('C/S timeout',
+`- Pt name and DOB
+- Allergies: ___
+- P or R C/S for ___ (elective or med. reason)
+- "I have the consent here and signed"
+- Medical concerns: ___
+- Introduce team (mention if NICU is present)
+- Abx @ ___
+- Fire risk of ___ (1, or 2 with O2)
+- Left lateral tilt
+- Bovie pad on left thigh
+- Foley in and draining
+- SCDs are on
+- Saline on the back table
+- EBL and length of procedure?
+- Questions?
+# In a rush, at minimum
+Name and DOB · R or P C/S d/t ___ · Allergies · Questions?`),
+    R('Bands',
+`- Baby: HCA print pt labels → HCA mother-baby armband batch → last name, B (baby). Printer 11_BB
+- Mom: HCA adult armband batch (LB2-102W3). Printer 11_AB`),
+    R('Prenatals',
+`Intranet → Document Center → L&D → Prenatals → Office → Name
+(Dominion and Virginia Women's Physicians are a different way)`),
+    R('After Delivery',
+`# On radio
+Baby boy/girl @ ___, in Rm ___, by Dr/CNM ___, epidural?
+# After PP orders are put in
+Orders → click the flag → transfer → approve standard orders → save → process transfer`),
+    // Names for C/S charting (first + last)
+    R('Anesthesia staff',
+`Tap Edit to add names — one per line, first and last (e.g. - Jane Smith, CRNA).`),
+    R('Surgical tech staff',
+`Tap Edit to add names — one per line, first and last (e.g. - Jane Smith).`),
+    R('Placenta/pathology form',
+`Put in intraoperative record (specimen → pathology → surgical → special instructions gross & microscope), then print in Orders (path → "I" → print req). Printer HHNRLBD2WP11`),
+  ]);
+}
+
+const KINDS = { labor: 'Labor / admitted', admit: 'New admit', triage: 'Triage', cs: 'Scheduled C/S' };
+const KIND_SHORT = { labor: 'Labor', admit: 'Admit', triage: 'Triage', cs: 'C/S' };
+
+// Charting bundles — one tap each; the list is just a reminder of what's included.
+// From the Expanse Charting Checklist (Bella's Book p.1). "- " = indented under the line above.
+const BUNDLES = {
+  start: 'Start of shift charting',
+  admission: 'Admission charting',
+  triage: 'Triage charting',
+  vaginal: 'Delivery charting (vaginal)',
+  csDelivery: 'Delivery charting (C/S)',
+  cs: 'C/S charting',
+  discharge: 'Discharge charting',
+  asNeeded: 'As-needed charting',
+  todos_labor: 'To-dos: Labor / admitted',
+  todos_admit: 'To-dos: New admit',
+  todos_cs: 'To-dos: Scheduled C/S',
+  todos_triage: 'To-dos: Triage',
+  todos_cspp: 'To-dos: After C/S delivery',
+};
+const DEFAULT_LISTS = {
+  start:
+`Admission/Shift Assessment
+Fall screening
+Isolation Precautions
+Pain Assessment
+Skin Assessment
+Teach/Educate
+Review Care Plan`,
+  admission:
+`Admission Health Hx
+First Point of Contact
+Admission/Shift Assessment
+Isolation/Precautions
+Fall Risk Screening
+OB Intake/Prenatal Record
+Plan of Care
+OB Maternal Early Warning
+PPH Assessment Paper
+Allergies
+Pharmacy & Home meds
+Vaccines
+Pain Assessment
+Skin Assessment
+Teach/Educate
+Review Care Plan`,
+  triage:
+`US/TOCO, V/S
+Triage questions
+iPad or call registration *94515
+Cervical exam / swabs?
+Call provider with report
+Admit or discharge orders
+Discharge instructions or admit`,
+  vaginal:
+`OB Delivery Record
+- Time pushing started
+- Foley removed & urine volume
+- QBL
+OB Recovery Record
+- Recovery start time
+- LOC
+- Anesthesia
+- Fundus, lochia, perineum, dressing
+- PAR Assessment`,
+  cs:
+`Pre-Proc Check List & Phase 1 times
+Intraoperative (in surgical view)
+- General Data, anesthesia type, ASA
+- Times
+- Staff
+- Actual Procedure (start and stop)
+- PreOp/Briefing
+- Fire Risk
+- Prep Site (prep time, dry time, no pooling, alcohol, who prepped)
+- Equipment: OB bovie, SCDs, smoke evac
+- Timeout (for c-section only, not spinal)
+- Abx
+- Counts
+- Incision/Dressing
+- Specimens/Cultures PRN
+- Post Procedure`,
+  // C/S delivery charting is separate from the C/S (surgical) charting above
+  csDelivery:
+`OB Delivery Record
+- QBL (in main view)
+OB Recovery Record (in main view)
+- Recovery start time
+- LOC
+- Anesthesia
+- Fundus, lochia, perineum, dressing
+- PAR Assessment`,
+  discharge:
+`Discharge instructions noted
+Discharge instructions reviewed & signed
+Remove IV / monitors
+Discharge time charted`,
+  asNeeded:
+`Lines (start/stop of IVs/epidural)
+I&Os (urine; QBL under "other")
+Drains (foley start and stop)`,
+  // To-dos each new patient starts with (by type)
+  todos_labor:
+`Consent signed
+Wristband
+Set up delivery tray
+Set up baby warmer`,
+  todos_admit:
+`Chart put together
+Wristband
+Consent signed
+IV / labs sent
+Birth plan?`,
+  todos_cs:
+`IV / labs sent
+Wristband
+Consent
+Add patient to surgical tracker
+SCDs
+Trim
+Scrub
+Prep OR`,
+  todos_triage:
+`Recept
+iPad (*94515)`,
+  // Added to the to-do list when a patient delivers by C/S
+  todos_cspp:
+`Connect SCDs`,
+};
+const LISTS_VERSION = 5;
+
+function defaultTodos(kind) {
+  return (state.lists['todos_' + kind] || '').split('\n').map(l => l.trim()).filter(Boolean).map(text => ({ id: uid(), text, done: false }));
+}
+function newPatient(room, kind) {
+  return { id: uid(), room, kind, done: {}, tags: [], todos: defaultTodos(kind), notes: '', deliveredAt: null };
+}
+const roomLabelOf = room => /^\d/.test(room) ? 'Rm ' + room : room;
+const roomLabel = p => /^\d/.test(p.room) ? 'Rm ' + p.room : (p.room || 'No room');
+
+const DEFAULT_LINKS = [
+  { id: 'l-timpani', label: 'Timpani Scheduler', url: 'https://ap.idf.medcity.net/IdentityFederationPortal/MFA/Analyze/HCA?ReturnUrl=%2FIdentityFederationPortal%2FLogin%2FValidate%2FHCA%3FAltConfig%3D2FA%26resume%3D%2Fidp%2FnVLX7BS8uY%2FresumeSAML20%2Fidp%2FSSO.ping%26spentity%3Durn%3Auuid%3Aef789313-74ab-423e-8265-bb28ef62bcdd', note: 'Opens in Safari. To see it like on a computer: tap aA in the address bar → Website Settings → turn on Request Desktop Website. Safari remembers it after that.' },
+  { id: 'l-healthstream', label: 'HealthStream', url: 'https://app.hstream.com/home', note: '' },
+  { id: 'l-hranswers', label: 'HR Answers', url: 'https://mingle-portal.inforcloudsuite.com/HCAHEALTHCARE_PRD/097ed3d1-0326-4b54-9ad7-2ab8bf9fa598?favoriteContext=https:%2F%2Fhcm-hcahealthcare-prd.tam.inforcloudsuite.com%2Fhcm%2FEmployeeSelfService%2Fhtml%2FEmployeeSelfService%3Fcsk.lidkey%3D6c1c5c1ea968a432ae27aa06e4c73e17%26menu%3DHome%26csk.CHP%3DEMPLOYEE_EXPERIENCE1%26LogicalId%3Dlid%253A%252F%252Finfor.lawson-ghr.ghr110-prod-useast1&LogicalId=lid:%2F%2Finfor.lawson-ghr.ghr110-prod-useast1&siteId=097ed3d1-0326-4b54-9ad7-2ab8bf9fa598', note: '' },
+];
+// Fill in the quick links on phones that saved data before they had web addresses
+function mergeLinks(links) {
+  const oldNames = { 'l-timpani': 'unit scheduler' };
+  links = links.filter(l => !(l.label === 'PolicyStat' && !l.url)); // PolicyStat can't be linked
+  for (const dl of DEFAULT_LINKS) {
+    const match = links.find(l => l.id === dl.id || [dl.label.toLowerCase(), oldNames[dl.id]].includes((l.label || '').toLowerCase()));
+    if (!match && !state.linksSeeded) links.push(clone(dl)); // only once, so deleting a link sticks
+    else if (match && !match.url && dl.url) Object.assign(match, { id: dl.id, label: dl.label, url: dl.url, note: match.note || dl.note });
+  }
+  return links;
+}
+
+function defaults() {
+  return {
+    v: 1,
+    protocols: defaultProtocols(),
+    refs: defaultRefs(),
+    runs: [],
+    lists: clone(DEFAULT_LISTS),
+    listsVersion: LISTS_VERSION,
+    shift: null,
+    callouts: [],
+    codes: [],
+    memories: [],
+    notes: [],
+    links: clone(DEFAULT_LINKS),
+    lastBackup: null,
+    refsVersion: 10,
+  };
+}
+
+/* ---------- state ---------- */
+let state;
+function load() {
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+  state = Object.assign(defaults(), saved || {});
+  state.links = mergeLinks(state.links); state.linksSeeded = true;
+  state.links.forEach(l => { if (l.note === 'Opens in Safari. Tap aA → Request Desktop Website so it looks like it does on a computer.') l.note = DEFAULT_LINKS[0].note; });
+  state.protocols = state.protocols.filter(p => !['bp-treat', 'bp-down', 'pit-pp', 'pit'].includes(p.id)); // removed protocols (info lives in Reference cards)
+  // Recovery checks show as a two-column time grid, like fundals on the Shift page
+  [...state.protocols, ...state.runs.map(r => r.proto)].forEach(p => { if (/^rec-/.test(p.id) && !p.style) p.style = 'grid'; });
+  state.refs.forEach(r => { if (r.title === 'Recovery checks') r.title = 'Recovery fundals'; });
+  state.refs.forEach(r => { if (!r.cat) r.cat = refCat(r.title); if (!r.protos) r.protos = CARD_TIMERS[r.title] || []; });
+  // Blood: supplies → set up → pre-checklist; 15-min V/S says the new rate; 4-hr limit lives on the card
+  const bl = state.protocols.find(p => p.id === 'blood');
+  if (bl) {
+    const def = defaultProtocols().find(p => p.id === 'blood').steps, byLabel = l => bl.steps.find(st => st.label === l) || def.find(st => st.label === l);
+    const before = ['Collect supplies', 'Set up', 'Pre-checklist charted'].map(byLabel);
+    bl.steps = [...before, ...bl.steps.filter(st => !before.includes(st) && st.label !== '4-hr limit')];
+    const v = bl.steps.find(st => st.label === '15-min V/S'); if (v && v.detail === 'Then increase the rate') v.detail = 'Then increase to ordered rate or 150 mL/hr';
+  }
+  [...state.protocols, ...state.runs.map(r => r.proto)].forEach(p => { if (p.id === 'rec-vag') p.steps = p.steps.filter(st => st.label !== 'Check when up to MBU'); }); // MBU staff do that one
+  const magP = state.protocols.find(p => p.id === 'mag');
+  if (magP && !magP.phases) Object.assign(magP, (({ phases, steps }) => ({ phases, steps }))(defaultProtocols().find(p => p.id === 'mag')));
+  [...(magP ? [magP] : []), ...state.runs.filter(r => r.proto.id === 'mag').map(r => r.proto)].forEach(mp => mp.steps.forEach(st => {
+    const def = { 'Mag assessment': 'then q1h on your shift paper', 'Urine': 'then q4h on your shift paper' }[st.label];
+    if (def && !st.note) { st.count = 1; st.note = def; }
+  }));
+  const recVag = state.protocols.find(p => p.id === 'rec-vag');
+  if (recVag && recVag.steps.filter(st => st.kind === 'timed').length === 1)
+    recVag.steps.push(...defaultProtocols().find(p => p.id === 'rec-vag').steps.slice(1));
+  state.refs.forEach(r => { if (/recovery (checks|fundals)/i.test(r.title)) r.body = r.body.replace('q15min ×8 → q30min ×1 → q1h ×1 → q6h until 24 hrs PP', 'q15min ×8 → check when up to MBU → repeated in 1 hr → q6h until 24 hrs PP'); }); // card keeps the MBU wording
+  const GO = { blood: 'Start transfusion', mag: 'Start bolus', 'rec-vag': 'Start recovery', 'rec-cs': 'Start recovery' };
+  [...state.protocols, ...state.runs.map(r => r.proto)].forEach(p => { if (!p.goLabel && GO[p.id]) p.goLabel = GO[p.id]; });
+  state.protocols.forEach(p => { if (!p.short && p.id === 'rec-vag') p.short = 'vaginal'; if (!p.short && p.id === 'rec-cs') p.short = 'C/S'; });
+  if ((state.refsVersion || 0) < 2) { // v2: QBL, Temp and BP Tx became their own cards
+    const d = defaultRefs(), byTitle = t => d.find(r => r.title === t);
+    const split = (oldTitle, newTitles) => {
+      const i = state.refs.findIndex(r => r.title === oldTitle);
+      if (i >= 0) state.refs.splice(i, 1, ...newTitles.map(byTitle));
+    };
+    split('JADA & QBL', ['JADA', 'QBL']);
+    split('Policies', ['Gestational Policies', 'Temp', 'BP Tx']);
+    state.refsVersion = 2;
+  }
+  if (state.refsVersion < 3) { // v3: full QBL dry-weight list
+    const q = state.refs.find(r => r.title === 'QBL');
+    if (q && /^Sucky\/thin blue chux ≈ 40 g$/.test(q.body.trim())) Object.assign(q, { body: defaultRefs().find(r => r.title === 'QBL').body, updated: today() });
+    state.refsVersion = 3;
+  }
+  if (state.refsVersion < 4) { // v4: Meds & fluids split into separate cards; Blood moves to Meds
+    const d = defaultRefs(), i = state.refs.findIndex(r => r.title === 'Meds & fluids');
+    if (i >= 0 && state.refs[i].body.trim() === '- Maintenance fluids max = **125 mL/hr** total (e.g. LR 75 + Mag 50 — if you add pit, decrease LR)\n- Dilute Benadryl, Pepcid, Nubain, Dilaudid, morphine in a flush\n# Betamethasone\nBlue needle (1–1½", 22–25g), IM in R/L hip. Don\'t squeeze skin (avoid injecting SUBQ)\n# Miso / Cytotec\nContraindicated if 3+ ctx/10 min\n# Terbutaline\n0.25 mg SUBQ (q15min ×4 PRN) — gray-capped SUBQ syringe, draw up 0.25 mL, back of arm')
+      state.refs.splice(i, 1, ...['Fluids', 'Diluting IV meds', 'Betamethasone', 'Miso / Cytotec', 'Terbutaline'].map(t => d.find(r => r.title === t)));
+    const blood = state.refs.find(r => r.title === 'Blood transfusion'); if (blood) blood.cat = 'meds';
+    state.refsVersion = 4;
+  }
+  if (state.refsVersion < 5) { // v5: fill-in blanks on the timeout template
+    const t = state.refs.find(r => r.title === 'C/S timeout');
+    if (t) t.body = t.body.replace(/^- Allergies$/m, '- Allergies: ___').replace(/^- Medical concerns$/m, '- Medical concerns: ___');
+    state.refsVersion = 5;
+  }
+  if (state.refsVersion < 6) { // v6: new default order (Meds A–Z) + BP Tx wording
+    state.refs = sortRefs(state.refs);
+    const bp = state.refs.find(r => r.title === 'BP Tx');
+    if (bp) bp.body = bp.body.replace('then decide if you need to re-treat', 'then follow orders if you need to re-treat');
+    state.refsVersion = 6;
+  }
+  if (state.refsVersion < 7) { // v7: "Charting & printing" split into Bands, Prenatals, After Delivery, Placenta; transfer tip → Phone extensions
+    const d = defaultRefs(), i = state.refs.findIndex(r => r.title === 'Charting & printing');
+    if (i >= 0 && state.refs[i].body.trim() === '# Transfer a call\nTransfer button → dial Rm # (found in green book) → Transfer button again\n# Prenatals\nIntranet → Document Center → L&D → Prenatals → Office → Name\n(Dominion and Virginia Women\'s Physicians are a different way)\n# Bands\n- Baby: HCA print pt labels → HCA mother-baby armband batch → last name, B (baby). Printer 11_BB\n- Mom: HCA adult armband batch (LB2-102W3). Printer 11_AB\n# Placenta/pathology form\nPut in intraoperative record (specimen → pathology → surgical → special instructions gross & microscope), then print in Orders (path → "I" → print req). Printer HHNRLBD2WP11\n# After delivery on radio\nBaby boy/girl @ ___, in Rm ___, by Dr/CNM ___, epidural?\n# After PP orders put in\nOrders → click the flag → transfer → approve standard orders → save → process transfer') {
+      state.refs.splice(i, 1, ...['Bands', 'Prenatals', 'After Delivery', 'Placenta/pathology form'].map(t => d.find(r => r.title === t)));
+      const ph = state.refs.find(r => r.title === 'Phone extensions');
+      if (ph && !/Transfer a call/.test(ph.body)) ph.body += '\n# Transfer a call\nTransfer button → dial Rm # (found in green book) → Transfer button again';
+      state.refs = sortRefs(state.refs);
+    }
+    state.refsVersion = 7;
+  }
+  if (state.refsVersion < 8) { // v8: staff name cards, right above C/S prep & OR
+    const d = defaultRefs();
+    ['Anesthesia staff', 'Surgical tech staff'].forEach(t => {
+      if (state.refs.some(r => r.title === t)) return;
+      const at = state.refs.findIndex(r => r.title === 'C/S prep & OR');
+      state.refs.splice(at < 0 ? state.refs.length : at, 0, d.find(r => r.title === t));
+    });
+    state.refsVersion = 8;
+  }
+  if (state.refsVersion < 9) { // v9: Magnesium toxicity card, right after Magnesium
+    if (!state.refs.some(r => r.title === 'Magnesium toxicity')) {
+      const at = state.refs.findIndex(r => r.title === 'Magnesium');
+      state.refs.splice(at < 0 ? 0 : at + 1, 0, defaultRefs().find(r => r.title === 'Magnesium toxicity'));
+    }
+    state.refsVersion = 9;
+  }
+  if (state.refsVersion < 10) { // v10: Blood transfusion reaction card, right after Blood transfusion
+    if (!state.refs.some(r => r.title === 'Blood transfusion reaction')) {
+      const at = state.refs.findIndex(r => r.title === 'Blood transfusion');
+      state.refs.splice(at < 0 ? 0 : at + 1, 0, defaultRefs().find(r => r.title === 'Blood transfusion reaction'));
+    }
+    state.refsVersion = 10;
+  }
+  state.refs.forEach(r => { if (r.title === 'Blood transfusion reaction') r.body = r.body.replace('- Notify the provider and blood bank\n- Send the bag and tubing back to the lab\n- Labs/urine per policy', '- Notify the provider\n- Follow orders for Tx/Interventions'); });
+  state.refs.forEach(r => { if (r.title === 'Magnesium toxicity') r.body = r.body.replace(' Keep it at the bedside while mag is running.', ''); });
+  // Older versions: two checklists and a shift without rooms
+  // Checklists before v2 were from the old charting system — replace with the Expanse ones
+  // v4: lists became one-tap charting bundles
+  if ((state.listsVersion || 0) < 4) state.lists = clone(DEFAULT_LISTS);
+  if ((state.listsVersion || 0) < 5) { // v5: to-dos split by patient type
+    if (state.lists.todos) state.lists.todos_labor = state.lists.todos;
+    delete state.lists.todos;
+  }
+  state.listsVersion = LISTS_VERSION;
+  if (state.shift && state.shift.startMin == null) [state.shift.startMin, state.shift.endMin] = DEFAULT_HOURS[state.shift.type || 'day'];
+  if (state.shift) state.shift.patients.forEach(p => {
+    if (!p.tags) Object.assign(p, { done: {}, strips: p.hourly || {}, tags: [], todos: [], deliveredAt: null });
+    if (p.strips) { // strips used to be the time buttons; now they're "Strip" tags
+      if (!p.tags.some(g => g.label === 'Strip')) stripTags(false).forEach(g => { g.done = !!p.strips[g.t]; p.tags.push(g); });
+      delete p.strips;
+    }
+  });
+  delete state.shiftList; delete state.csList;
+  for (const k in DEFAULT_LISTS) if (typeof state.lists[k] !== 'string') state.lists[k] = DEFAULT_LISTS[k];
+  state.lists.cs = state.lists.cs.replace(/^OB Delivery Record \(surgical view as well as main view\)\n(- QBL\n)?/m, 'OB Delivery Record\n- QBL (in main view)\n');
+  if (state.lists.csDelivery == null || state.lists.csDelivery === DEFAULT_LISTS.csDelivery) {
+    const at = state.lists.cs.search(/^OB Delivery Record/m);
+    if (at > 0) { state.lists.csDelivery = state.lists.cs.slice(at).trim(); state.lists.cs = state.lists.cs.slice(0, at).trim(); }
+  }
+  if (!/surgical tracker/i.test(state.lists.todos_cs)) state.lists.todos_cs = state.lists.todos_cs.replace(/^Consent$/m, 'Consent\nAdd patient to surgical tracker');
+  state.lists.todos_triage = state.lists.todos_triage.replace(/^iPad$/m, 'iPad (*94515)');
+  state.lists.vaginal = state.lists.vaginal.replace(/^OB Delivery Record\nOB Recovery Record/m, 'OB Delivery Record\n- Time pushing started\n- Foley removed & urine volume\n- QBL\nOB Recovery Record');
+  state.lists.asNeeded = state.lists.asNeeded.replace(/\nUniversal Timeout \(epidural\)\nCervical ripening\/oxytocin checklist \(in OB labor assessment\)\nAdd mag checklist interventions$/, '');
+  state.lists.discharge = state.lists.discharge.replace(/^Discharge order$/m, 'Discharge instructions noted');
+  if (state.shift && !state.shift.startedAt) state.shift = null;
+}
+let saveTimer;
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(state)); }
+  catch (e) { toast('Could not save — storage unavailable'); }
+}
+function saveSoon() { clearTimeout(saveTimer); saveTimer = setTimeout(save, 400); }
+
+const ui = { runMore: {}, refSection: 'other', startDraft: null, openInfo: {}, showLabor: {}, rowEdit: null, tab: 'shift', openRuns: {}, openRefs: {}, refQuery: '', showOld: false, draft: null };
+try { ui.tab = localStorage.getItem(KEY + '-tab') || 'shift'; if (ui.tab === 'protocols') ui.tab = 'running'; if (ui.tab === 'memories' || ui.tab === 'callouts') ui.tab = 'more'; if (ui.tab === 'codes') ui.tab = 'notes'; ui.refSection = localStorage.getItem(KEY + '-refsec') || 'other'; } catch (e) {}
+if (ui.tab === 'callouts') ui.tab = 'more'; // call-outs moved into More
+
+/* ---------- sheet ---------- */
+function openSheet(html) { const s = $('#sheet'); s.innerHTML = '<div class="sheet-card">' + html + '</div>'; s.hidden = false; }
+function closeSheet() {
+  ui.startPt = undefined;
+  $('#sheet').hidden = true; $('#sheet').innerHTML = ''; ui.draft = null; ui.todoSheet = null; ui.shiftDraft = null; ui.dlType = null; if (ui.qblSheet && ui.tab === 'shift') setTimeout(render, 0); ui.qblSheet = null; ui.timeoutSheet = null;
+  if (ui.resetTimer) keepShift(); // closing the reset warning = keep the shift
+}
+$('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet') closeSheet(); });
+
+/* ---------- render ---------- */
+const TITLES = { reference: 'Reference', running: 'Running', shift: 'Shift', notes: 'Notes', more: 'More' };
+function render() {
+  const onShift = ui.tab === 'shift' && state.shift;
+  $('#title').innerHTML = esc(TITLES[ui.tab]) + (onShift ? ' <span class="caret">▾</span>' : '');
+  $('#title').dataset.a = onShift ? 'shiftMenu' : '';
+  $('#title').classList.toggle('tap', !!onShift);
+  $('#hdr-mid').innerHTML = ui.tab === 'shift'
+    ? `<b>${parseYmd(state.shift ? state.shift.date : today()).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</b>`
+      + (state.shift ? `<span>${hm(state.shift.startMin)}–${hm(state.shift.endMin)}</span>` : '') : '';
+  $('#settings-btn').hidden = ui.tab !== 'shift';
+  $('#notebook-btn').hidden = ui.tab !== 'reference';
+  $('#more-settings').hidden = ui.tab !== 'more';
+  document.body.classList.toggle('std-time', std());
+  $$('#nav button').forEach(b => b.classList.toggle('on', b.dataset.t === ui.tab));
+  const main = $('#main');
+  main.innerHTML = ({ reference: renderReference, running: renderRunning, shift: renderShift, notes: renderNotes, more: renderMore })[ui.tab]();
+  updateRunBadge();
+  if (ui.tab === 'reference') renderRefList();
+}
+
+/* ---------- protocols ---------- */
+function describeStep(s) {
+  if (s.kind === 'before') return 'Before start';
+  if (s.kind === 'end') return 'When finished';
+  const n = +s.count || 0, ev = +s.every || 0, off = +s.offset || 0;
+  if (n === 1 || ev <= 0) return 'At ' + mins(off);
+  return 'q' + mins(ev).replace(' min', 'min') + (n ? ' ×' + n : ' ongoing') + ', first at ' + mins(off);
+}
+
+function instances(run) {
+  const out = [], horizon = Date.now() + 3 * 3600e3;
+  if (run.start == null) return out; // still setting up
+  run.proto.steps.forEach(st => {
+    if (st.kind !== 'timed') return;
+    const base = phaseStart(run, st.phase || 0);
+    if (base == null) return; // that phase hasn't started yet
+    const n = +st.count || 0, ev = +st.every || 0;
+    for (let i = 0; i < 400; i++) {
+      if (n && i >= n) break;
+      if (ev <= 0 && i > 0) break;
+      const t = base + ((+st.offset || 0) + i * ev) * 60000;
+      if (!n && i > 0 && t > horizon) break;
+      out.push({ key: st.id + ':' + i, t, st, i, n });
+    }
+  });
+  return out.sort((a, b) => a.t - b.t);
+}
+
+// A one-time check at 0 min (e.g. "Running at 25 mL/hr") is the start itself, so it's checked off with the start time
+// Maintenance started on a patient's timer → the Shift time clock takes over after the q15 checks:
+// Mag q1h and Urine q4h from their first times (the timer still shows those first ones for reference)
+// Take a timer's (unchecked) clock checks back off its patient
+function clearRunTags(run) {
+  const pt = run.ptId && state.shift && state.shift.patients.find(p => p.id === run.ptId);
+  if (pt) pt.tags = pt.tags.filter(g => !(g.runId === run.id && !g.done));
+}
+function magToClock(run) {
+  const pt = runPt(run);
+  if (!pt) return;
+  const times = gridTimes(), added = [];
+  [['Mag assessment', 'Mag', 60, true], ['Urine', 'Urine', 240, false]].forEach(([stepLabel, tag, every, flag]) => {
+    const st = run.proto.steps.find(x => x.label === stepLabel);
+    if (!st) return;
+    const firstMs = phaseStart(run, st.phase || 0) + (+st.offset || 0) * 60000;
+    const first = times.find(t => slotMs(t) >= firstMs - 15 * 60000);
+    if (!first) return;
+    const s0 = sinceStart(first);
+    times.filter(t => sinceStart(t) >= s0 && (sinceStart(t) - s0) % every === 0)
+      .filter(t => !pt.tags.some(g => g.t === t && g.label === tag))
+      .forEach(t => { pt.tags.push({ id: uid(), t, label: tag, done: false, flag, runId: run.id }); added.push(tag + ' ' + t); });
+  });
+  if (added.length) toast(`Mag q1h & urine q4h added to ${roomLabel(pt)}'s time clock`);
+}
+const phaseStart = (run, ph) => ph ? (run.phases || {})[ph] ?? null : run.start;
+function markStarted(run, ph = 0) {
+  run.proto.steps.filter(st => st.kind === 'timed' && (st.phase || 0) === ph && !(+st.offset) && (+st.count || 0) <= 1)
+    .forEach(st => { run.done[st.id + ':0'] = phaseStart(run, ph); });
+}
+const cdText = ms => {
+  if (ms <= 0) return 'now';
+  const sec = Math.round(ms / 1000);
+  return sec >= 3600 ? Math.floor(sec / 3600) + 'h ' + pad(Math.floor(sec % 3600 / 60)) + 'm' : Math.floor(sec / 60) + ':' + pad(sec % 60);
+};
+setInterval(() => $$('[data-cd]').forEach(el => { el.textContent = cdText(+el.dataset.cd - Date.now()); }), 1000);
+function relText(t, now) {
+  const d = Math.round((t - now) / 60000);
+  if (d > 0) return 'in ' + mins(d);
+  if (d === 0) return 'due now';
+  return 'due ' + mins(-d) + ' ago';
+}
+
+function updateRunBadge() {
+  const due = state.runs.reduce((a, r) => a + runDue(r), 0), badge = $('#run-badge');
+  badge.hidden = !due; badge.textContent = due;
+}
+// Checks that count toward "due": for grid timers, the extra blocks only once you've expanded them
+function countedInst(run) {
+  const inst = instances(run);
+  if (run.proto.style !== 'grid' || ui.runMore[run.id]) return inst;
+  const first = run.proto.steps.find(st => st.kind === 'timed');
+  return inst.filter(x => x.st === first);
+}
+function runDue(run) {
+  const now = Date.now();
+  if (run.finishedAt) return 0;
+  if (run.start == null) return 0; // setting up doesn't count as due
+  return countedInst(run).filter(x => !run.done[x.key] && x.t <= now).length
+    + run.proto.steps.filter(s => s.kind === 'before' && !run.done[s.id + ':b']).length;
+}
+function runSummary(run) {
+  const now = Date.now(), inst = countedInst(run), dueCount = runDue(run);
+  if (run.finishedAt) return `<span class="pill done">Finished ${hhmm(run.finishedAt)}</span>`;
+  if (run.start == null) {
+    const left = run.proto.steps.filter(s => s.kind === 'before' && !run.done[s.id + ':b']).length;
+    return `<span class="pill">Setting up${left ? ' · ' + left + ' left' : ' ✓'}</span>`;
+  }
+  if (dueCount) return `<span class="pill due">${dueCount} due</span>`;
+  const next = inst.find(x => !run.done[x.key] && x.t > now);
+  if (next) return `<span class="pill">Next <span data-cd="${next.t}">${cdText(next.t - now)}</span></span>`; // live countdown
+  return `<span class="pill done">All done</span>`;
+}
+
+function rowHtml(run, key, label, detail, timeHtml, status) {
+  return `<button class="row ${status}" data-a="tick" data-run="${run.id}" data-key="${esc(key)}">
+    <span class="dot">${status === 'done' ? '✓' : ''}</span>
+    <span class="rm"><span class="rt">${esc(label)}</span>${detail ? `<span class="rd">${esc(detail)}</span>` : ''}</span>
+    <span class="rtime">${timeHtml}</span></button>`;
+}
+
+const cardFor = protoId => state.refs.find(r => (r.protos || []).includes(protoId));
+function runPt(run) { // the patient a timer is tracked with, if they're still on the shift
+  return run.ptId && state.shift && state.shift.patients.find(p => p.id === run.ptId && !p.archivedAt);
+}
+function renderRun(run, inPatient) {
+  const open = !!ui.openRuns[run.id];
+  const where = inPatient ? '' : run.label || (run.room ? roomLabelOf(run.room) : '');
+  // Mag and Blood timers get a ⚠ button that opens their "watch for" card
+  const alertCard = { mag: 'Magnesium toxicity', blood: 'Blood transfusion reaction' }[run.proto.id];
+  const tox = alertCard && state.refs.some(r => r.title === alertCard) ? alertCard : '';
+  let h = `<div class="card run${inPatient ? ' run-in' : ''}${run.finishedAt ? ' finished' : ''}"><div class="run-top">
+    <button class="run-h" data-a="toggleRun" data-id="${run.id}">
+      <span><span class="run-name">${esc(run.proto.name)}</span><br>
+      <span class="muted small">${where ? esc(where) + ' · ' : ''}${run.start == null ? 'not started yet'
+        : run.proto.phases ? run.proto.phases.map((ph, i) => phaseStart(run, i) != null ? `${esc(ph.started)} started at ${hhmm(phaseStart(run, i))}` : '').filter(Boolean).join('<br>')
+        : 'started ' + hhmm(run.start)}</span></span>
+      ${runSummary(run)}
+    </button>${tox ? `<button class="tox-btn" data-a="refPop" data-t="${tox}" aria-label="${tox}">⚠</button>` : ''}</div>`;
+  if (open) {
+    const now = Date.now(), inst = instances(run);
+    const before = run.proto.steps.filter(s => s.kind === 'before');
+    const end = run.proto.steps.filter(s => s.kind === 'end');
+    const nextKey = (inst.find(x => !run.done[x.key] && x.t > now) || {}).key;
+    h += '<div class="tl">';
+    if (before.length) {
+      h += '<div class="tl-label">Before start</div>';
+      before.forEach(s => {
+        const k = s.id + ':b', dn = run.done[k];
+        h += rowHtml(run, k, s.label, s.detail, '', dn ? 'done' : run.start == null ? '' : 'due');
+      });
+    }
+    if (run.proto.phases) {
+      run.proto.phases.forEach((ph, pi) => {
+        const base = phaseStart(run, pi), prevOn = pi === 0 || phaseStart(run, pi - 1) != null;
+        if (base == null && prevOn) h += `<button class="btn primary block" style="margin:8px 0 2px" data-a="runGo" data-id="${run.id}" data-phase="${pi}">▶ ${esc(ph.go)}</button>`;
+        h += `<div class="tl-label">${esc(ph.label)}</div>`;
+        run.proto.steps.filter(st => st.kind === 'timed' && (st.phase || 0) === pi).forEach(st => {
+          const n = +st.count || 0, how = n > 1 ? `×${n}` : '';
+          if (base == null) {
+            h += `<div class="row pending"><span class="dot"></span><span class="rm"><span class="rt">${esc(st.label)} <span class="muted" style="font-weight:500">${esc(st.detail)}${how ? ' ' + how : ''}</span></span></span></div>`;
+            return;
+          }
+          const xs = inst.filter(x => x.st === st);
+          h += `<div class="sub-label">${esc(st.label)}${st.detail ? ' · ' + esc(st.detail) : ''}</div>
+            <div class="fgrid" style="grid-template-rows:repeat(${Math.max(1, Math.ceil(xs.length / 2))},auto);margin-top:0">`;
+          xs.forEach(x => {
+            const dn = run.done[x.key];
+            h += `<button class="fcell${dn ? ' done' : x.t <= now ? ' due' : ''}" data-a="tick" data-run="${run.id}" data-key="${esc(x.key)}">
+              <span class="dot">${dn ? '✓' : ''}</span><span>${hhmm(x.t)}</span></button>`;
+          });
+          if (st.note) h += `<span class="fnote">${esc(st.note)}</span>`;
+          h += '</div>';
+        });
+      });
+    } else if (run.start == null) {
+      h += `<button class="btn primary block" style="margin:8px 0 2px" data-a="runGo" data-id="${run.id}">▶ ${esc(run.proto.goLabel || 'Start')}</button>`;
+      const allTimed = run.proto.steps.filter(st => st.kind === 'timed'), grid = run.proto.style === 'grid';
+      const timed = grid && !ui.runMore[run.id] ? allTimed.slice(0, 1) : allTimed;
+      if (timed.length) h += '<div class="tl-label">Timeline</div>' + timed.map(st => {
+        const n = +st.count || 0, ev = +st.every || 0;
+        const how = n > 1 ? `×${n}` : !n && ev ? 'ongoing' : '';
+        return `<div class="row pending"><span class="dot"></span><span class="rm"><span class="rt">${esc(st.label)}${how ? ` <span class="muted" style="font-weight:500">${how}</span>` : ''}</span>${st.detail ? `<span class="rd">${esc(st.detail)}</span>` : ''}</span></div>`;
+      }).join('');
+      if (grid && allTimed.length > 1) h += `<button class="labor-toggle" data-a="runMore" data-id="${run.id}">${ui.runMore[run.id] ? '▾ Hide' : '▸ Show'} PP recovery checks</button>`;
+    }
+    if (run.proto.phases) { /* drawn above */ }
+    else if (inst.length && run.proto.style === 'grid') {
+      // One two-column block of times per step (e.g. q15min ×8, then q30min ×2…)
+      // Only the first block shows until you expand — the rest are for patients kept longer
+      const timedSteps = run.proto.steps.filter(st => st.kind === 'timed'), more = ui.runMore[run.id];
+      timedSteps.forEach((st, si) => {
+        const xs = inst.filter(x => x.st === st);
+        if (!xs.length) return;
+        if (si === 1) h += `<button class="labor-toggle" data-a="runMore" data-id="${run.id}">${more ? '▾ Hide' : '▸ Show'} PP recovery checks</button>`;
+        if (si > 0 && !more) return;
+        h += `<div class="tl-label">${esc(st.label)}${st.detail ? ' · ' + esc(st.detail) : ''}</div>
+          <div class="fgrid" style="grid-template-rows:repeat(${Math.ceil(xs.length / 2)},auto);margin-top:0">`;
+        xs.forEach(x => {
+          const dn = run.done[x.key];
+          h += `<button class="fcell${dn ? ' done' : x.t <= now ? ' due' : ''}" data-a="tick" data-run="${run.id}" data-key="${esc(x.key)}">
+            <span class="dot">${dn ? '✓' : ''}</span><span>${hhmm(x.t)}</span></button>`;
+        });
+        h += '</div>';
+      });
+    } else if (inst.length) {
+      h += '<div class="tl-label">Timeline</div>';
+      inst.forEach(x => {
+        const dn = run.done[x.key];
+        const status = dn ? 'done' : x.t <= now ? 'due' : x.key === nextKey ? 'next' : '';
+        const label = x.st.label + (x.n > 1 ? ` ${x.i + 1}/${x.n}` : '');
+        const atStart = !(+x.st.offset) && x.n <= 1;
+        const sub = atStart && dn ? 'Started' : dn ? 'done ' + hhmm(dn) : relText(x.t, now);
+        h += rowHtml(run, x.key, label, x.st.detail, `<b>${hhmm(x.t)}</b><small>${sub}</small>`, status);
+      });
+      if (inst.some(x => !x.n)) h += '<div class="muted small" style="margin:2px 4px">Ongoing checks keep appearing as time goes on.</div>';
+    }
+    if (end.length) {
+      h += '<div class="tl-label">When finished</div>';
+      end.forEach(s => {
+        const k = s.id + ':e', dn = run.done[k];
+        h += rowHtml(run, k, s.label, s.detail, dn ? `<small>${hhmm(dn)}</small>` : '', dn ? 'done' : '');
+      });
+    }
+    h += '</div>';
+    const card = cardFor(run.proto.id), info = card ? card.body : run.proto.info;
+    if (info) h += `<details><summary>${card ? esc(card.title) + ' card' : 'Protocol info'}</summary><div class="ref-body">${fmt(info)}</div></details>`;
+    if (run.finishedAt) h += `<div class="btn-row"><button class="btn" data-a="runReopen" data-id="${run.id}">Reopen</button>
+      <button class="btn danger" data-a="runDelete" data-id="${run.id}">Delete</button></div>`;
+    else h += `<div class="btn-row">${run.start == null ? '' : `<button class="btn" data-a="runEdit" data-id="${run.id}">Edit</button>`}
+      <button class="btn primary" data-a="runEnd" data-id="${run.id}">Finish</button></div>`;
+  }
+  return h + '</div>';
+}
+
+const VERIFY = '<div class="verify"><b>Verify with PolicyStat.</b> Always check current policy and follow provider orders.</div>';
+
+function timeInputToMs(v) {
+  const [hh, mm] = v.split(':').map(Number);
+  const d = new Date(); d.setHours(hh, mm, 0, 0);
+  if (d.getTime() - Date.now() > 3600e3) d.setDate(d.getDate() - 1); // e.g. 23:50 entered at 00:10
+  return d.getTime();
+}
+
+function stepListPreview(p) {
+  return '<ul class="small">' + p.steps.map(s => `<li><b>${esc(s.label)}</b>${s.detail ? ' — ' + esc(s.detail) : ''} <span class="muted">(${describeStep(s)})</span></li>`).join('') + '</ul>';
+}
+
+const actions = {
+  tab(d) { ui.tab = d.t; try { localStorage.setItem(KEY + '-tab', d.t); } catch (e) {} render(); window.scrollTo(0, 0); },
+  closeSheet,
+
+  protoStart(d) {
+    const p = state.protocols.find(x => x.id === d.id);
+    if (ui.startPt === undefined) ui.startPt = d.p || '';
+    const pts = state.shift ? activePts() : [];
+    if (ui.startPt && !pts.some(x => x.id === ui.startPt)) ui.startPt = '';
+    openSheet(`<h3>${esc(p.name)}</h3>
+      <div class="sec" style="margin-top:12px">Track with</div>
+      <div class="chips">
+        <button class="chip${!ui.startPt ? ' on' : ''}" data-a="startPtPick" data-id="${p.id}" data-p="">On its own</button>
+        ${pts.map(x => `<button class="chip${ui.startPt === x.id ? ' on' : ''}" data-a="startPtPick" data-id="${p.id}" data-p="${x.id}">${esc(roomLabel(x))}</button>`).join('')}</div>
+      <div class="btn-row end"><button class="btn" data-a="closeSheet">Cancel</button>
+      <button class="btn primary" data-a="doStart" data-id="${p.id}">Start</button></div>`);
+  },
+  startPtPick(d) { ui.startPt = d.p; actions.protoStart({ id: d.id }); },
+  doStart(d) {
+    const p = state.protocols.find(x => x.id === d.id);
+    const pt = ui.startPt ? curPt(ui.startPt) : null;
+    // Opens the whole checklist; times fill in when you tap the start button (e.g. Start transfusion)
+    const run = { id: uid(), proto: clone(p), ptId: pt ? pt.id : null, room: pt ? pt.room : '', label: '', start: null, done: {} };
+    state.runs.unshift(run); ui.openRuns[run.id] = true;
+    if (pt) { state.shift.currentId = pt.id; ui.tab = 'shift'; } else ui.tab = 'running';
+    save(); closeSheet(); render(); window.scrollTo(0, 0);
+  },
+  runGo(d) {
+    const run = state.runs.find(r => r.id === d.id), ph = +d.phase || 0;
+    if (ph) (run.phases = run.phases || {})[ph] = Date.now(); else run.start = Date.now();
+    markStarted(run, ph);
+    if (run.proto.id === 'mag' && ph === 1) magToClock(run);
+    save(); render();
+  },
+  runMore(d) { ui.runMore[d.id] = !ui.runMore[d.id]; render(); },
+  toggleRun(d) { ui.openRuns[d.id] = !ui.openRuns[d.id]; render(); },
+  tick(d) {
+    const run = state.runs.find(r => r.id === d.run);
+    if (run.done[d.key]) delete run.done[d.key]; else run.done[d.key] = Date.now();
+    save(); render();
+  },
+  runEdit(d) {
+    const run = state.runs.find(r => r.id === d.id);
+    const phs = run.proto.phases || [{ started: 'Start' }], pts = state.shift ? activePts() : [], cur = runPt(run);
+    openSheet(`<h3>${esc(run.proto.name)}</h3>
+      <div class="sec" style="margin-top:12px">Track with</div>
+      <div class="chips">
+        <button class="chip${!cur ? ' on' : ''}" data-a="runMove" data-id="${run.id}" data-p="">On its own</button>
+        ${pts.map(x => `<button class="chip${cur && cur.id === x.id ? ' on' : ''}" data-a="runMove" data-id="${run.id}" data-p="${x.id}">${esc(roomLabel(x))}</button>`).join('')}</div>
+      <div class="grid2">${phs.map((ph, i) => phaseStart(run, i) != null ? `<label class="f">${esc(ph.started === 'Start' ? 'Start time' : ph.started + ' started')}<input type="time" data-ph="${i}" value="${hhmm24(phaseStart(run, i))}"></label>` : '').join('')}
+      <label class="f">Label<input id="st-label" value="${esc(run.label)}"></label></div>
+      <p class="muted small" style="margin-top:10px">Changing a start time moves its timed checks.</p>
+      <div class="btn-row"><button class="btn danger" data-a="runDelete" data-id="${run.id}">Delete timer</button>
+      <span style="flex:1"></span><button class="btn" data-a="closeSheet">Cancel</button>
+      <button class="btn primary" data-a="runSave" data-id="${run.id}">Save</button></div>`);
+  },
+  runSave(d) {
+    const run = state.runs.find(r => r.id === d.id);
+    $$('[data-ph]').forEach(inp => {
+      if (!inp.value) return;
+      const i = +inp.dataset.ph, t = timeInputToMs(inp.value);
+      if (i) run.phases[i] = t; else run.start = t;
+    });
+    run.label = $('#st-label').value.trim();
+    save(); closeSheet(); render();
+  },
+  runEnd(d) {
+    const run = state.runs.find(r => r.id === d.id), now = Date.now();
+    const open = countedInst(run).filter(x => !run.done[x.key]);
+    const missed = open.filter(x => x.t <= now).length + run.proto.steps.filter(st => st.kind === 'before' && !run.done[st.id + ':b']).length;
+    const upcoming = open.filter(x => x.t > now).length;
+    if (!missed && !upcoming) { actions.runEndGo(d); return; }
+    openSheet(`<h3>Finish ${esc(run.proto.name)}${run.label ? ' · ' + esc(run.label) : ''}?</h3>
+      <p class="small" style="margin-top:6px">${missed ? `<b>${missed}</b> check${missed === 1 ? '' : 's'} not checked off` : ''}${missed && upcoming ? ' and ' : ''}${upcoming ? `<b>${upcoming}</b> still upcoming` : ''}.
+      It'll be folded up and kept so you can look back at it.</p>
+      <div class="btn-row end"><button class="btn" data-a="closeSheet">Keep going</button>
+      <button class="btn primary" data-a="runEndGo" data-id="${run.id}">Finish</button></div>`);
+  },
+  runEndGo(d) {
+    const run = state.runs.find(r => r.id === d.id);
+    run.finishedAt = Date.now(); ui.openRuns[run.id] = false; save(); closeSheet(); render();
+  },
+  runReopen(d) { delete state.runs.find(r => r.id === d.id).finishedAt; save(); render(); },
+  runDelete(d) {
+    const run = state.runs.find(r => r.id === d.id);
+    if (!confirm(run.finishedAt ? 'Delete this record for good?' : `Delete this ${run.proto.name} timer? Anything it added to a time clock (not yet checked off) is removed too.`)) return;
+    clearRunTags(run); state.runs = state.runs.filter(r => r.id !== d.id); save(); closeSheet(); render();
+  },
+  runMove(d) {
+    const run = state.runs.find(r => r.id === d.id), pt = d.p ? curPt(d.p) : null;
+    if ((runPt(run) || {}).id === (pt || {}).id) return;
+    clearRunTags(run);
+    Object.assign(run, { ptId: pt ? pt.id : null, room: pt ? pt.room : '' });
+    if (pt && run.proto.id === 'mag' && phaseStart(run, 1) != null) magToClock(run);
+    save(); actions.runEdit({ id: run.id }); render(); toast(pt ? `Moved to ${roomLabel(pt)}` : 'Now running on its own');
+  },
+
+  protoEdit(d) {
+    ui.draft = d.id === 'new'
+      ? { id: 'p' + uid(), name: '', info: '', steps: [S('', '', 'timed', 0, 15, 4)], isNew: true }
+      : clone(state.protocols.find(x => x.id === d.id));
+    renderProtoEditor();
+  },
+  stepAdd() { readDraft(); ui.draft.steps.push(S('', '', 'timed', 0, 15, 1)); renderProtoEditor(); },
+  stepDel(d) { readDraft(); ui.draft.steps.splice(+d.i, 1); renderProtoEditor(); },
+  stepMove(d) {
+    readDraft(); const i = +d.i, j = i + +d.dir, st = ui.draft.steps;
+    if (j < 0 || j >= st.length) return;
+    [st[i], st[j]] = [st[j], st[i]]; renderProtoEditor();
+  },
+  protoSave() {
+    readDraft(); const p = ui.draft;
+    p.name = p.name.trim();
+    if (!p.name) { toast('Give it a name'); return; }
+    p.steps = p.steps.filter(s => s.label.trim());
+    p.updated = today();
+    const isNew = p.isNew; delete p.isNew;
+    if (isNew) state.protocols.push(p);
+    else state.protocols[state.protocols.findIndex(x => x.id === p.id)] = p;
+    save(); closeSheet(); render(); toast('Saved');
+  },
+  protoDelete() {
+    const p = ui.draft;
+    if (p.isNew) { closeSheet(); return; }
+    if (!confirm(`Delete "${p.name}"?`)) return;
+    state.protocols = state.protocols.filter(x => x.id !== p.id); save(); closeSheet(); render();
+  },
+
+  // Quick popup of the admission questions (from the "Admit / triage" reference card)
+  admitQs() {
+    const ref = state.refs.find(r => /admit/i.test(r.title) && /admission questions/i.test(r.body)) || state.refs.find(r => /admit/i.test(r.title));
+    if (!ref) { toast('No admission questions card found'); return; }
+    const m = ref.body.match(/#\s*Admission questions[^\n]*\n([\s\S]*?)(?=\n#\s|$)/i);
+    openSheet(`<h3>Admission questions</h3>
+      <div class="ref-body">${fmt(m ? m[1] : ref.body)}</div>
+      <div class="btn-row"><button class="btn" data-a="refEdit" data-id="${ref.id}">Edit</button>
+      <span style="flex:1"></span><button class="btn primary" data-a="closeSheet">Done</button></div>`);
+  },
+  refSec(d) { ui.refSection = d.s; try { localStorage.setItem(KEY + '-refsec', d.s); } catch (e) {} render(); },
+  refToggle(d) { ui.openRefs[d.id] = !ui.openRefs[d.id]; renderRefList(); },
+  refEdit(d) {
+    const r = d.id === 'new' ? { id: 'new', title: '', body: '', cat: ui.refSection } : state.refs.find(x => x.id === d.id);
+    openSheet(`<h3>${d.id === 'new' ? 'New card' : 'Edit card'}</h3>
+      <div class="grid2"><label class="f">Title<input id="r-title" value="${esc(r.title)}"></label>
+      <label class="f">Section<select id="r-cat"><option value="meds"${r.cat === 'meds' ? ' selected' : ''}>Meds</option><option value="other"${r.cat !== 'meds' ? ' selected' : ''}>Other</option></select></label></div>
+      <label class="f">Content<textarea id="r-body" rows="16">${esc(r.body)}</textarea></label>
+      ${d.id !== 'new' && timersFor(r).length ? `<div class="sec">Timed checks</div><div class="btn-row" style="margin-top:4px">${timersFor(r).map(p => `<button class="btn" data-a="protoEdit" data-id="${p.id}">Edit ${esc(p.short || '')} checks</button>`).join('')}</div>` : ''}
+      <p class="muted small" style="margin-top:6px">Start a line with <b>#</b> for a heading, <b>-</b> for a bullet, and wrap words in <b>**</b> to bold them.</p>
+      <div class="btn-row">${d.id === 'new' ? '' : `<button class="btn danger" data-a="refDelete" data-id="${r.id}">Delete</button>`}
+      <span style="flex:1"></span><button class="btn" data-a="closeSheet">Cancel</button>
+      <button class="btn primary" data-a="refSave" data-id="${r.id}">Save</button></div>`);
+  },
+  refSave(d) {
+    const title = $('#r-title').value.trim(), body = $('#r-body').value, cat = $('#r-cat').value;
+    if (!title) { toast('Give it a title'); return; }
+    if (d.id === 'new') { const r = { id: uid(), title, body, cat, updated: today() }; state.refs.push(r); ui.openRefs[r.id] = true; }
+    else Object.assign(state.refs.find(x => x.id === d.id), { title, body, cat, updated: today() });
+    ui.refSection = cat;
+    save(); closeSheet(); render(); toast('Saved');
+  },
+  refDelete(d) {
+    if (!confirm('Delete this card?')) return;
+    state.refs = state.refs.filter(x => x.id !== d.id); save(); closeSheet(); render();
+  },
+  refMove(d) {
+    // Swap with the nearest card in the same section
+    const i = state.refs.findIndex(x => x.id === d.id), cat = state.refs[i].cat;
+    let j = i + +d.dir;
+    while (j >= 0 && j < state.refs.length && state.refs[j].cat !== cat) j += +d.dir;
+    if (j < 0 || j >= state.refs.length) return;
+    [state.refs[i], state.refs[j]] = [state.refs[j], state.refs[i]]; save(); renderRefList();
+  },
+
+  startType(d) { Object.assign(ui.startDraft, { type: d.type, start: DEFAULT_HOURS[d.type][0], end: DEFAULT_HOURS[d.type][1] }); render(); },
+  sdAdd() { ui.startDraft.pts.push({ room: '', kind: 'labor' }); render(); },
+  sdDel(d) { ui.startDraft.pts.splice(+d.i, 1); render(); },
+  shiftStart() {
+    const sd = ui.startDraft;
+    const pts = sd.pts.filter(x => x.room.trim()).map(x => newPatient(x.room.trim(), x.kind));
+    if (sd.pts.some(x => !x.room.trim()) && !confirm('Patients without a room number will be skipped. Start anyway?')) return;
+    state.shift = { startedAt: Date.now(), date: today(), type: sd.type, startMin: sd.start, endMin: sd.end, patients: pts, currentId: pts[0] ? pts[0].id : null };
+    pts.forEach(p => { p.tags = stripTags(false); });
+    ui.startDraft = null; save(); render(); window.scrollTo(0, 0);
+  },
+  // End of shift: review anything still open, then Clock out
+  shiftEnd() {
+    const pts = activePts(), now = Date.now();
+    const blocks = pts.map(p => {
+      const open = [];
+      const chk = (k, label) => { if (!p.done[k]) open.push(label); };
+      chk('report1', 'Report received');
+      if (!p.deliveredAt && !p.dischargedAt) chk('start', BUNDLES[{ labor: 'start', admit: 'admission', cs: 'admission', triage: 'triage' }[p.kind]]);
+      if (p.deliveredAt) {
+        chk('pp:delivery', 'Delivery charting');
+        if (isCsDelivery(p)) chk('pp:cscharting', 'C/S charting');
+        chk('pp:pph', 'PPH paper'); chk('pp:charge', 'Charge sheet'); chk('pp:report', 'Report given');
+      } else if (p.dischargedAt) chk('dc:charting', 'Discharge charting');
+      else chk('report2', 'Report given');
+      const late = p.tags.filter(g => !g.done && sinceStart(g.t) < shiftLen() && slotMs(g.t) <= now).length;
+      if (late) open.push(`${late} time-clock item${late === 1 ? '' : 's'} not checked off`);
+      const todos = p.todos.filter(t => !t.done);
+      if (todos.length) open.push(`To-do: ${todos.map(t => esc(t.text)).join(', ')}`);
+      state.runs.filter(r => r.ptId === p.id && !r.finishedAt).forEach(r => open.push(`${esc(r.proto.name)} timer still running`));
+      return `<div class="eos-pt"><b>${esc(roomLabel(p))}</b>${open.length
+        ? `<ul>${open.map(o => `<li>${o}</li>`).join('')}</ul>` : ' <span class="eos-ok">✓ all caught up</span>'}</div>`;
+    }).join('');
+    const solo = state.runs.filter(r => !runPt(r) && !r.finishedAt);
+    openSheet(`<h3>Before you clock out</h3>
+      <p class="muted small" style="margin-top:4px">Anything still open this shift:</p>
+      ${blocks || '<p class="empty">No patients this shift.</p>'}
+      ${solo.length ? `<div class="eos-pt"><b>On its own</b><ul>${solo.map(r => `<li>${esc(r.proto.name)} timer still running</li>`).join('')}</ul></div>` : ''}
+      <p class="muted small" style="margin-top:10px">Clocking out clears this shift's patients. Notes, codes and references stay.</p>
+      <div class="btn-row end"><button class="btn" data-a="closeSheet">Back</button>
+      <button class="btn primary" data-a="clockOut">Clock out</button></div>`);
+  },
+  clockOut() {
+    state.shift = null; state.runs = state.runs.filter(r => !(r.ptId && r.finishedAt)); save(); closeSheet(); render(); window.scrollTo(0, 0); toast('Clocked out — have a good one!');
+  },
+  shiftMenu() {
+    if (!state.shift) return;
+    const sh = state.shift;
+    ui.shiftDraft = ui.shiftDraft || { type: sh.type, start: sh.startMin, end: sh.endMin };
+    const sd = ui.shiftDraft;
+    openSheet(`<h3>Shift</h3>
+      <div class="seg" style="margin-top:12px">
+        <button class="${sd.type === 'day' ? 'on' : ''}" data-a="smType" data-type="day">Day</button>
+        <button class="${sd.type === 'night' ? 'on' : ''}" data-a="smType" data-type="night">Night</button></div>
+      <div class="grid2"><label class="f">Start<select data-sm-time="start">${timeOptions(sd.start)}</select></label>
+        <label class="f">End<select data-sm-time="end">${timeOptions(sd.end)}</select></label></div>
+      <p class="muted small" style="margin-top:8px">Started ${niceDate(sh.date)} at ${hhmm(sh.startedAt)}. Resets on its own 18 hrs after that.</p>
+      <div class="btn-row"><button class="btn danger" data-a="shiftEnd">End shift</button>
+      <span style="flex:1"></span><button class="btn" data-a="closeSheet">Cancel</button>
+      <button class="btn primary" data-a="shiftMenuSave">Save</button></div>`);
+  },
+  smType(d) { Object.assign(ui.shiftDraft, { type: d.type, start: DEFAULT_HOURS[d.type][0], end: DEFAULT_HOURS[d.type][1] }); actions.shiftMenu(); },
+  shiftMenuSave() {
+    const sh = state.shift, sd = ui.shiftDraft;
+    if (sd.start === sd.end) { toast('Start and end can\'t be the same'); return; }
+    Object.assign(sh, { type: sd.type, startMin: sd.start, endMin: sd.end });
+    // Re-fit hourly strips to the new hours
+    const base = gridTimes().filter((_, i) => i % 2 === 0);
+    sh.patients.forEach(p => {
+      p.tags = p.tags.filter(g => g.done || sinceStart(g.t) < shiftLen() && (g.label !== 'Strip' || base.includes(g.t)));
+      if (p.tags.some(g => g.label === 'Strip') || !p.tags.length) base.forEach(t => {
+        if (!p.tags.some(g => g.t === t && g.label === 'Strip')) p.tags.push({ id: uid(), t, label: 'Strip', done: false });
+      });
+    });
+    save(); closeSheet(); render(); toast('Shift hours updated');
+  },
+  // Tapping the room you're already in closes it and shows the overview of all your patients
+  selPt(d) { state.shift.currentId = state.shift.currentId === d.id ? 'overview' : d.id; save(); render(); window.scrollTo(0, 0); },
+  patientEdit(d) {
+    const p = d.id === 'new' ? { id: 'new', room: '', kind: 'labor' } : curPt(d.id);
+    openSheet(`<h3>${d.id === 'new' ? 'Add patient' : esc(roomLabel(p)) + ' · patient type'}</h3>
+      ${d.id === 'new' ? `<div class="grid2"><label class="f">Room #<input id="pt-room" value="" autocomplete="off"></label>
+      <label class="f">Type<select id="pt-kind">${kindOptions(p.kind)}</select></label></div>`
+      : `<label class="f">Type<select id="pt-kind">${kindOptions(p.kind)}</select></label>`}
+      ${p.deliveredAt ? `<button class="btn block" style="margin-top:12px" data-a="undeliver" data-id="${p.id}">Undo delivered</button>` : ''}
+      ${p.dischargedAt ? `<button class="btn block" style="margin-top:12px" data-a="undischarge" data-id="${p.id}">Undo discharge</button>` : ''}
+      ${p.archivedAt ? `<button class="btn block" style="margin-top:12px" data-a="patientRestore" data-id="${p.id}">Bring back to my rooms</button>` : ''}
+      <div class="btn-row">${d.id === 'new' ? '' : p.archivedAt ? `<button class="btn danger" data-a="patientPurge" data-id="${p.id}">Delete for good</button>` : `<button class="btn danger" data-a="patientDelete" data-id="${p.id}">Remove from my list</button>`}
+      <span style="flex:1"></span><button class="btn" data-a="closeSheet">Cancel</button>
+      <button class="btn primary" data-a="patientSave" data-id="${p.id}">${d.id === 'new' ? 'Add' : 'Save'}</button></div>`);
+    if (d.id === 'new') $('#pt-room').focus();
+  },
+  patientSave(d) {
+    const room = $('#pt-room') ? $('#pt-room').value.trim() : curPt(d.id).room, kind = $('#pt-kind').value;
+    if (!room) { toast('Add a room number'); return; }
+    if (d.id === 'new') { const p = newPatient(room, kind); p.tags = stripTags(true); state.shift.patients.push(p); state.shift.currentId = p.id; }
+    else {
+      const p = curPt(d.id);
+      if (p.kind !== kind) defaultTodos(kind).forEach(t => { if (!p.todos.some(x => x.text === t.text)) p.todos.push(t); });
+      Object.assign(p, { room, kind });
+    }
+    save(); closeSheet(); render();
+  },
+  roomEdit(d) {
+    const p = curPt(d.id);
+    openSheet(`<h3>Change room</h3>
+      <label class="f">Room #<input id="rm-room" value="${esc(p.room)}" autocomplete="off"></label>
+      <div class="btn-row end"><button class="btn" data-a="closeSheet">Cancel</button>
+      <button class="btn primary" data-a="roomSave" data-id="${p.id}">Save</button></div>`);
+    const i = $('#rm-room'); i.focus(); i.select();
+  },
+  roomSave(d) {
+    const room = $('#rm-room').value.trim();
+    if (!room) { toast('Add a room number'); return; }
+    curPt(d.id).room = room; save(); closeSheet(); render();
+  },
+  // Removing moves a patient to "Previous" for the rest of the shift
+  patientDelete(d) {
+    const p = curPt(d.id);
+    p.archivedAt = Date.now();
+    const next = activePts()[0];
+    state.shift.currentId = next ? next.id : null;
+    save(); closeSheet(); render(); toast(`${roomLabel(p)} moved to previous patients`);
+  },
+  patientRestore(d) { const p = curPt(d.id); delete p.archivedAt; state.shift.currentId = p.id; save(); closeSheet(); render(); },
+  patientPurge(d) {
+    const p = curPt(d.id);
+    if (!confirm(`Delete ${roomLabel(p)} for good?`)) return;
+    state.shift.patients = state.shift.patients.filter(x => x.id !== d.id);
+    const next = activePts()[0]; state.shift.currentId = next ? next.id : null;
+    save(); closeSheet(); render();
+  },
+  tools(d) {
+    const p = curPt(d.p), t = qblTotal(p);
+    openSheet(`<h3>Tools · ${esc(roomLabel(p))}</h3>
+      <div style="margin-top:6px">
+        <button class="item" data-a="qblOpen" data-p="${p.id}"><span class="grow"><b>QBL tracker</b></span><span class="${qblOver(p) ? 'qbl-over' : 'muted'}">${t ? (qblOver(p) ? '⚠ ' : '') + t + ' mL' : ''} ›</span></button>
+        <button class="item" data-a="timeoutOpen" data-p="${p.id}"><span class="grow"><b>Timeout</b></span><span class="muted">›</span></button>
+        <button class="item" data-a="csList" data-p="${p.id}"><span class="grow"><b>C/S charting list</b></span><span class="muted">›</span></button>
+      </div>
+      <div class="btn-row end"><button class="btn" data-a="closeSheet">Close</button></div>`);
+  },
+  csList(d) {
+    openSheet(`<h3>C/S charting</h3>
+      <p class="muted small">Get a head start creating these in Expanse.</p>
+      <div class="sec">C/S charting</div>${bundleHtml(state.lists.cs)}
+      <div class="sec">Delivery charting</div>${bundleHtml(state.lists.csDelivery)}
+      <div class="btn-row end"><button class="btn" data-a="tools" data-p="${d.p}">‹ Tools</button><button class="btn primary" data-a="closeSheet">Done</button></div>`);
+  },
+  refPop(d) {
+    const r = state.refs.find(x => x.title === d.t);
+    if (!r) return;
+    openSheet(`<h3>${esc(r.title)}</h3><div class="ref-body">${fmt(r.body)}</div>
+      <div class="verify" style="margin-top:12px"><b>Verify with PolicyStat.</b></div>
+      <div class="btn-row end"><button class="btn primary" data-a="closeSheet">Done</button></div>`);
+  },
+  pphCard() {
+    const r = state.refs.find(x => /pph/i.test(x.title));
+    if (!r) return;
+    openSheet(`<h3>${esc(r.title)}</h3><div class="ref-body">${fmt(r.body)}</div>
+      <div class="btn-row end"><button class="btn" data-a="qblBack">‹ Back to QBL</button></div>`);
+  },
+  qblBack() { renderQblSheet(); },
+  qblOpen(d) { ui.qblSheet = d.p; renderQblSheet(); },
+  qblMode(d) { qblData(qblOwner()).mode = d.m; save(); renderQblSheet(); },
+  qblAddRow() { qblData(qblOwner()).rows.push({ g: '', items: [] }); save(); renderQblSheet(); },
+  qblDelRow(d) { qblData(qblOwner()).rows.splice(+d.i, 1); save(); renderQblSheet(); },
+  qblAddItem(d) {
+    const r = qblData(qblOwner()).rows[+d.i], dw = dryWeights();
+    const unused = x => !r.items.some(it => it.name === x.name);
+    const next = ['Lap', 'Lap counter'].map(n => dw.find(x => x.name === n && unused(x))).find(Boolean) || dw.find(unused) || dw[0] || {};
+    r.items.push({ name: next.name || '', count: '' }); save(); renderQblSheet();
+  },
+  qblDelItem(d) { qblData(qblOwner()).rows[+d.i].items.splice(+d.j, 1); save(); renderQblSheet(); },
+  qblClear() {
+    if (!confirm('Clear all QBL numbers for this patient?')) return;
+    qblOwner().qbl = null; save(); renderQblSheet();
+  },
+  timeoutOpen(d) { ui.timeoutSheet = d.p; renderTimeoutSheet(false); },
+  timeoutRead() { renderTimeoutSheet(true); },
+  timeoutEdit() { renderTimeoutSheet(false); },
+  handoff(d) {
+    const p = curPt(d.p);
+    openSheet(`<h3>Hand off ${esc(roomLabel(p))}</h3>
+      <p class="small" style="margin-top:6px">Chart your report, then tap below. ${esc(roomLabel(p))} moves to Previous so you can still look back.</p>
+      <label class="f">Given to (optional)<input id="ho-to" placeholder="e.g. Sarah" autocomplete="off"></label>
+      <div class="btn-row end"><button class="btn" data-a="closeSheet">Cancel</button>
+      <button class="btn primary" data-a="handoffSave" data-p="${p.id}">Report charted — hand off</button></div>`);
+  },
+  handoffSave(d) {
+    const p = curPt(d.p);
+    p.done.handoff = Date.now(); p.handedOffTo = $('#ho-to').value.trim();
+    actions.patientDelete({ id: p.id });
+  },
+  previousPts() {
+    const prev = state.shift.patients.filter(p => p.archivedAt).sort((a, b) => b.archivedAt - a.archivedAt);
+    openSheet(`<h3>Previous patients this shift</h3>
+      <div style="margin-top:6px">${prev.map(p => `<button class="item" data-a="viewPrev" data-id="${p.id}">
+        <span class="grow"><b>${esc(roomLabel(p))}</b> <span class="muted small">· ${KINDS[p.kind]}${p.deliveredAt ? ' · delivered' : ''}${p.dischargedAt ? ' · discharged' : ''}</span></span>
+        <span class="muted small">${p.done.handoff ? 'handed off' : 'removed'} ${hhmm(p.archivedAt)} ›</span></button>`).join('')}</div>
+      <div class="btn-row end"><button class="btn" data-a="closeSheet">Close</button></div>`);
+  },
+  viewPrev(d) { state.shift.currentId = d.id; closeSheet(); render(); window.scrollTo(0, 0); },
+
+  // time clock
+  pencilMenu(d) {
+    openSheet(`<h3>What applies to ${esc(roomLabel(curPt(d.p)))}?</h3>
+      <div style="margin-top:6px">${PENCIL_MENU.map(([l, t]) => `<button class="item" data-a="sched" data-p="${d.p}" data-label="${l}"><span class="grow"><b>${t}</b></span><span class="muted small">${l && SCHED[l] ? 'q' + mins(SCHED[l].every).replace(' min', 'min') : ''} ›</span></button>`).join('')}</div>
+      ${state.protocols.length ? `<div class="sec">Start a timer</div>${state.protocols.map(t => `<button class="item" data-a="protoStart" data-id="${t.id}" data-p="${d.p}"><span class="grow"><b>${esc(t.name)}</b></span><span class="muted">›</span></button>`).join('')}` : ''}
+      <div class="btn-row end"><button class="btn" data-a="closeSheet">Cancel</button></div>`);
+  },
+  tagTog(d) { const g = curPt(d.p).tags.find(x => x.id === d.id); g.done = !g.done; save(); render(); },
+  ptItem(d) { const p = curPt(d.p); if (p.done[d.k]) delete p.done[d.k]; else p.done[d.k] = Date.now(); save(); render(); },
+  info(d) { ui.openInfo[d.p + d.k] = !ui.openInfo[d.p + d.k]; render(); },
+  sched(d) {
+    const p = curPt(d.p), preset = SCHED[d.label] || { every: 240 };
+    const times = gridTimes(), next = nextGridTime(times);
+    openSheet(`<h3>Add ${d.label ? esc(d.label === 'Strip' ? 'strip charting' : d.label) : 'something'}</h3>
+      <label class="f">What<input id="sc-label" value="${esc(d.label || '')}" placeholder="e.g. Miso"></label>
+      <div class="grid2"><label class="f">Every<select id="sc-every">
+        ${[[30, '30 min'], [60, '1 hr'], [120, '2 hrs'], [240, '4 hrs'], [0, 'Just once']].map(([v, t]) => `<option value="${v}"${v === preset.every ? ' selected' : ''}>${t}</option>`).join('')}
+      </select></label>
+      <label class="f">Starting<select id="sc-start">${times.map(t => `<option value="${t}"${t === next ? ' selected' : ''}>${fmtT(t)}</option>`).join('')}</select></label></div>
+      <label class="chk-line"><input type="checkbox" id="sc-flag"${preset.flag ? ' checked' : ''}> ⚑ Flag as important <span class="muted small" style="font-weight:400">— turns pink if missed</span></label>
+      <label class="f">⏰ Remind me<select id="sc-remind">${remindOptions(preset.remind || 0)}</select></label>
+      ${preset.hint ? `<p class="muted small" style="margin-top:8px">${preset.hint}</p>` : ''}
+      <div class="btn-row"><button class="btn danger" data-a="schedRemove" data-p="${p.id}">Remove upcoming</button>
+      <span style="flex:1"></span><button class="btn" data-a="closeSheet">Cancel</button>
+      <button class="btn primary" data-a="schedAdd" data-p="${p.id}">Add</button></div>`);
+    if (!d.label) $('#sc-label').focus();
+  },
+  schedAdd(d) {
+    const p = curPt(d.p), label = $('#sc-label').value.trim(), every = +$('#sc-every').value, start = $('#sc-start').value, flag = $('#sc-flag').checked, remind = +$('#sc-remind').value || 0;
+    if (!label) { toast('What are you adding?'); return; }
+    const times = gridTimes(), s0 = sinceStart(start);
+    times.filter(t => sinceStart(t) >= s0 && (every ? (sinceStart(t) - s0) % every === 0 : t === start)).forEach(t => {
+      if (!p.tags.some(g => g.t === t && g.label.toLowerCase() === label.toLowerCase())) p.tags.push({ id: uid(), t, label, done: false, flag, remind });
+    });
+    save(); closeSheet(); render();
+  },
+  schedRemove(d) {
+    const p = curPt(d.p), label = $('#sc-label').value.trim().toLowerCase(), s0 = sinceStart($('#sc-start').value);
+    if (!label) { toast('Type what to remove'); return; }
+    const before = p.tags.length;
+    p.tags = p.tags.filter(g => !(g.label.toLowerCase() === label && !g.done && sinceStart(g.t) >= s0));
+    save(); closeSheet(); render(); toast(`Removed ${before - p.tags.length} upcoming`);
+  },
+  rowEdit(d) { ui.rowEdit = { p: d.p, t: d.t }; renderRowEditor(); },
+  rowAdd(d) {
+    const p = curPt(ui.rowEdit.p), label = (d.label || $('#row-new').value).trim();
+    if (!label) return;
+    p.tags.push({ id: uid(), t: ui.rowEdit.t, label, done: false, flag: !!(SCHED[label] && SCHED[label].flag), remind: (SCHED[label] && SCHED[label].remind) || 0 }); save(); renderRowEditor(); render();
+  },
+  remindClose(d) { curPt(d.p).tags.find(g => g.id === d.id).dismissed = true; save(); render(); },
+  tagFlag(d) { const g = curPt(ui.rowEdit.p).tags.find(x => x.id === d.id); g.flag = !g.flag; save(); renderRowEditor(); render(); },
+  tagDel(d) { const p = curPt(ui.rowEdit.p); p.tags = p.tags.filter(g => g.id !== d.id); save(); renderRowEditor(); render(); },
+
+  // delivery
+  deliver(d) {
+    const p = curPt(d.p);
+    ui.dlType = ui.dlType || (p.kind === 'cs' ? 'cs' : 'vaginal');
+    openSheet(`<h3>Delivered</h3>
+      <div class="seg" style="margin-top:12px">
+        <button class="${ui.dlType === 'vaginal' ? 'on' : ''}" data-a="dlType" data-type="vaginal" data-p="${p.id}">Vaginal</button>
+        <button class="${ui.dlType === 'cs' ? 'on' : ''}" data-a="dlType" data-type="cs" data-p="${p.id}">C/S</button></div>
+      <label class="f">Delivery time<input type="time" id="dl-time" value="${$('#dl-time') ? $('#dl-time').value : hhmm24(Date.now())}"></label>
+      <p class="muted small" style="margin-top:8px">Switches ${esc(roomLabel(curPt(d.p)))} to postpartum recovery. Labor charting stays saved — tap "Labor charting" to look back at it.</p>
+      <div class="btn-row end"><button class="btn" data-a="closeSheet">Cancel</button>
+      <button class="btn primary" data-a="deliverSave" data-p="${d.p}">Start recovery</button></div>`);
+  },
+  dlType(d) { ui.dlType = d.type; actions.deliver(d); },
+  deliverSave(d) {
+    const p = curPt(d.p), v = $('#dl-time').value;
+    p.deliveredAt = v ? timeInputToMs(v) : Date.now(); p.deliveryType = ui.dlType;
+    if (ui.dlType === 'cs') p.todos.unshift(...defaultTodos('cspp').filter(t => !p.todos.some(x => x.text === t.text))); // top of the list
+    ui.dlType = null; save(); closeSheet(); render();
+  },
+
+  undeliver(d) {
+    if (!confirm('Go back to labor charting? Postpartum check-offs will be cleared.')) return;
+    const p = curPt(d.id); p.deliveredAt = null; delete p.deliveryType;
+    Object.keys(p.done).filter(k => k.startsWith('pp:')).forEach(k => delete p.done[k]);
+    save(); closeSheet(); render();
+  },
+  admit(d) {
+    const p = curPt(d.p);
+    openSheet(`<h3>Admit ${esc(roomLabel(p))}</h3>
+      <label class="f">Room # they're going to<input id="ad-room" value="${esc(p.room)}" autocomplete="off"></label>
+      <p class="muted small" style="margin-top:8px">Switches to admission charting and adds the new-admit to-dos. Triage charting stays on the page.</p>
+      <div class="btn-row end"><button class="btn" data-a="closeSheet">Cancel</button>
+      <button class="btn primary" data-a="admitSave" data-p="${p.id}">Admit</button></div>`);
+  },
+  admitSave(d) {
+    const p = curPt(d.p);
+    p.room = $('#ad-room').value.trim() || p.room;
+    if (p.done.start) { p.done.triage = p.done.start; delete p.done.start; }
+    p.kind = 'admit'; p.admittedAt = Date.now();
+    defaultTodos('admit').forEach(t => { if (!p.todos.some(x => x.text === t.text)) p.todos.push(t); });
+    save(); closeSheet(); render(); toast('Admitted');
+  },
+  discharge(d) {
+    openSheet(`<h3>Discharge ${esc(roomLabel(curPt(d.p)))}</h3>
+      <label class="f">Discharge time<input type="time" id="dc-time" value="${hhmm24(Date.now())}"></label>
+      <p class="muted small" style="margin-top:8px">Switches to discharge charting. Triage charting stays saved — tap "Triage charting" to look back at it.</p>
+      <div class="btn-row end"><button class="btn" data-a="closeSheet">Cancel</button>
+      <button class="btn primary" data-a="dischargeSave" data-p="${d.p}">Discharge</button></div>`);
+  },
+  dischargeSave(d) { const v = $('#dc-time').value; curPt(d.p).dischargedAt = v ? timeInputToMs(v) : Date.now(); save(); closeSheet(); render(); },
+  undischarge(d) {
+    const p = curPt(d.id); p.dischargedAt = null;
+    Object.keys(p.done).filter(k => k.startsWith('dc:')).forEach(k => delete p.done[k]);
+    save(); closeSheet(); render();
+  },
+  // Shows the "Recovery fundals" reference card, so editing that card updates this too
+  fundalPolicy(d) {
+    const p = curPt(d.p), ref = state.refs.find(r => /recovery (checks|fundals)/i.test(r.title));
+    const body = ref ? ref.body : '# Vaginal\nq15min ×8 → check when up to MBU → repeated in 1 hr → q6h until 24 hrs PP\n# C/S\nq15min ×8 → q30min ×2 → q1h ×4 → q4h until 24 hrs PP';
+    openSheet(`<h3>Fundal frequency</h3>
+      <p class="muted small" style="margin-top:4px">${esc(roomLabel(p))} is ${isCsDelivery(p) ? 'a C/S' : 'a vaginal delivery'}.</p>
+      <div class="ref-body">${fmt(body)}</div>
+      <div class="verify" style="margin-top:12px"><b>Verify with PolicyStat.</b> Edit this in Reference → Recovery fundals.</div>
+      <div class="btn-row end"><button class="btn primary" data-a="closeSheet">Done</button></div>`);
+  },
+  fundalTime(d) {
+    const p = curPt(d.p);
+    openSheet(`<h3>First fundal</h3>
+      <label class="f">Time of your first fundal<input type="time" id="fd-time" value="${hhmm24(p.fundalStart || p.deliveredAt + 15 * 60000)}"></label>
+      <p class="muted small" style="margin-top:8px">The rest follow q15min (8 total).</p>
+      <div class="btn-row end"><button class="btn" data-a="closeSheet">Cancel</button>
+      <button class="btn primary" data-a="fundalTimeSave" data-p="${p.id}">Save</button></div>`);
+  },
+  fundalTimeSave(d) { const v = $('#fd-time').value; if (v) curPt(d.p).fundalStart = timeInputToMs(v); save(); closeSheet(); render(); },
+  laborToggle(d) { ui.showLabor[d.p] = !ui.showLabor[d.p]; render(); },
+
+  // to-do
+  todoEye() { state.hideDoneTodos = !state.hideDoneTodos; save(); renderTodoSheet(); },
+  todoOpen(d) { ui.todoSheet = d.p; renderTodoSheet(); },
+  todoAdd(d) {
+    const p = curPt(d.p), inp = $('#todo-new'), text = (d.text || inp.value).trim();
+    if (!text) return;
+    p.todos.push({ id: uid(), text, done: false }); save(); render(); renderTodoSheet();
+    if (!d.text) setTimeout(() => $('#todo-new') && $('#todo-new').focus(), 0);
+  },
+  todoTog(d) { const x = curPt(d.p).todos.find(t => t.id === d.id); x.done = !x.done; save(); render(); renderTodoSheet(); },
+  todoDel(d) { const p = curPt(d.p); p.todos = p.todos.filter(t => t.id !== d.id); save(); render(); renderTodoSheet(); },
+
+  listEdit(d) {
+    openSheet(`<h3>Edit ${esc(BUNDLES[d.which].toLowerCase())}</h3>
+      <p class="muted small">One item per line. Start a line with <b>-</b> to indent it under the line above.</p>
+      <textarea id="list-body" rows="18" style="margin-top:8px">${esc(state.lists[d.which])}</textarea>
+      <div class="btn-row end"><button class="btn" data-a="closeSheet">Cancel</button>
+      <button class="btn primary" data-a="listSave" data-which="${d.which}">Save</button></div>`);
+  },
+  shiftSettings() {
+    openSheet(`<h3>Shift settings</h3>
+      <p class="muted small">Edit what each list includes.</p>
+      <div style="margin-top:6px">${Object.entries(BUNDLES).map(([k, t]) => `<button class="item" data-a="listEdit" data-which="${k}"><span class="grow">${t}</span><span class="muted">Edit ›</span></button>`).join('')}</div>
+      <div class="btn-row end"><button class="btn" data-a="closeSheet">Done</button></div>`);
+  },
+  listSave(d) { state.lists[d.which] = $('#list-body').value; save(); closeSheet(); render(); toast('Saved'); },
+
+  itemEdit(d) { openItemEditor(d.list, d.id); },
+  linksEdit() {
+    openSheet(`<h3>Edit links</h3>
+      <div style="margin-top:6px">${state.links.map(l => `<div class="todo">
+        <button class="it-main" data-a="itemEdit" data-list="links" data-id="${l.id}"><span class="it-l">${esc(l.label)}</span><span class="muted small">Edit ›</span></button>
+        <button class="x" data-a="linkDelete" data-id="${l.id}" aria-label="Delete ${esc(l.label)}">✕</button></div>`).join('') || '<p class="empty">No links yet.</p>'}</div>
+      <button class="btn block" style="margin-top:10px" data-a="itemEdit" data-list="links" data-id="new">+ Add link</button>
+      <div class="btn-row end"><button class="btn primary" data-a="closeSheet">Done</button></div>`);
+  },
+  linkDelete(d) {
+    const l = state.links.find(x => x.id === d.id);
+    if (!confirm(`Delete ${l.label}?`)) return;
+    state.links = state.links.filter(x => x.id !== d.id); save(); render(); actions.linksEdit();
+  },
+  linkInfo(d) {
+    const l = state.links.find(x => x.id === d.id);
+    openSheet(`<h3>${esc(l.label)}</h3><p class="pre" style="margin-top:8px">${esc(l.note)}</p>
+      <div class="btn-row end"><button class="btn primary" data-a="closeSheet">Done</button></div>`);
+  },
+  asNeededToggle() { state.asNeededHidden = !state.asNeededHidden; save(); render(); },
+  appSettings() {
+    const f = state.timeFormat === '12' ? '12' : '24';
+    openSheet(`<h3>Settings</h3>
+      <div class="sec" style="margin-top:12px">Time format</div>
+      <div class="seg" style="margin-top:6px">
+        <button class="${f === '24' ? 'on' : ''}" data-a="setTimeFmt" data-f="24">Military · 1430</button>
+        <button class="${f === '12' ? 'on' : ''}" data-a="setTimeFmt" data-f="12">Standard · 2:30 PM</button></div>
+      <p class="muted small" style="margin-top:8px">Changes how times show throughout the app. Boxes where you type a time follow your phone's own clock setting.</p>
+      <label class="chk-line" style="margin-top:16px"><input type="checkbox" id="set-daily"${state.hideDailyLine ? '' : ' checked'} data-a="toggleDailyLine"> Show a daily encouraging line before starting a shift</label>
+      <div class="btn-row end"><button class="btn primary" data-a="closeSheet">Done</button></div>`);
+  },
+  toggleDailyLine() { state.hideDailyLine = !$('#set-daily').checked; save(); render(); },
+  setTimeFmt(d) { state.timeFormat = d.f; save(); render(); actions.appSettings(); },
+  backupToggle() { state.backupHidden = !state.backupHidden; save(); render(); },
+  codesToggle() { state.codesHidden = !state.codesHidden; save(); render(); },
+  noteEdit(d) {
+    const n = d.id === 'new' ? null : state.notes.find(x => x.id === d.id);
+    ui.noteDraft = n ? { ...n } : { id: 'new', text: '', color: 'yellow' };
+    renderNoteSheet();
+  },
+  noteColor(d) { ui.noteDraft.text = $('#note-text').value; ui.noteDraft.color = d.c; renderNoteSheet(); },
+  noteSave() {
+    const n = ui.noteDraft, text = $('#note-text').value.trim();
+    if (!text) { toast('Write something first'); return; }
+    if (n.id === 'new') state.notes.unshift({ id: uid(), text, color: n.color, date: today() });
+    else Object.assign(state.notes.find(x => x.id === n.id), { text, color: n.color });
+    save(); closeSheet(); render();
+  },
+  noteDelete(d) {
+    if (!confirm('Delete this note?')) return;
+    state.notes = state.notes.filter(x => x.id !== d.id); save(); closeSheet(); render();
+  },
+  itemSave(d) {
+    const cfg = LISTS[d.list], obj = {};
+    for (const [k] of cfg.fields) obj[k] = $('#f-' + k).value.trim();
+    if (!obj[cfg.required]) { toast('Fill in ' + cfg.fields.find(f => f[0] === cfg.required)[1].toLowerCase()); return; }
+    if (obj.url && !/^[a-z]+:/i.test(obj.url)) obj.url = 'https://' + obj.url;
+    if (d.id === 'new') state[d.list].push({ id: uid(), ...obj });
+    else Object.assign(state[d.list].find(x => x.id === d.id), obj);
+    save(); closeSheet(); render(); toast('Saved');
+  },
+  itemDelete(d) {
+    if (!confirm('Delete this ' + LISTS[d.list].title.toLowerCase() + '?')) return;
+    state[d.list] = state[d.list].filter(x => x.id !== d.id); save(); closeSheet(); render();
+  },
+  toggleOld() { ui.showOld = !ui.showOld; render(); },
+
+  exportData, importData() { $('#import-file').click(); },
+  // Reset goes to your saved reset point if you've made one, otherwise the built-in (corrected) version
+  resetContent() {
+    const rp = state.resetPoint;
+    openSheet(`<h3>Reset reference cards</h3>
+      <p class="small" style="margin-top:6px">Puts every reference card and timer back to a saved version. Edits made since then are lost. Call-outs, codes, notes, links and shift are kept.</p>
+      <div style="margin-top:8px">
+        ${rp ? `<button class="item" data-a="resetGo" data-to="point"><span class="grow"><b>Your reset point</b><br><span class="muted small">Saved ${niceDate(rp.date)}</span></span><span class="muted">›</span></button>` : ''}
+        <button class="item" data-a="resetGo" data-to="builtin"><span class="grow"><b>Built-in version</b><br><span class="muted small">Corrected version from Sep 25, 2026</span></span><span class="muted">›</span></button>
+      </div>
+      <div class="btn-row end"><button class="btn" data-a="closeSheet">Cancel</button></div>`);
+  },
+  resetGo(d) {
+    const rp = state.resetPoint, usePoint = d.to === 'point' && rp;
+    if (!confirm(`Reset all reference cards and timers to ${usePoint ? 'your reset point from ' + niceDate(rp.date) : 'the built-in version'}?`)) return;
+    state.refs = usePoint ? clone(rp.refs) : defaultRefs();
+    state.protocols = usePoint ? clone(rp.protocols) : defaultProtocols();
+    save(); closeSheet(); render(); toast('Reference cards reset');
+  },
+  saveResetPoint() {
+    const had = state.resetPoint;
+    if (!confirm(`Save your current reference cards and timers as the reset point?${had ? ' This replaces the one from ' + niceDate(had.date) + '.' : ''}`)) return;
+    state.resetPoint = { date: today(), refs: clone(state.refs), protocols: clone(state.protocols) };
+    save(); render(); toast('Reset point saved');
+  },
+};
+
+function renderProtoEditor() {
+  const p = ui.draft;
+  const kindOpt = (v, cur, t) => `<option value="${v}"${v === cur ? ' selected' : ''}>${t}</option>`;
+  openSheet(`<h3>Edit timed checks</h3>
+    <label class="f">Name<input id="pe-name" value="${esc(p.name)}"></label>
+    <h4 style="margin-top:16px">Checks</h4>
+    <p class="muted small">Times are minutes after you tap Start. "How many" = 0 keeps repeating until you end it.</p>
+    ${p.steps.map((s, i) => `<div class="step-ed">
+      <div class="h-row"><b class="small">Step ${i + 1}</b><span style="display:flex;gap:6px">
+        <button data-a="stepMove" data-i="${i}" data-dir="-1" aria-label="Move up">↑</button>
+        <button data-a="stepMove" data-i="${i}" data-dir="1" aria-label="Move down">↓</button>
+        <button data-a="stepDel" data-i="${i}" aria-label="Delete step">✕</button></span></div>
+      <label class="f">What to do<input data-f="label" value="${esc(s.label)}" placeholder="e.g. V/S & DTRs"></label>
+      <label class="f">Details (optional)<input data-f="detail" value="${esc(s.detail)}"></label>
+      <label class="f">When<select data-f="kind">${kindOpt('before', s.kind, 'Before start (checklist)')}${kindOpt('timed', s.kind, 'Timed')}${kindOpt('end', s.kind, 'When finished (checklist)')}</select></label>
+      <div class="grid3 ${s.kind === 'timed' ? '' : 'hide'}">
+        <label class="f">First at (min)<input type="number" inputmode="numeric" data-f="offset" value="${s.offset}"></label>
+        <label class="f">Every (min)<input type="number" inputmode="numeric" data-f="every" value="${s.every}"></label>
+        <label class="f">How many<input type="number" inputmode="numeric" data-f="count" value="${s.count}"></label>
+      </div></div>`).join('')}
+    <button class="btn block" style="margin-top:10px" data-a="stepAdd">+ Add step</button>
+    <div class="btn-row end"><button class="btn" data-a="closeSheet">Cancel</button>
+      <button class="btn primary" data-a="protoSave">Save</button></div>`);
+}
+function readDraft() {
+  const d = ui.draft; if (!$('#pe-name')) return;
+  d.name = $('#pe-name').value;
+  $$('.step-ed').forEach((el, i) => {
+    el.querySelectorAll('[data-f]').forEach(inp => {
+      const f = inp.dataset.f;
+      d.steps[i][f] = ['offset', 'every', 'count'].includes(f) ? Math.max(0, Number(inp.value) || 0) : inp.value;
+    });
+  });
+}
+
+/* ---------- running ---------- */
+// Every active timer in one place: grouped by patient, then ones running on their own
+function renderRunning() {
+  let h = '';
+  const active = state.runs.filter(r => !r.finishedAt);
+  const mine = state.shift ? activePts().filter(p => active.some(r => r.ptId === p.id)) : [];
+  mine.forEach(p => {
+    h += `<h2>${esc(roomLabel(p))}</h2>` + active.filter(r => r.ptId === p.id).map(r => renderRun(r)).join('');
+  });
+  const solo = active.filter(r => !runPt(r));
+  if (solo.length) h += '<h2>On its own</h2>' + solo.map(r => renderRun(r)).join('');
+  if (!active.length) h += '<p class="empty" style="margin:8px 4px 4px">No timers running.</p>';
+  const doneSolo = state.runs.filter(r => r.finishedAt && !(r.ptId && state.shift && state.shift.patients.some(p => p.id === r.ptId)));
+  if (doneSolo.length) h += '<h2>Finished</h2>' + doneSolo.map(r => renderRun(r)).join('');
+  h += `<h2>Start a timer</h2><div class="card">${state.protocols.map(t => `<button class="item" data-a="protoStart" data-id="${t.id}">
+    <span class="grow"><b>${esc(t.name)}</b></span><span class="muted">▶</span></button>`).join('')}</div>`;
+  return h;
+}
+
+/* ---------- reference ---------- */
+function renderReference() {
+  const sec = ui.refSection;
+  return VERIFY + `<div class="seg" style="margin-bottom:10px">
+      <button class="${sec === 'meds' ? 'on' : ''}" data-a="refSec" data-s="meds">Meds</button>
+      <button class="${sec === 'other' ? 'on' : ''}" data-a="refSec" data-s="other">Other</button></div>
+    <input class="search" type="search" id="ref-q" placeholder="Search all cards (e.g. TXA, GBS, printer)" value="${esc(ui.refQuery)}">
+    <div id="reflist"></div>
+    <button class="btn block" data-a="refEdit" data-id="new">+ New card</button>`;
+}
+const timersFor = r => (r.protos || []).map(id => state.protocols.find(p => p.id === id)).filter(Boolean);
+function renderRefList() {
+  const q = ui.refQuery.trim().toLowerCase();
+  // Searching looks through both sections
+  const list = state.refs.filter(r => q ? (r.title + '\n' + r.body).toLowerCase().includes(q) : r.cat === ui.refSection);
+  $('#reflist').innerHTML = list.length ? list.map(r => {
+    const open = q || ui.openRefs[r.id];
+    return `<div class="card ref${open ? ' open' : ''}" data-rid="${r.id}">
+      <button class="ref-h" data-a="refToggle" data-id="${r.id}"><span>${esc(r.title)}${q ? ` <span class="muted small" style="font-weight:500">· ${r.cat === 'meds' ? 'Meds' : 'Other'}</span>` : ''}</span><span class="chev">›</span></button>
+      ${open ? `<div class="ref-body">${fmt(r.body)}</div>
+        ${r.title === 'QBL' ? `<div class="btn-row"><button class="btn primary" data-a="qblOpen" data-p="solo">▶ Open QBL tracker</button></div>` : ''}
+        ${timersFor(r).length ? `<div class="btn-row">${timersFor(r).map(p => `<button class="btn primary" data-a="protoStart" data-id="${p.id}">▶ Start${timersFor(r).length > 1 ? ' ' + esc(p.short || p.name) : ' timer'}</button>`).join('')}</div>` : ''}
+        <div class="btn-row"><span class="muted small" style="flex:1;align-self:center">Updated ${niceDate(r.updated)}</span>
+        <button class="btn" data-a="refEdit" data-id="${r.id}">Edit</button></div>` : ''}
+    </div>`;
+  }).join('') : '<p class="empty">No cards match.</p>';
+}
+
+/* ---------- shift ---------- */
+const PENCIL_SVG = '<svg viewBox="0 0 24 24"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>';
+const PENCIL_MENU = [['Strip', 'Strip charting'], ['Pit', 'Pit'], ['Mag', 'Mag'], ['V/S', 'V/S'], ['Temp', 'Temp'], ['BG', 'BG'], ['', 'Something else (e.g. Miso)']];
+// Hourly strips at the :30s (from now, when a patient is added mid-shift)
+function stripTags(fromNow) {
+  return gridTimes().filter((_, i) => i % 2 === 0)
+    .filter(t => !fromNow || slotMs(t) >= Date.now() - 30 * 60000)
+    .map(t => ({ id: uid(), t, label: 'Strip', done: false }));
+}
+const SCHED = {
+  'Strip': { every: 60 },
+  'Pit': { every: 30, remind: 5, hint: 'Strip charting q30min while on pit — adds the :00 times to the clock.' },
+  'Mag': { every: 60, flag: true, hint: 'Hourly mag review.' },
+  'V/S': { every: 240 },
+  'Temp': { every: 240, hint: 'Temp: q4h if intact · q2h if ROM · q1h if > 99.0 (until < 99.0)' },
+  'BG': { every: 60, flag: true, remind: 60, hint: 'BG per hospital policy = 70–110' },
+};
+const curPt = id => state.shift.patients.find(x => x.id === id);
+const activePts = () => state.shift.patients.filter(p => !p.archivedAt);
+const DEFAULT_HOURS = { day: [7 * 60, 19 * 60], night: [19 * 60, 7 * 60] };
+const shiftLen = () => ((state.shift.endMin - state.shift.startMin + 1440) % 1440) || 1440;
+const hm = m => std() ? clock12(Math.floor(m / 60) % 24, m % 60) : pad(Math.floor(m / 60) % 24) + ':' + pad(m % 60);
+const timeOptions = cur => Array.from({ length: 48 }, (_, i) => i * 30).map(m => `<option value="${m}"${m === cur ? ' selected' : ''}>${hm(m)}</option>`).join('');
+const tStr = m => pad(Math.floor(m / 60) % 24) + pad(m % 60);
+function sinceStart(t) {
+  const m = +t.slice(0, 2) * 60 + +t.slice(2);
+  return (m - state.shift.startMin + 1440) % 1440;
+}
+// Every half hour from 30 min after shift start to 30 min before the end (0730–1830 on a normal day)
+function gridTimes() {
+  const out = [];
+  for (let m = 30; m <= shiftLen() - 30; m += 30) out.push(tStr(state.shift.startMin + m));
+  return out;
+}
+function slotMs(t) {
+  const base = new Date(state.shift.startedAt);
+  base.setHours(0, state.shift.startMin, 0, 0);
+  if (base.getTime() - state.shift.startedAt > 3 * 3600e3) base.setDate(base.getDate() - 1);
+  return base.getTime() + sinceStart(t) * 60000;
+}
+function nextGridTime(times) {
+  const now = Date.now();
+  return times.find(t => slotMs(t) >= now - 15 * 60000) || times[0];
+}
+function bundleHtml(text) {
+  return '<ul class="bundle">' + String(text || '').split('\n').map(l => l.trim()).filter(Boolean)
+    .map(l => /^-\s/.test(l) ? `<li class="sub">${esc(l.replace(/^-\s*/, ''))}</li>` : `<li>${esc(l)}</li>`).join('') + '</ul>';
+}
+function itemHtml(p, key, label, opts = {}) {
+  const on = !!p.done[key], infoKey = opts.bundle;
+  const open = infoKey && ui.openInfo[p.id + infoKey];
+  return `<div class="it${on ? ' done' : ''}${opts.due && !on ? ' due' : ''}">
+      <button class="it-main" data-a="ptItem" data-p="${p.id}" data-k="${key}"><span class="dot">${on ? '✓' : ''}</span>
+        <span class="it-l">${esc(label)}</span>${opts.time ? `<span class="it-t">${opts.time}</span>` : ''}</button>
+      ${infoKey ? `<button class="info-btn${open ? ' on' : ''}" data-a="info" data-p="${p.id}" data-k="${infoKey}" aria-label="What's included">i</button>` : ''}
+    </div>${open ? bundleHtml(state.lists[infoKey]) : ''}`;
+}
+function clockHtml(p) {
+  const base = gridTimes().filter((_, i) => i % 2 === 0); // the :30s
+  const inShift = p.tags.filter(g => sinceStart(g.t) < shiftLen());
+  const times = [...new Set([...base, ...inShift.map(g => g.t)])].sort((a, b) => sinceStart(a) - sinceStart(b));
+  const now = Date.now();
+  return '<div class="clock">' + times.map(t => {
+    const tags = p.tags.filter(g => g.t === t);
+    const done = tags.length && tags.every(g => g.done), due = !done && tags.length && slotMs(t) <= now;
+    return `<div class="tr${base.includes(t) ? '' : ' half'}">
+      <button class="tt${done ? ' done' : due ? ' due' : ''}" data-a="rowEdit" data-p="${p.id}" data-t="${t}">${fmtT(t)}${done ? ' ✓' : ''}</button>
+      <span class="dash">–</span>
+      <span class="tags">${tags.map(g => `<button class="tag${g.done ? ' done' : ''}${g.flag ? ' flag' : ''}${g.flag && !g.done && slotMs(t) <= now ? ' missed' : ''}" data-a="tagTog" data-p="${p.id}" data-id="${g.id}">${esc(g.label)}</button>`).join('')}</span>
+      <button class="tr-add" data-a="rowEdit" data-p="${p.id}" data-t="${t}" aria-label="Add something at ${t}">+</button>
+    </div>`;
+  }).join('') + '</div>';
+}
+function laborHtml(p) {
+  const bundle = { labor: 'start', admit: 'admission', cs: 'admission', triage: 'triage' }[p.kind];
+  return itemHtml(p, 'report1', 'Report received')
+    + (p.admittedAt ? itemHtml(p, 'triage', BUNDLES.triage, { bundle: 'triage', time: 'admitted ' + hhmm(p.admittedAt) }) : '')
+    + itemHtml(p, 'start', BUNDLES[bundle], { bundle })
+    + clockHtml(p)
+    + itemHtml(p, 'report2', 'Report given');
+}
+const isCsDelivery = p => (p.deliveryType || (p.kind === 'cs' ? 'cs' : 'vaginal')) === 'cs';
+// Fundal times (minutes after the first one): q15 ×8 for 2 hrs, vaginal and C/S alike
+function fundalOffsets() {
+  return [[0, 15, 30, 45, 60, 75, 90, 105]];
+}
+/* ----- Tools: QBL tracker, timeout, C/S charting preview ----- */
+// Dry weights come from the QBL reference card ("- Name — 40")
+function dryWeights() {
+  const ref = state.refs.find(r => r.title === 'QBL');
+  return (ref ? ref.body : '').split('\n').map(l => l.match(/^\s*-\s*(.+?)\s*[—–-]\s*~?(\d+(?:\.\d+)?)/)).filter(Boolean).map(m => ({ name: m[1], dry: +m[2] }));
+}
+const num = v => +v || 0;
+// QBL = everything wet − everything dry (1 g = 1 mL)
+function qblData(p) {
+  let q = p.qbl;
+  if (!q || !q.rows) { // older shapes → rows (first weighing gets the dry items)
+    const old = q || {};
+    const wets = old.wets || (old.items || []).map(it => ({ g: it.wet }));
+    const dry = old.dry || (old.items || []).map(it => ({ name: it.name, count: it.count }));
+    q = p.qbl = { mode: old.mode, canister: old.canister || '', bag: old.bag || '', amnio: old.amnio || '', saline: old.saline || '',
+      rows: (wets.length ? wets : [{ g: '' }]).map((w, i) => ({ g: w.g || '', items: i === 0 ? dry : [] })) };
+  }
+  return q;
+}
+// The tracker belongs to a patient, or is the standalone one opened from Reference → QBL
+const qblOwner = () => ui.qblSheet === 'solo' ? (state.qblSolo = state.qblSolo || { id: 'solo', kind: 'cs', qbl: null }) : curPt(ui.qblSheet);
+// C/S (OR) tracker uses canister + saline; the vaginal (hemorrhage) tracker doesn't
+const qblMode = p => p.deliveredAt ? (isCsDelivery(p) ? 'cs' : 'vaginal')
+  : (p.qbl && p.qbl.mode) || (p.kind === 'cs' ? 'cs' : 'vaginal');
+const OTHER = '__other';
+function qblParts(p) {
+  const q = qblData(p), dw = dryWeights(), cs = qblMode(p) === 'cs';
+  const dryOf = it => it.name === OTHER ? num(it.grams) : (dw.find(d => d.name === it.name) || { dry: 0 }).dry * num(it.count);
+  // Vaginal: the drape bag takes the canister's place
+  const fluidWet = cs ? num(q.canister) : num(q.bag), fluidDry = num(q.amnio) + (cs ? num(q.saline) : 0);
+  const rows = q.rows.map(r => { const dry = r.items.reduce((a, it) => a + dryOf(it), 0); return { wet: num(r.g), dry, blood: num(r.g) - dry }; });
+  const wet = fluidWet + rows.reduce((a, r) => a + r.wet, 0), dry = fluidDry + rows.reduce((a, r) => a + r.dry, 0);
+  return { wet, dry, rows, fluid: fluidWet - fluidDry, itemDry: q.rows.map(r => r.items.map(dryOf)), total: Math.round(wet - dry) };
+}
+const qblTotal = p => qblParts(p).total;
+// Hemorrhage threshold: 500 mL vaginal, 1000 mL C/S
+const qblLimit = p => qblMode(p) === 'cs' ? 1000 : 500;
+const qblOver = p => qblTotal(p) >= qblLimit(p);
+function renderQblSheet() {
+  const p = qblOwner(), q = qblData(p), dw = dryWeights(), parts = qblParts(p), cs = qblMode(p) === 'cs';
+  const opts = cur => `<option value="${OTHER}"${cur === OTHER ? ' selected' : ''}>Other</option>`
+    + dw.map(d => `<option value="${esc(d.name)}"${d.name === cur ? ' selected' : ''}>${esc(d.name)}</option>`).join('');
+  const num1 = (attrs, val, ph) => `<input type="number" inputmode="decimal" ${attrs} value="${esc(val)}" placeholder="${ph || ''}">`;
+  const fluidRow = cs
+    ? `<div class="qrow"><div class="qcell"><span class="qlab">Canister (mL)</span>${num1('data-qbl="canister"', q.canister)}</div>
+        <div class="qcell"><span class="qlab">Amniotic (mL)</span>${num1('data-qbl="amnio"', q.amnio)}
+          <span class="qlab">Saline (mL)</span>${num1('data-qbl="saline"', q.saline)}</div>
+        <div class="qres">Canister − fluids <b data-qfluid>${Math.round(parts.fluid)}</b> mL</div></div>`
+    : `<div class="qrow"><div class="qcell"><span class="qlab">Bag volume (mL)</span>${num1('data-qbl="bag"', q.bag)}</div>
+        <div class="qcell"><span class="qlab">Amniotic (mL)</span>${num1('data-qbl="amnio"', q.amnio)}</div>
+        <div class="qres">Bag − fluid <b data-qfluid>${Math.round(parts.fluid)}</b> mL</div></div>`;
+  const rows = q.rows.map((r, i) => `<div class="qrow">
+      <div class="qcell"><span class="qlab">Weighing ${i + 1} (g)${q.rows.length > 1 ? ` <button class="qx" data-a="qblDelRow" data-i="${i}" aria-label="Remove weighing">✕</button>` : ''}</span>
+        ${num1(`data-qr="${i}"`, r.g, 'Wet')}</div>
+      <div class="qcell"><span class="qlab">What's in it</span>
+        ${r.items.map((it, j) => `<div class="qitem"><select data-qi="${i}" data-qj="${j}" data-qf="name">${opts(it.name)}</select>
+          ${it.name === OTHER
+            ? `<span class="qtimes">g</span><input type="number" inputmode="decimal" data-qi="${i}" data-qj="${j}" data-qf="grams" value="${esc(it.grams || '')}" placeholder="Dry">`
+            : `<span class="qtimes">×</span><input type="number" inputmode="numeric" data-qi="${i}" data-qj="${j}" data-qf="count" value="${esc(it.count)}" placeholder="#">`}
+          <button class="qx" data-a="qblDelItem" data-i="${i}" data-j="${j}" aria-label="Remove">✕</button></div>`).join('')}
+        <button class="qadd" data-a="qblAddItem" data-i="${i}">+ item</button></div>
+      <div class="qres">Dry <span data-qdry="${i}">${Math.round(parts.rows[i].dry)}</span> g · blood <b data-qrow="${i}">${Math.round(parts.rows[i].blood)}</b> mL</div></div>`).join('');
+  openSheet(`<div class="h-row"><h3>QBL · ${p.id === 'solo' ? 'tracker' : esc(roomLabel(p))}</h3><div class="qbl-total${parts.total >= qblLimit(p) ? ' over' : ''}"><span id="qbl-total">${parts.total}</span> mL</div></div>
+    <div id="qbl-alert" class="qbl-alert"${parts.total >= qblLimit(p) ? '' : ' hidden'}><span>⚠ QBL ≥ ${qblLimit(p)} mL — hemorrhage</span>
+      <button class="linkish" data-a="pphCard">PPH meds ›</button></div>
+    ${p.deliveredAt ? `<p class="muted small" style="margin-top:4px">${cs ? 'C/S (OR)' : 'Vaginal'} delivery</p>` : `<div class="seg" style="margin-top:10px">
+      <button class="${cs ? 'on' : ''}" data-a="qblMode" data-m="cs">C/S (OR)</button>
+      <button class="${cs ? '' : 'on'}" data-a="qblMode" data-m="vaginal">Vaginal</button></div>`}
+    <div class="qgrid">
+      <div class="qhead"><span>Wet</span><span>Dry / Subtract</span></div>
+      ${fluidRow}${rows}
+      <button class="btn block" style="margin-top:8px" data-a="qblAddRow">+ Another weighing</button>
+      <div class="qhead qtot"><span>Total Wet <b id="qbl-wet">${Math.round(parts.wet)}</b></span><span>Total Dry / Subtract <b id="qbl-dry">${Math.round(parts.dry)}</b></span></div>
+    </div>
+    <p class="muted small" style="margin-top:8px">Wet − Dry / Subtract · 1 g = 1 mL · Dry weights come from Reference → QBL.</p>
+    <div class="btn-row"><button class="btn danger" data-a="qblClear">Clear</button><span style="flex:1"></span>
+    <button class="btn primary" data-a="closeSheet">Done</button></div>`);
+}
+function updateQblTotals() {
+  const parts = qblParts(qblOwner()), set = (sel, v) => { const el = $(sel); if (el) el.textContent = Math.round(v); };
+  set('#qbl-total', parts.total); set('#qbl-wet', parts.wet); set('#qbl-dry', parts.dry); set('[data-qfluid]', parts.fluid);
+  const over = parts.total >= qblLimit(qblOwner());
+  $('.qbl-total').classList.toggle('over', over); $('#qbl-alert').hidden = !over;
+  parts.rows.forEach((r, i) => { set(`[data-qrow="${i}"]`, r.blood); set(`[data-qdry="${i}"]`, r.dry); });
+}
+// Timeout: every "___" in the C/S timeout card becomes a fill-in blank
+function timeoutLines() {
+  const ref = state.refs.find(r => /timeout/i.test(r.title));
+  const body = (ref ? ref.body : '').split(/\n#\s/)[0];
+  return body.split('\n').map(l => l.replace(/^\s*[-•]\s*/, '').trim()).filter(l => l && !l.startsWith('#')).map(l => l.split(/_{3,}/));
+}
+function renderTimeoutSheet(script) {
+  const p = curPt(ui.timeoutSheet), v = p.timeout || (p.timeout = {});
+  const lines = timeoutLines();
+  if (script) {
+    openSheet(`<h3>Timeout · ${esc(roomLabel(p))}</h3>
+      <ol class="to-script">${lines.map((parts, i) => `<li>${parts.map((t, j) => esc(t) + (j < parts.length - 1 ? `<b>${esc(v[i + '_' + j]) || '___'}</b>` : '')).join('')}</li>`).join('')}</ol>
+      <div class="btn-row"><button class="btn" data-a="timeoutEdit">‹ Edit</button><span style="flex:1"></span>
+      <button class="btn primary" data-a="closeSheet">Done</button></div>`);
+    return;
+  }
+  openSheet(`<h3>Timeout · ${esc(roomLabel(p))}</h3>
+    <p class="muted small">Fill in the blanks, then tap Finalize.</p>
+    <div class="to-form">${lines.map((parts, i) => `<div class="to-line">${parts.map((t, j) => esc(t) + (j < parts.length - 1 ? `<input data-to="${i}_${j}" value="${esc(v[i + '_' + j] || '')}" autocomplete="off">` : '')).join('')}</div>`).join('')}</div>
+    <p class="muted small" style="margin-top:8px">Built from Reference → C/S timeout. Add ___ there for more blanks.</p>
+    <div class="btn-row"><button class="btn" data-a="closeSheet">Close</button><span style="flex:1"></span>
+    <button class="btn primary" data-a="timeoutRead">Finalize ›</button></div>`);
+}
+
+function ppHtml(p) {
+  const now = Date.now();
+  let h = `<div class="sec">Postpartum recovery · delivered ${hhmm(p.deliveredAt)}</div>`;
+  const b = isCsDelivery(p) ? 'cs' : 'vaginal';
+  // Both just say "Delivery charting" on the page; each keeps its own list behind the i
+  if (b === 'cs') h += itemHtml(p, 'pp:delivery', 'Delivery charting', { bundle: 'csDelivery' }) + itemHtml(p, 'pp:cscharting', BUNDLES.cs, { bundle: 'cs' });
+  else h += itemHtml(p, 'pp:delivery', 'Delivery charting', { bundle: 'vaginal' });
+  // Fundals march out from the first one, in two columns like on paper
+  const first = p.fundalStart || p.deliveredAt + 15 * 60000;
+  h += `<div class="fundals"><div class="h-row"><button class="fund-h" data-a="fundalPolicy" data-p="${p.id}">Fundals${b === 'cs' ? ' · C/S' : ''} <span class="info-btn sm">i</span></button>
+    <button class="linkish fedit" data-a="fundalTime" data-p="${p.id}">first at ${hhmm(first)} ${PENCIL_SVG}</button></div>`;
+  let i = 0;
+  fundalOffsets(p).forEach(group => {
+    h += `<div class="fgrid" style="grid-template-rows:repeat(${Math.ceil(group.length / 2)},auto)">`;
+    group.forEach(off => {
+      const t = first + off * 60000, k = 'pp:fundal' + i++, on = !!p.done[k];
+      h += `<button class="fcell${on ? ' done' : t <= now ? ' due' : ''}" data-a="ptItem" data-p="${p.id}" data-k="${k}">
+        <span class="dot">${on ? '✓' : ''}</span><span>${hhmm(t)}</span></button>`;
+    });
+    h += '</div>';
+  });
+  h += '</div>';
+  h += `<button class="item" data-a="qblOpen" data-p="${p.id}"><span class="grow"><b>QBL tracker</b></span><span class="${qblOver(p) ? 'qbl-over' : 'muted'}">${qblTotal(p) ? (qblOver(p) ? '⚠ ' : '') + qblTotal(p) + ' mL' : ''} ›</span></button>`;
+  h += itemHtml(p, 'pp:pph', 'PPH paper') + itemHtml(p, 'pp:charge', 'Charge sheet') + itemHtml(p, 'pp:report', 'Report given');
+  return h;
+}
+function dcHtml(p) {
+  return `<div class="sec">Discharged · ${hhmm(p.dischargedAt)}</div>`
+    + itemHtml(p, 'dc:charting', BUNDLES.discharge, { bundle: 'discharge' })
+    + (p.archivedAt ? '' : `<button class="btn block" style="margin:10px 0 4px" data-a="patientDelete" data-id="${p.id}">Remove ${esc(roomLabel(p))} from my list</button>`);
+}
+// Compact to-do bar at the top of the page; the full list opens as a popup
+function todoBar(p) {
+  const left = p.todos.filter(t => !t.done), next = left[0];
+  return `<button class="todo-bar" data-a="todoOpen" data-p="${p.id}">
+    <span class="grow"><b>To-do</b>${next ? `<span class="muted small"> · ${esc(next.text)}${left.length > 1 ? '…' : ''}</span>` : ''}</span>
+    ${!p.todos.length ? '<span class="muted small">Add ›</span>'
+      : left.length ? `<span class="pill due">${left.length} left</span>` : '<span class="pill done">All done ✓</span>'}</button>`;
+}
+function renderTodoSheet() {
+  if (!ui.todoSheet) return;
+  const p = curPt(ui.todoSheet);
+  const hide = state.hideDoneTodos, nDone = p.todos.filter(t => t.done).length;
+  openSheet(`<div class="h-row"><h3>To-do · ${esc(roomLabel(p))}</h3>
+    <button class="eye-btn" data-a="todoEye" aria-label="${hide ? 'Show' : 'Hide'} checked items">${hide ? EYE_OFF : EYE}</button></div>
+    ${todoHtml(p, hide)}
+    ${hide && nDone ? `<p class="muted small" style="margin-top:6px">${nDone} checked item${nDone === 1 ? '' : 's'} hidden</p>` : ''}
+    <div class="btn-row end"><button class="btn primary" data-a="closeSheet">Done</button></div>`);
+}
+const EYE = '<svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+const EYE_OFF = '<svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/></svg>';
+function todoHtml(p, hideDone) {
+  return `<div class="todo-list" data-p="${p.id}" style="margin-top:8px">
+    ${p.todos.filter(t => !(hideDone && t.done)).map(t => `<div class="todo${t.done ? ' done' : ''}" data-tid="${t.id}">
+      <button class="it-main" data-a="todoTog" data-p="${p.id}" data-id="${t.id}"><span class="dot">${t.done ? '✓' : ''}</span><span class="it-l">${esc(t.text)}</span></button>
+      <button class="x" data-a="todoDel" data-p="${p.id}" data-id="${t.id}" aria-label="Delete">✕</button></div>`).join('')}
+    </div><div class="todo-add"><input id="todo-new" data-p="${p.id}" placeholder="Add to-do" autocomplete="off"><button class="btn" data-a="todoAdd" data-p="${p.id}">Add</button></div>`;
+}
+function renderRowEditor() {
+  const { p: pid, t } = ui.rowEdit, p = curPt(pid), tags = p.tags.filter(g => g.t === t);
+  openSheet(`<h3>${fmtT(t)} · ${esc(roomLabel(p))}</h3>
+    ${tags.length ? tags.map(g => `<div class="todo"><span class="it-l" style="padding:8px 0">${esc(g.label)}</span>
+      <select class="remind-sel" data-remind="${g.id}" aria-label="Reminder">${remindOptions(g.remind || 0, true)}</select>
+      <button class="flag-btn${g.flag ? ' on' : ''}" data-a="tagFlag" data-id="${g.id}">⚑ ${g.flag ? 'Flagged' : 'Flag'}</button>
+      <button class="x" data-a="tagDel" data-id="${g.id}" aria-label="Remove">✕</button></div>`).join('') : '<p class="empty">Nothing added at this time yet.</p>'}
+    <div class="todo-add"><input id="row-new" placeholder="Add something at this time" autocomplete="off"><button class="btn" data-a="rowAdd">Add</button></div>
+    <div class="chips">${['V/S', 'Temp', 'BG', 'Mag', 'Pit', 'Cervical exam', 'Abx'].map(l => `<button class="chip" data-a="rowAdd" data-label="${l}">+ ${l}</button>`).join('')}</div>
+    <div class="btn-row end"><button class="btn primary" data-a="closeSheet">Done</button></div>`);
+}
+
+const kindOptions = cur => Object.entries(KINDS).map(([k, t]) => `<option value="${k}"${k === cur ? ' selected' : ''}>${t}</option>`).join('');
+
+// One encouraging line under the start-shift card, the same all day (Settings → turn off)
+const DAILY_LINES = [
+  "Today you'll be someone's calm in the middle of their biggest day.",
+  "Every family you care for today will remember how you made them feel.",
+  "Strong coffee, steady hands, big heart. You've got this.",
+  "You're about to help write someone's birth story. Make it a good one.",
+  "Deep breath. You've trained for this, and you're good at it.",
+  "One room at a time, one strip at a time.",
+  "Trust your gut. It's been right more times than you know.",
+  "Kindness counts as much as the charting. Today you'll do both.",
+  "It's okay if it gets busy. You're the kind of nurse people want on a busy day.",
+  "Be proud of the work you do. It matters more than it shows.",
+  "Hydrate, eat something, and remember to take care of you too.",
+  "You're the first person to welcome a new life. What an honor.",
+  "Advocate loudly, chart clearly, and laugh when you can.",
+  "Whatever today brings, your team has your back and you have theirs.",
+  "Little moments of reassurance make the biggest difference.",
+  "You don't have to be perfect to be exactly what a patient needs.",
+  "New shift, fresh start. Leave yesterday at the door.",
+  "Moms in labor are brave. So are the nurses who guide them.",
+  "Go make today a little easier for someone.",
+  "It's a beautiful day to make a difference.",
+];
+// A little pair of baby footprints under the daily line (one-piece soles, toes arcing over the top)
+const FOOT = `<path d="M19 21 C 31 16, 44 23, 43 39 C 42 53, 36 68, 25 73 C 14 78, 7 70, 9 60 C 11 52, 16 48, 14 40 C 12 31, 11 24, 19 21 Z"/>
+  <circle cx="15" cy="10" r="5.8"/><circle cx="26.5" cy="6" r="4.8"/><circle cx="36" cy="7.5" r="4.2"/><circle cx="43.5" cy="13" r="3.6"/><circle cx="48" cy="21" r="3"/>`;
+const FEET_SVG = `<svg viewBox="0 0 108 100" width="38" height="35">
+  <g transform="translate(55 22) scale(-1 1)">${FOOT}</g>
+  <g transform="translate(55 0)">${FOOT}</g></svg>`;
+function dailyLine() {
+  const d = new Date(), n = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 864e5);
+  return DAILY_LINES[n % DAILY_LINES.length];
+}
+
+function renderShiftStart() {
+  if (!ui.startDraft) {
+    ui.startDraft = { type: 'day', start: DEFAULT_HOURS.day[0], end: DEFAULT_HOURS.day[1], pts: [{ room: '', kind: 'labor' }] };
+  }
+  const sd = ui.startDraft;
+  return `<div class="card">
+    <h3>Start a new shift?</h3>
+    <div class="seg" style="margin-top:12px">
+      <button class="${sd.type === 'day' ? 'on' : ''}" data-a="startType" data-type="day">Day</button>
+      <button class="${sd.type === 'night' ? 'on' : ''}" data-a="startType" data-type="night">Night</button></div>
+    <div class="grid2"><label class="f">Start<select data-sd-time="start">${timeOptions(sd.start)}</select></label>
+      <label class="f">End<select data-sd-time="end">${timeOptions(sd.end)}</select></label></div>
+    <div class="sec" style="margin-top:16px">Your patients</div>
+    ${sd.pts.map((x, i) => `<div class="pt-row">
+      <input placeholder="Rm #" value="${esc(x.room)}" data-sd-room="${i}" autocomplete="off">
+      <select data-sd-kind="${i}">${kindOptions(x.kind)}</select>
+      <button class="btn" data-a="sdDel" data-i="${i}" aria-label="Remove">✕</button></div>`).join('')}
+    <button class="btn block" style="margin-top:10px" data-a="sdAdd">+ Add another patient</button>
+    <button class="btn primary block" style="margin-top:10px" data-a="shiftStart">Start shift</button>
+    <p class="muted small" style="margin-top:8px">You can add or discharge patients during the shift too.</p>
+  </div>
+  ${state.hideDailyLine ? '' : `<p class="daily-line">${esc(dailyLine())}</p><div class="daily-feet" aria-hidden="true">${FEET_SVG}</div>`}`;
+}
+
+const REMIND_CHOICES = [0, 5, 10, 15, 30, 60];
+const remindOptions = (cur, short) => REMIND_CHOICES.map(m => `<option value="${m}"${m === cur ? ' selected' : ''}>${m ? (short ? '⏰ ' + m + 'm' : m + ' min before') : (short ? '⏰ Off' : 'Off')}</option>`).join('');
+// Banner under the room buttons: items with a reminder whose reminder window has opened (and aren't done yet)
+function reminderBanner() {
+  const now = Date.now(), items = [];
+  activePts().forEach(p => p.tags.forEach(g => {
+    if (g.done || g.dismissed || !g.remind || sinceStart(g.t) >= shiftLen()) return;
+    const at = slotMs(g.t);
+    if (now >= at - g.remind * 60000) items.push({ p, g, at });
+  }));
+  if (!items.length) return '';
+  items.sort((a, b) => a.at - b.at);
+  return `<div class="remind-banner">${items.slice(0, 4).map(({ p, g, at }) => {
+    const d = Math.round((at - now) / 60000);
+    return `<div class="remind-item${d <= 0 ? ' late' : ''}"><button class="remind-go" data-a="selPt" data-id="${p.id}">⏰ <b>${esc(roomLabel(p))}</b> · ${esc(g.label)} at ${fmtT(g.t)} · ${d > 0 ? 'in ' + mins(d) : d === 0 ? 'now' : mins(-d) + ' ago'}</button>
+      <button class="remind-x" data-a="remindClose" data-p="${p.id}" data-id="${g.id}" aria-label="Close reminder">✕</button></div>`;
+  }).join('')}${items.length > 4 ? `<div class="muted small">+${items.length - 4} more</div>` : ''}</div>`;
+}
+
+// One compact card per patient: what's due, what's next, to-dos and timers
+function overviewCard(p) {
+  const now = Date.now(), lines = [];
+  if (p.deliveredAt) {
+    const first = p.fundalStart || p.deliveredAt + 15 * 60000;
+    const offs = fundalOffsets(p)[0], left = offs.map((o, i) => ({ t: first + o * 60000, k: 'pp:fundal' + i })).filter(x => !p.done[x.k]);
+    const late = left.filter(x => x.t <= now).length;
+    lines.push(left.length ? `Fundals ${offs.length - left.length}/${offs.length}${late ? ` · <b class="due-txt">${late} due</b>` : ` · next ${hhmm(left[0].t)}`}` : 'Fundals done ✓');
+  } else {
+    const open = p.tags.filter(g => !g.done && sinceStart(g.t) < shiftLen());
+    const late = open.filter(g => slotMs(g.t) <= now), missedFlag = late.filter(g => g.flag).length;
+    const upcoming = open.filter(g => slotMs(g.t) > now).sort((a, b) => sinceStart(a.t) - sinceStart(b.t));
+    const nextT = upcoming[0] && upcoming[0].t;
+    if (late.length) lines.push(`<b class="${missedFlag ? 'miss-txt' : 'due-txt'}">${late.length} past due</b>${missedFlag ? ` (${missedFlag} flagged)` : ''}`);
+    if (nextT) lines.push(`Next ${fmtT(nextT)} · ${upcoming.filter(g => g.t === nextT).map(g => esc(g.label)).join(', ')}`);
+  }
+  const todoLeft = p.todos.filter(t => !t.done);
+  if (todoLeft.length) lines.push(`To-do: ${todoLeft.length} left · ${esc(todoLeft[0].text)}`);
+  state.runs.filter(r => r.ptId === p.id && !r.finishedAt).forEach(r => {
+    const due = runDue(r);
+    lines.push(`${esc(r.proto.name)}${due ? ` · <b class="due-txt">${due} due</b>` : ''}`);
+  });
+  return `<button class="card ov-card" data-a="selPt" data-id="${p.id}">
+    <div class="h-row"><span class="ov-room">${esc(roomLabel(p))}</span>
+      <span class="muted small">${KINDS[p.kind]}${p.deliveredAt ? ' · PP' : ''}${p.dischargedAt ? ' · D/C' : ''} ›</span></div>
+    ${lines.length ? `<div class="ov-lines">${lines.map(l => `<div>${l}</div>`).join('')}</div>` : '<div class="ov-lines muted">Nothing due</div>'}</button>`;
+}
+
+function renderShift() {
+  const sh = state.shift;
+  if (!sh) return renderShiftStart();
+  const cur = sh.currentId === 'overview' ? null : sh.patients.find(p => p.id === sh.currentId) || activePts()[0];
+  const prevCount = sh.patients.filter(p => p.archivedAt).length;
+  let h = '';
+  h += `<div class="rooms">${activePts().map(p => `<button class="room-tab${cur && p.id === cur.id ? ' on' : ''}" data-a="selPt" data-id="${p.id}">
+      <span class="rn">${esc(roomLabel(p))}</span><span class="rk">${p.deliveredAt ? (isCsDelivery(p) ? 'PP · C/S' : 'PP') : p.dischargedAt ? 'D/C' : KIND_SHORT[p.kind]}</span></button>`).join('')}
+      <button class="room-tab add" data-a="patientEdit" data-id="new"><span class="rn">+</span><span class="rk">Add</span></button>
+      ${prevCount ? `<button class="room-tab prev${cur && cur.archivedAt ? ' on' : ''}" data-a="previousPts"><span class="rn">↺ ${prevCount}</span><span class="rk">Previous</span></button>` : ''}</div>`;
+  h += reminderBanner();
+  if (cur) {
+    if (cur.archivedAt) h += `<div class="verify">Previous patient · ${cur.done.handoff ? 'handed off' + (cur.handedOffTo ? ' to ' + esc(cur.handedOffTo) : '') : 'removed'} ${hhmm(cur.archivedAt)}</div>`;
+    h += `<div class="card pt-card${cur.archivedAt ? ' archived' : ''}">
+      <div class="pt-head"><div>
+        <button class="type-btn" data-a="patientEdit" data-id="${cur.id}">${KINDS[cur.kind]}${cur.admittedAt ? ' · from triage' : ''}${cur.deliveredAt ? (isCsDelivery(cur) ? ' · delivered by C/S' : ' · delivered') : ''}${cur.dischargedAt ? ' · discharged' : ''} ${PENCIL_SVG}</button>
+        ${cur.archivedAt ? '' : `<div class="pt-links"><button class="linkish" data-a="tools" data-p="${cur.id}">Tools</button></div>`}</div>
+        <div class="pt-right">${cur.archivedAt ? '' : `<button class="pencil-btn" data-a="pencilMenu" data-p="${cur.id}" aria-label="Add what applies to this patient">＋ Add</button>`}
+        <button class="pt-room" data-a="roomEdit" data-id="${cur.id}" aria-label="Change room number">${esc(roomLabel(cur))}</button></div></div>`;
+    h += todoBar(cur);
+    const ptRuns = state.runs.filter(r => r.ptId === cur.id && (!cur.archivedAt || r.finishedAt));
+    h += [...ptRuns.filter(r => !r.finishedAt), ...ptRuns.filter(r => r.finishedAt)].map(r => renderRun(r, true)).join('');
+    if (cur.deliveredAt || cur.dischargedAt) {
+      h += (cur.deliveredAt ? ppHtml(cur) : dcHtml(cur))
+        + `<button class="labor-toggle" data-a="laborToggle" data-p="${cur.id}">${ui.showLabor[cur.id] ? '▾' : '▸'} ${cur.kind === 'triage' ? 'Triage' : 'Labor'} charting</button>`;
+      if (ui.showLabor[cur.id]) h += `<div class="labor-old">${laborHtml(cur)}</div>`;
+    } else {
+      h += laborHtml(cur);
+      if (cur.kind === 'triage') h += `<div class="grid2" style="margin-top:14px">
+          <button class="btn" data-a="discharge" data-p="${cur.id}">Discharge</button>
+          <button class="btn primary" data-a="admit" data-p="${cur.id}">Admit →</button></div>`;
+      else h += `<button class="btn primary block" style="margin-top:14px" data-a="deliver" data-p="${cur.id}">Delivered →</button>`;
+    }
+    h += `<div class="sec">Notes</div>
+      <textarea rows="4" data-ptnotes="${cur.id}" style="margin-top:6px" placeholder="Notes for ${esc(roomLabel(cur))}">${esc(cur.notes || '')}</textarea>
+      ${cur.archivedAt ? '' : `<button class="btn block" style="margin-top:14px" data-a="handoff" data-p="${cur.id}">Hand off ${esc(roomLabel(cur))}</button>`}</div>`;
+  } else if (activePts().length) {
+    h += activePts().map(overviewCard).join('');
+  } else {
+    h += `<p class="empty">No patients yet. Tap <b>+ Add</b> to add one.</p>`;
+  }
+  h += `<button class="sec-toggle" style="margin-top:22px" data-a="asNeededToggle">${state.asNeededHidden ? '▸' : '▾'} As-needed charting</button>
+    ${state.asNeededHidden ? '' : `<div class="card">${bundleHtml(state.lists.asNeeded)}</div>`}`;
+  return h;
+}
+
+/* ---------- call-outs ---------- */
+const rollOff = s => { const d = parseYmd(s); d.setFullYear(d.getFullYear() + 1); return ymd(d); };
+function level(p) {
+  if (p >= 7) return { t: 'Sent to HR', c: 'black', note: 'Can result in disciplinary action' };
+  if (p >= 6) return { t: 'Written counseling', c: 'danger' };
+  if (p >= 4) return { t: 'Verbal counseling', c: 'due' };
+  return { t: 'No counseling', c: 'done' };
+}
+function renderCallouts() {
+  const t = today();
+  const all = [...state.callouts].sort((a, b) => b.date.localeCompare(a.date));
+  const active = all.filter(c => rollOff(c.date) > t), old = all.filter(c => rollOff(c.date) <= t);
+  const pts = active.length, lv = level(pts), nxt = level(pts + 1);
+  const nextOff = active.map(c => rollOff(c.date)).sort()[0];
+  const daysTo = nextOff ? Math.round((parseYmd(nextOff) - parseYmd(t)) / 864e5) : 0;
+  const untilNext = pts < 4 ? `${4 - pts} more until verbal counseling` : pts < 6 ? `${6 - pts} more until written counseling` : pts < 7 ? '1 more sends it to HR' : '';
+  let h = `<div class="card">
+    <div class="h-row"><div><div class="big">${pts}</div><div class="muted small">point${pts === 1 ? '' : 's'} in the last year</div></div>
+    <span class="pill ${lv.c}">${lv.t}</span></div>
+    <div class="bar">${[1, 2, 3, 4, 5, 6, 7].map(i => `<span class="${i <= pts ? (i >= 7 ? 'f4' : i >= 6 ? 'f3' : i >= 4 ? 'f2' : 'f1') : ''}"></span>`).join('')}</div>
+    <div class="bar-l"><span>1</span><span>2</span><span>3</span><span>4<br>verbal</span><span>5</span><span>6<br>written</span><span>7<br>HR</span></div>
+    ${lv.note ? `<p class="small" style="margin-top:12px"><b>${lv.note}</b></p>` : ''}
+    ${untilNext ? `<p class="small" style="margin-top:12px">${untilNext}</p>` : ''}
+    ${nextOff ? `<p class="small">Next point drops off <b>${niceDate(nextOff)}</b> (${daysTo} day${daysTo === 1 ? '' : 's'})</p>` : ''}
+    <p class="small muted">If you call out today: ${pts + 1} point${pts ? 's' : ''} — ${nxt.t.charAt(0).toLowerCase() + nxt.t.slice(1)}${nxt.note ? ' (' + nxt.note.toLowerCase() + ')' : ''}</p>
+    <button class="btn primary block" style="margin-top:12px" data-a="itemEdit" data-list="callouts" data-id="new">+ Log a call-out</button>
+    <div class="tl-label" style="margin-top:16px">Active (${active.length})</div>
+    <div>${active.length ? active.map(c => calloutRow(c, false)).join('') : '<p class="empty">No active call-outs.</p>'}</div>`;
+  if (old.length) {
+    h += `<button class="btn block" style="margin-top:8px" data-a="toggleOld">${ui.showOld ? 'Hide' : 'Show'} dropped off (${old.length})</button>`;
+    if (ui.showOld) h += `<div style="margin-top:6px">${old.map(c => calloutRow(c, true)).join('')}</div>`;
+  }
+  return h + '</div>';
+}
+function calloutRow(c, old) {
+  return `<button class="item${old ? ' old' : ''}" data-a="itemEdit" data-list="callouts" data-id="${c.id}">
+    <div class="grow"><b>${niceDate(c.date)}</b>${c.note ? `<div class="small pre">${esc(c.note)}</div>` : ''}</div>
+    <span class="muted small">${old ? 'dropped' : 'drops'} ${niceDate(rollOff(c.date))}</span></button>`;
+}
+
+/* ---------- simple lists (call-outs, links, codes, memories) ---------- */
+const LISTS = {
+  callouts: { title: 'Call-out', required: 'date', fields: [['date', 'Date', 'date'], ['note', 'Notes (reason, who you called, time)', 'textarea']] },
+  links: { title: 'Link', required: 'label', fields: [['label', 'Name', 'text'], ['url', 'Web address', 'url'], ['note', 'Note', 'textarea']] },
+  codes: { title: 'Code', required: 'label', fields: [['label', 'What it\'s for', 'text'], ['code', 'Code', 'text'], ['note', 'Note', 'textarea']] },
+  memories: { title: 'Memory', required: 'text', fields: [['date', 'Date', 'date'], ['text', 'Memory', 'textarea']] },
+};
+function openItemEditor(list, id) {
+  const cfg = LISTS[list];
+  const item = id === 'new' ? { date: today() } : state[list].find(x => x.id === id);
+  const fields = cfg.fields.map(([k, label, type]) => type === 'textarea'
+    ? `<label class="f">${label}<textarea id="f-${k}" rows="${list === 'memories' ? 8 : 4}">${esc(item[k])}</textarea></label>`
+    : `<label class="f">${label}<input id="f-${k}" type="${type === 'url' ? 'url' : type}" value="${esc(item[k])}"${type === 'url' ? ' inputmode="url" autocapitalize="off" placeholder="https://"' : ''}></label>`).join('');
+  openSheet(`<h3>${id === 'new' ? 'New' : 'Edit'} ${cfg.title.toLowerCase()}</h3>${fields}
+    <div class="btn-row">${id === 'new' ? '' : `<button class="btn danger" data-a="itemDelete" data-list="${list}" data-id="${id}">Delete</button>`}
+    <span style="flex:1"></span><button class="btn" data-a="closeSheet">Cancel</button>
+    <button class="btn primary" data-a="itemSave" data-list="${list}" data-id="${id}">Save</button></div>`);
+}
+
+/* ---------- memories ---------- */
+/* ---------- codes ---------- */
+// Notes tab: codes as small tiles, then sticky notes that stay until you delete them
+const NOTE_COLORS = { yellow: '#fff3a8', pink: '#ffd3e2', blue: '#cfe6ff', green: '#d4f2d2', orange: '#ffdcb5', purple: '#e6d8ff' };
+function renderNotes() {
+  const codes = state.codes.map(c => `<button class="code-tile" data-a="itemEdit" data-list="codes" data-id="${c.id}">
+      <span class="small muted">${esc(c.label)}</span><span class="code">${esc(c.code)}</span></button>`).join('');
+  const notes = state.notes.map(n => `<button class="sticky" data-nid="${n.id}" style="background:${NOTE_COLORS[n.color] || NOTE_COLORS.yellow}" data-a="noteEdit" data-id="${n.id}">
+      <span class="pre">${esc(n.text)}</span><span class="sticky-date">${niceDate(n.date)}</span></button>`).join('');
+  const hide = state.codesHidden;
+  return `<div class="h-row"><button class="sec-toggle" data-a="codesToggle"><span>${hide ? '▸' : '▾'} Codes${hide && state.codes.length ? ` <span class="muted">(${state.codes.length})</span>` : ''}</span></button>
+      ${hide ? '' : '<button class="plus-btn" data-a="itemEdit" data-list="codes" data-id="new" aria-label="Add code">+</button>'}</div>
+    ${hide || !codes ? '' : `<div class="code-grid">${codes}</div>`}
+    <div class="h-row" style="margin:22px 4px 8px"><h2 style="margin:0">Sticky notes</h2><button class="btn" data-a="noteEdit" data-id="new">＋ Note</button></div>
+    ${notes ? `<div class="sticky-grid">${notes}</div>` : ''}`;
+}
+function renderNoteSheet() {
+  const n = ui.noteDraft;
+  openSheet(`<h3>${n.id === 'new' ? 'New note' : 'Sticky note'}</h3>
+    <textarea id="note-text" rows="6" style="margin-top:10px;background:${NOTE_COLORS[n.color]};color:#231f20;border-color:transparent">${esc(n.text)}</textarea>
+    <div class="swatches">${Object.entries(NOTE_COLORS).map(([k, v]) => `<button class="swatch${n.color === k ? ' on' : ''}" style="background:${v}" data-a="noteColor" data-c="${k}" aria-label="${k}"></button>`).join('')}</div>
+    <div class="btn-row">${n.id === 'new' ? '' : `<button class="btn danger" data-a="noteDelete" data-id="${n.id}">Delete</button>`}
+    <span style="flex:1"></span><button class="btn" data-a="closeSheet">Cancel</button>
+    <button class="btn primary" data-a="noteSave">Save</button></div>`);
+  const ta = $('#note-text'); ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
+}
+
+/* ---------- more ---------- */
+function renderMore() {
+  // Link tiles, 3 per row; the "i" shows that link's note (e.g. the Safari tip for Timpani)
+  const links = state.links.map(l => `<div class="link-tile">
+      ${l.url ? `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a>`
+              : `<a href="#" data-a="itemEdit" data-list="links" data-id="${l.id}">${esc(l.label)}<span class="muted small">add address</span></a>`}
+      ${l.note ? `<button class="info-btn sm" data-a="linkInfo" data-id="${l.id}" aria-label="About ${esc(l.label)}">i</button>` : ''}</div>`).join('');
+  return `<div class="h-row" style="margin:6px 4px 8px"><h2 style="margin:0">Links</h2>
+      <button class="icon-btn" data-a="linksEdit" aria-label="Edit links">${PENCIL_SVG}</button></div>
+    ${links ? `<div class="link-grid">${links}</div>` : '<p class="empty" style="margin:0 4px">No links yet. Tap the pencil to add one.</p>'}
+    <h2>Call-outs</h2>${renderCallouts()}
+    <button class="sec-toggle" style="margin-top:22px" data-a="backupToggle">${state.backupHidden ? '▸' : '▾'} Backup${state.backupHidden ? ` <span class="muted" style="text-transform:none;letter-spacing:0;font-weight:500">· last ${state.lastBackup ? niceDate(state.lastBackup) : 'never'}</span>` : ''}</button>
+    ${state.backupHidden ? '' : `<div class="card">
+      <p class="small">Everything is saved on this phone only. Save a backup file now and then (to Files or iCloud Drive) so nothing is lost if you get a new phone.</p>
+      <p class="small muted">Last backup: ${state.lastBackup ? niceDate(state.lastBackup) : 'never'}</p>
+      <div class="grid2" style="margin-top:12px"><button class="btn primary" data-a="exportData">Save backup</button>
+        <button class="btn" data-a="importData">Restore backup</button>
+        <button class="btn danger" data-a="resetContent">Reset cards</button>
+        <button class="btn" style="font-size:14px;padding:0 8px;white-space:nowrap" data-a="saveResetPoint">Save as reset point</button></div>
+      <p class="muted small" style="margin-top:6px">Reset cards goes back to ${state.resetPoint ? 'your reset point from ' + niceDate(state.resetPoint.date) : 'the corrected built-in version'}. Save as reset point makes your current cards the new version to reset to.</p>
+    </div>`}`;
+}
+
+async function exportData() {
+  const name = 'ld-shift-backup-' + today() + '.json';
+  const file = new File([JSON.stringify(state, null, 1)], name, { type: 'application/json' });
+  const done = () => { state.lastBackup = today(); save(); if (ui.tab === 'more') render(); toast('Backup saved'); };
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: name }); done(); return; }
+  } catch (e) { if (e.name === 'AbortError') return; }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(file); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000); done();
+}
+$('#import-file').addEventListener('change', e => {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (!Array.isArray(data.protocols) || !Array.isArray(data.callouts)) throw new Error('bad');
+      if (!confirm('Replace everything in the app with this backup?')) return;
+      state = Object.assign(defaults(), data); save(); render(); toast('Backup restored');
+    } catch (err) { toast('That file isn\'t a Bella\'s Book backup'); }
+    e.target.value = '';
+  };
+  r.readAsText(f);
+});
+
+/* ---------- events ---------- */
+/* ---------- press-and-hold to reorder to-dos ---------- */
+const drag = { row: null, timer: null, startY: 0, y0: 0, on: false };
+function dragCancel() { clearTimeout(drag.timer); drag.timer = null; if (!drag.on) drag.row = null; }
+$('#sheet').addEventListener('pointerdown', e => {
+  const row = e.target.closest('.todo-list .todo');
+  if (!row || e.target.closest('.x')) return;
+  drag.row = row; drag.startY = drag.y0 = e.clientY;
+  drag.timer = setTimeout(() => {           // held still long enough → start dragging
+    drag.on = true; row.classList.add('dragging');
+    $('.sheet-card').classList.add('no-scroll');
+    if (navigator.vibrate) navigator.vibrate(10);
+  }, 300);
+});
+$('#sheet').addEventListener('pointermove', e => {
+  if (!drag.row) return;
+  if (!drag.on) { if (Math.abs(e.clientY - drag.y0) > 8) dragCancel(); return; } // moved first = scrolling
+  e.preventDefault();
+  const row = drag.row;
+  row.style.transform = `translateY(${e.clientY - drag.startY}px)`;
+  const prev = row.previousElementSibling, next = row.nextElementSibling, r = row.getBoundingClientRect();
+  if (prev && e.clientY < prev.getBoundingClientRect().top + prev.offsetHeight / 2) {
+    row.parentNode.insertBefore(row, prev); drag.startY -= prev.offsetHeight;
+  } else if (next && e.clientY > next.getBoundingClientRect().top + next.offsetHeight / 2) {
+    row.parentNode.insertBefore(next, row); drag.startY += next.offsetHeight;
+  }
+  row.style.transform = `translateY(${e.clientY - drag.startY}px)`;
+});
+$('#sheet').addEventListener('touchmove', e => { if (drag.on) e.preventDefault(); }, { passive: false });
+function dragEnd() {
+  if (!drag.on) { dragCancel(); return; }
+  const list = drag.row.parentNode, p = curPt(list.dataset.p);
+  const order = [...list.querySelectorAll('.todo')].map(el => el.dataset.tid);
+  // Put the visible items in their new order; hidden (checked) ones keep their slots
+  const visible = new Set(order), byId = Object.fromEntries(p.todos.map(t => [t.id, t])); let k = 0;
+  p.todos = p.todos.map(t => visible.has(t.id) ? byId[order[k++]] : t);
+  drag.on = false; drag.row = null; ui.suppressClick = true;
+  save(); render(); renderTodoSheet();
+  setTimeout(() => { ui.suppressClick = false; }, 400);
+}
+$('#sheet').addEventListener('pointerup', dragEnd);
+$('#sheet').addEventListener('pointercancel', dragEnd);
+$('#sheet').addEventListener('contextmenu', e => { if (e.target.closest('.todo-list')) e.preventDefault(); });
+
+/* ---------- press-and-hold to reorder reference cards (within Meds or Other) ---------- */
+const rd = { el: null, timer: null, y0: 0, startY: 0, on: false };
+function rdCancel() { clearTimeout(rd.timer); rd.timer = null; if (!rd.on) rd.el = null; }
+$('#main').addEventListener('pointerdown', e => {
+  const el = e.target.closest('#reflist .ref');
+  if (!el || ui.refQuery.trim() || e.target.closest('.ref-body, .btn-row')) return; // not while searching or inside an open card's text
+  Object.assign(rd, { el, y0: e.clientY, startY: e.clientY });
+  rd.timer = setTimeout(() => {
+    rd.on = true; el.classList.add('dragging'); document.body.classList.add('no-scroll');
+    if (navigator.vibrate) navigator.vibrate(10);
+  }, 300);
+});
+$('#main').addEventListener('pointermove', e => {
+  if (!rd.el) return;
+  if (!rd.on) { if (Math.abs(e.clientY - rd.y0) > 8) rdCancel(); return; }
+  e.preventDefault();
+  const el = rd.el, prev = el.previousElementSibling, next = el.nextElementSibling;
+  if (prev && e.clientY < prev.getBoundingClientRect().top + prev.offsetHeight / 2) {
+    el.parentNode.insertBefore(el, prev); rd.startY -= prev.offsetHeight + 10;
+  } else if (next && e.clientY > next.getBoundingClientRect().top + next.offsetHeight / 2) {
+    el.parentNode.insertBefore(next, el); rd.startY += next.offsetHeight + 10;
+  }
+  el.style.transform = `translateY(${e.clientY - rd.startY}px)`;
+});
+document.addEventListener('touchmove', e => { if (rd.on) e.preventDefault(); }, { passive: false });
+function rdEnd() {
+  document.body.classList.remove('no-scroll');
+  if (!rd.on) { rdCancel(); return; }
+  // New order for this section; cards in the other section keep their places
+  const order = [...rd.el.parentNode.querySelectorAll('.ref')].map(x => x.dataset.rid);
+  const inSec = new Set(order), byId = Object.fromEntries(state.refs.map(r => [r.id, r])); let k = 0;
+  state.refs = state.refs.map(r => inSec.has(r.id) ? byId[order[k++]] : r);
+  rd.on = false; rd.el = null; ui.suppressClick = true;
+  save(); renderRefList();
+  setTimeout(() => { ui.suppressClick = false; }, 400);
+}
+$('#main').addEventListener('pointerup', rdEnd);
+$('#main').addEventListener('pointercancel', rdEnd);
+
+/* ---------- press-and-hold to rearrange sticky notes (2-column grid) ---------- */
+const nd = { el: null, timer: null, x0: 0, y0: 0, on: false };
+function ndCancel() { clearTimeout(nd.timer); nd.timer = null; if (!nd.on) nd.el = null; }
+$('#main').addEventListener('pointerdown', e => {
+  const el = e.target.closest('.sticky-grid .sticky');
+  if (!el) return;
+  Object.assign(nd, { el, x0: e.clientX, y0: e.clientY });
+  nd.timer = setTimeout(() => {
+    nd.on = true; el.classList.add('dragging'); document.body.classList.add('no-scroll');
+    if (navigator.vibrate) navigator.vibrate(10);
+  }, 300);
+});
+$('#main').addEventListener('pointermove', e => {
+  if (!nd.el) return;
+  if (!nd.on) { if (Math.hypot(e.clientX - nd.x0, e.clientY - nd.y0) > 8) ndCancel(); return; }
+  e.preventDefault();
+  const el = nd.el;
+  el.style.transform = `translate(${e.clientX - nd.x0}px, ${e.clientY - nd.y0}px)`;
+  el.style.pointerEvents = 'none';
+  const over = document.elementFromPoint(e.clientX, e.clientY);
+  el.style.pointerEvents = '';
+  const target = over && over.closest('.sticky-grid .sticky');
+  if (target && target !== el) {
+    const r0 = el.getBoundingClientRect();
+    const items = [...el.parentNode.children], from = items.indexOf(el), to = items.indexOf(target);
+    el.parentNode.insertBefore(el, from < to ? target.nextSibling : target);
+    const r1 = el.getBoundingClientRect(); // keep it under the finger after the swap
+    nd.x0 += r1.left - r0.left; nd.y0 += r1.top - r0.top;
+    el.style.transform = `translate(${e.clientX - nd.x0}px, ${e.clientY - nd.y0}px)`;
+  }
+});
+document.addEventListener('touchmove', e => { if (nd.on) e.preventDefault(); }, { passive: false });
+function ndEnd() {
+  document.body.classList.remove('no-scroll');
+  if (!nd.on) { ndCancel(); return; }
+  const order = [...nd.el.parentNode.children].map(x => x.dataset.nid);
+  state.notes.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+  nd.on = false; nd.el = null; ui.suppressClick = true;
+  save(); render();
+  setTimeout(() => { ui.suppressClick = false; }, 400);
+}
+$('#main').addEventListener('pointerup', ndEnd);
+$('#main').addEventListener('pointercancel', ndEnd);
+$('#main').addEventListener('contextmenu', e => { if (e.target.closest('.sticky-grid')) e.preventDefault(); });
+
+document.addEventListener('click', e => {
+  if (ui.suppressClick) { ui.suppressClick = false; e.stopPropagation(); e.preventDefault(); return; }
+  const b = e.target.closest('[data-a]'); if (!b) return;
+  if (b.tagName === 'A') e.preventDefault();
+  const fn = actions[b.dataset.a]; if (fn) fn(b.dataset, b, e);
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.matches('[data-f="kind"]') && ui.draft) { readDraft(); renderProtoEditor(); return; }
+  if (t.dataset.sdKind) { ui.startDraft.pts[+t.dataset.sdKind].kind = t.value; return; }
+  if (t.dataset.remind) { const g = curPt(ui.rowEdit.p).tags.find(x => x.id === t.dataset.remind); g.remind = +t.value || 0; save(); render(); return; }
+  if (t.dataset.sdTime) { ui.startDraft[t.dataset.sdTime] = +t.value; return; }
+  if (t.dataset.smTime) { ui.shiftDraft[t.dataset.smTime] = +t.value; return; }
+});
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.id === 'ref-q') { ui.refQuery = t.value; renderRefList(); }
+  else if (t.dataset.sdRoom) ui.startDraft.pts[+t.dataset.sdRoom].room = t.value;
+  else if (t.dataset.ptnotes) { curPt(t.dataset.ptnotes).notes = t.value; saveSoon(); }
+  else if (t.dataset.qbl) { qblData(qblOwner())[t.dataset.qbl] = t.value; updateQblTotals(); saveSoon(); }
+  else if (t.dataset.qr) { qblData(qblOwner()).rows[+t.dataset.qr].g = t.value; updateQblTotals(); saveSoon(); }
+  else if (t.dataset.qj) {
+    qblData(qblOwner()).rows[+t.dataset.qi].items[+t.dataset.qj][t.dataset.qf] = t.value; saveSoon();
+    if (t.dataset.qf === 'name') renderQblSheet(); else updateQblTotals();
+  }
+  else if (t.dataset.to) { curPt(ui.timeoutSheet).timeout[t.dataset.to] = t.value; saveSoon(); }
+});
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  if (e.target.id === 'todo-new') { e.preventDefault(); actions.todoAdd({ p: e.target.dataset.p }); }
+  else if (e.target.id === 'row-new') { e.preventDefault(); actions.rowAdd({}); }
+});
+window.addEventListener('pagehide', save);
+
+// Hospital max is 18 hrs, so a shift resets on its own after that (with a chance to cancel)
+const SHIFT_MAX = 18 * 3600e3;
+function checkShiftReset() {
+  const sh = state.shift;
+  if (!sh || document.hidden || ui.resetTimer) return;
+  if (Date.now() - sh.startedAt < SHIFT_MAX || (sh.keepUntil && Date.now() < sh.keepUntil)) return;
+  let left = 30;
+  openSheet(`<h3>Resetting your shift</h3>
+    <p class="small" style="margin-top:6px">It's been 18 hrs since this shift started, so everything from it will clear in <b id="reset-left">${left}</b> seconds.</p>
+    <div class="btn-row end"><button class="btn" data-a="keepShift">Keep my shift</button>
+    <button class="btn primary" data-a="resetNow">Reset now</button></div>`);
+  ui.resetTimer = setInterval(() => {
+    left--; const el = $('#reset-left'); if (el) el.textContent = left;
+    if (left <= 0) actions.resetNow();
+  }, 1000);
+}
+function keepShift() {
+  clearInterval(ui.resetTimer); ui.resetTimer = null;
+  if (state.shift) { state.shift.keepUntil = Date.now() + 3600e3; save(); } // ask again in an hour
+}
+actions.keepShift = () => { keepShift(); closeSheet(); };
+actions.resetNow = () => {
+  clearInterval(ui.resetTimer); ui.resetTimer = null;
+  state.shift = null; state.runs = state.runs.filter(r => !(r.ptId && r.finishedAt)); ui.startDraft = null; save(); closeSheet(); render(); toast('New shift — last shift cleared');
+};
+
+// Refresh "due" highlights while a protocol is running
+setInterval(() => {
+  const typing = document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);
+  if (!$('#sheet').hidden || typing) return;
+  // Only the live pages redraw; elsewhere just refresh the Running badge so nothing jumps while you read
+  if ((ui.tab === 'running' && state.runs.length) || (ui.tab === 'shift' && state.shift)) render();
+  else updateRunBadge();
+}, 30000);
+setInterval(checkShiftReset, 30000);
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && (ui.tab === 'running' || ui.tab === 'shift') && $('#sheet').hidden && !(document.activeElement && /INPUT|TEXTAREA/.test(document.activeElement.tagName))) render();
+  else if (!document.hidden) updateRunBadge();
+  checkShiftReset();
+});
+
+load();
+if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+render();
+checkShiftReset();
+</script>
+</body>
+</html>
