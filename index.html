@@ -340,7 +340,7 @@ nav button.on{color:var(--accent)}
 /* sheet */
 #sheet{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:10;display:flex;align-items:flex-end;justify-content:center}
 #sheet[hidden]{display:none}
-.sheet-card{background:var(--card);width:100%;max-width:680px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch}
+.sheet-card{background:var(--card);width:100%;max-width:680px;max-height:92vh;max-height:calc(100dvh - 16px - env(safe-area-inset-top));overflow:auto;border-radius:18px 18px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch}
 .step-ed{border:1px solid var(--line);border-radius:12px;padding:10px;margin-top:10px}
 .step-ed .h-row button{min-width:34px;min-height:34px;border-radius:8px;border:1px solid var(--line);font-size:15px}
 .hide{display:none!important}
