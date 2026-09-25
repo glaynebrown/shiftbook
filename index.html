@@ -1676,7 +1676,7 @@ const actions = {
       const p = newPatient(room, kind), fromNow = !$('#add-from [data-v="all"]').classList.contains('on');
       p.tags = stripTags(fromNow);
       // From now: hide the clock rows before the first slot that's still coming up
-      if (fromNow) { const first = gridTimes().find(t => slotMs(t) >= Date.now() - 30 * 60000); p.clockFrom = first ? sinceStart(first) : 0; }
+      if (fromNow) { const first = gridTimes().find(t => slotMs(t) >= Date.now() - 5 * 60000); p.clockFrom = first ? sinceStart(first) : 0; }
       state.shift.patients.push(p); state.shift.currentId = p.id;
     }
     else {
@@ -2152,7 +2152,7 @@ const PENCIL_MENU = [['Strip', 'Strip charting'], ['Pit', 'Pit'], ['Mag', 'Mag']
 // Hourly strips at the :30s (from now, when a patient is added mid-shift)
 function stripTags(fromNow) {
   return gridTimes().filter((_, i) => i % 2 === 0)
-    .filter(t => !fromNow || slotMs(t) >= Date.now() - 30 * 60000)
+    .filter(t => !fromNow || slotMs(t) >= Date.now() - 5 * 60000) // mid-shift: only slots still coming up
     .map(t => ({ id: uid(), t, label: 'Strip', done: false }));
 }
 const SCHED = {
