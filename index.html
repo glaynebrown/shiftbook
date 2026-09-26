@@ -1604,12 +1604,12 @@ const actions = {
       <p class="muted small" style="margin-top:4px">Anything still open this shift:</p>
       ${blocks || '<p class="empty">No patients this shift.</p>'}
       ${solo.length ? `<div class="eos-pt"><b>On its own</b><ul>${solo.map(r => `<li>${esc(r.proto.name)} timer still running</li>`).join('')}</ul></div>` : ''}
-      <p class="muted small" style="margin-top:10px">Clocking out clears this shift's patients. Notes, codes and references stay.</p>
+      <p class="muted small" style="margin-top:10px">Clocking out clears this shift's patients.</p>
       <div class="btn-row end"><button class="btn" data-a="closeSheet">Back</button>
       <button class="btn primary" data-a="clockOut">Clock out</button></div>`);
   },
   clockOut() {
-    state.shift = null; state.runs = state.runs.filter(r => !(r.ptId && r.finishedAt)); save(); closeSheet(); render(); window.scrollTo(0, 0); toast('Clocked out — have a good one!');
+    state.shift = null; state.runs = state.runs.filter(r => !(r.ptId && r.finishedAt)); save(); closeSheet(); render(); window.scrollTo(0, 0); toast('Clocked out — now go relax!');
   },
   shiftMenu() {
     if (!state.shift) return;
