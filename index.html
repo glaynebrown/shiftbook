@@ -940,7 +940,7 @@ const roomLabel = p => /^\d/.test(p.room) ? 'Rm ' + p.room : (p.room || 'No room
 
 const DEFAULT_LINKS = [
   { id: 'l-timpani', label: 'Timpani Scheduler', url: 'https://hca.palantirfoundry.com/multipass/login/all', note: 'Opens in Safari. For the computer view: iPhone Settings → Apps → Safari → Request Desktop Website → turn on. Turning your phone sideways and Page Zoom (••• menu in Safari) help too.' },
-  { id: 'l-healthstream', label: 'HealthStream', url: 'https://app.hstream.com/home', note: '' },
+  { id: 'l-healthstream', label: 'HealthStream', url: 'https://login.healthstream.com/hstmsts/login.aspx?ReturnUrl=%2fHSTMSTS%2fusers%2fissue.aspx%3fwa%3dwsignin1.0%26wtrealm%3dhttp%253a%252f%252fwww.healthstream.com%252fhlc%26wctx%3drm%253d0%2526id%253dpassive%2526ru%253d%25252fHLC%25252flogin%25252flogin.aspx%25253fReturnURL%25253dhttp%25253a%25252f%25252fwww.healthstream.com%25252fHSAPP%25252fLogin%25252fAffiliationSelector%26wct%3d2026-09-26T02%253a24%253a04Z%26wreply%3dhttps%253a%252f%252fwww.healthstream.com%252fHLC%252flogin%252flogin.aspx%26sts_OrgId%3da86b970c-a5b3-da11-8139-000423acef71&sts_OrgId=a86b970c-a5b3-da11-8139-000423acef71&sts_OrgNodeId=00000000-0000-0000-0000-000000000000&wtrealm=http%3a%2f%2fwww.healthstream.com%2fhlc', note: '' },
   { id: 'l-hranswers', label: 'HR Answers', url: 'https://mingle-portal.inforcloudsuite.com/HCAHEALTHCARE_PRD/097ed3d1-0326-4b54-9ad7-2ab8bf9fa598?favoriteContext=https:%2F%2Fhcm-hcahealthcare-prd.tam.inforcloudsuite.com%2Fhcm%2FEmployeeSelfService%2Fhtml%2FEmployeeSelfService%3Fcsk.lidkey%3D6c1c5c1ea968a432ae27aa06e4c73e17%26menu%3DHome%26csk.CHP%3DEMPLOYEE_EXPERIENCE1%26LogicalId%3Dlid%253A%252F%252Finfor.lawson-ghr.ghr110-prod-useast1&LogicalId=lid:%2F%2Finfor.lawson-ghr.ghr110-prod-useast1&siteId=097ed3d1-0326-4b54-9ad7-2ab8bf9fa598', note: '' },
 ];
 // Fill in the quick links on phones that saved data before they had web addresses
@@ -984,6 +984,7 @@ function load() {
   const OLD_TIMPANI = 'https://ap.idf.medcity.net/IdentityFederationPortal/MFA/Analyze/HCA?ReturnUrl=%2FIdentityFederationPortal%2FLogin%2FValidate%2FHCA%3FAltConfig%3D2FA%26resume%3D%2Fidp%2FnVLX7BS8uY%2FresumeSAML20%2Fidp%2FSSO.ping%26spentity%3Durn%3Auuid%3Aef789313-74ab-423e-8265-bb28ef62bcdd', OLD_TIPS = ['Opens in Safari. Tap aA → Request Desktop Website so it looks like it does on a computer.', 'Opens in Safari. To see it like on a computer: tap aA in the address bar → Website Settings → turn on Request Desktop Website. Safari remembers it after that.'];
   state.links.forEach(l => {
     if (l.url === OLD_TIMPANI) l.url = DEFAULT_LINKS[0].url;
+    if (l.url === 'https://app.hstream.com/home') l.url = DEFAULT_LINKS[1].url;
     if (OLD_TIPS.includes(l.note)) l.note = DEFAULT_LINKS[0].note;
   });
   state.protocols = state.protocols.filter(p => !['bp-treat', 'bp-down', 'pit-pp', 'pit'].includes(p.id)); // removed protocols (info lives in Reference cards)
