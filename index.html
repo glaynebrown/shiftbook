@@ -125,8 +125,18 @@ details>summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:14p
 
 /* reference */
 .search{margin-bottom:10px}
+.search-wrap{position:relative}
+.search-wrap .search{padding-right:42px}
+.search::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
+.search-x{position:absolute;right:6px;top:6px;width:30px;height:30px;border-radius:50%;color:var(--muted);font-size:16px}
 .ref-h{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;font-weight:700;font-size:16px}
 .ref-h .chev{color:var(--muted);transition:transform .15s}
+.ref-top{display:flex;align-items:center;gap:6px}
+.ref-top .ref-h{flex:1;min-width:0}
+.star-btn{flex:none;width:30px;height:30px;margin:-6px 0 -6px -6px;display:grid;place-items:center;font-size:19px;line-height:1;color:var(--muted)}
+.star-btn.on{color:var(--accent)}
+.starred-btn{display:block;margin:0 auto 8px;padding:6px 16px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-weight:700;font-size:14px;color:var(--muted)}
+.starred-btn.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .ref.open .chev{transform:rotate(90deg)}
 .ref-body{margin-top:8px;font-size:15px}
 
@@ -198,6 +208,19 @@ ul.bundle li.sub{margin-left:16px;list-style:circle;color:var(--muted)}
 .pt-right{display:flex;align-items:center;gap:10px}
 .pt-head>div:first-child{flex:1;min-width:0}
 .pt-right{flex:none}
+.blurb-wrap{position:relative;display:block;margin:0 0 10px}
+.blurb-wrap .ic{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none}
+.pt-blurb{min-height:34px;padding:5px 11px 5px 32px;border-radius:999px;font-weight:700;font-size:15px;background:var(--accent-soft);color:var(--accent);border:1px solid transparent}
+.pt-blurb::placeholder{color:var(--muted);font-weight:500;font-size:14px}
+.pt-blurb.blank{background:transparent;border:1.5px dashed var(--line)}
+.pt-blurb:focus{outline:none;border-color:var(--accent)}
+.room-tab .rb{font-size:11px;font-weight:600;max-width:96px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pt-links{align-items:center}
+.rows-eye{width:30px;height:30px;display:grid;place-items:center;color:var(--muted);border-radius:8px}
+.rows-eye.on{color:var(--accent)}
+.rows-eye svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.todo-edit{flex:1;min-height:38px;padding:6px 10px;margin:4px 0}
+.h-btns{display:flex;align-items:center;gap:4px}
 .pt-room,.pencil-btn{white-space:nowrap}
 .pencil-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:9px;border:1px solid var(--accent);color:var(--accent);font-weight:700;font-size:14px}
 .pencil-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -219,6 +242,12 @@ body.std-time .tt{width:100px;font-size:15px}
 .tag.missed::before{color:var(--accent-ink)}
 .tag.done{background:var(--bg);border-color:var(--line);color:var(--muted);text-decoration:line-through;font-weight:500}
 .tag.done::before{color:var(--muted)}
+.tag{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+.tag.dragging{position:relative;z-index:6;box-shadow:0 8px 20px rgba(0,0,0,.25);background:var(--card);border-color:var(--accent)}
+.tr.ghost{display:none}
+.clock.tag-drag .tr.ghost{display:flex;opacity:.55}
+.clock.tag-drag .tr.ghost .tt{font-size:14px;color:var(--muted);padding-left:18px}
+.tr.drop{background:var(--accent-soft);border-radius:8px}
 .flag-btn{flex:none;min-height:34px;padding:0 10px;border-radius:8px;border:1px solid var(--line);font-size:13px;font-weight:700;color:var(--muted)}
 .flag-btn.on{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
 .chk-line{display:flex;align-items:center;gap:10px;margin-top:12px;font-weight:600}
@@ -253,6 +282,8 @@ body.std-time .tt{width:100px;font-size:15px}
 .ref{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .ref .ref-body{-webkit-user-select:text;user-select:text}
 .ref.dragging{position:relative;z-index:5;box-shadow:0 10px 24px rgba(0,0,0,.2)}
+.code-tile{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+.code-tile.dragging{position:relative;z-index:5;box-shadow:0 10px 24px rgba(0,0,0,.2)}
 .sticky.dragging{position:relative;z-index:5;box-shadow:0 10px 24px rgba(0,0,0,.25);transform-origin:center}
 body.no-scroll{overflow:hidden;touch-action:none}
 .swatches{display:flex;gap:10px;margin-top:12px}
@@ -487,12 +518,12 @@ q15min ×8 → q30min ×2 → q1h ×4 → q4h until 24 hrs PP`,
   ];
 }
 
-// Reference is split into Meds and Other
+// Reference is split into Meds and Policies & More (stored as "other")
 const MED_CARDS = ['Blood transfusion reaction', 'Magnesium toxicity', 'Fluids', 'Diluting IV meds', 'Betamethasone', 'Miso / Cytotec', 'Terbutaline', 'Meds & fluids', 'Pitocin', 'Magnesium', 'Epidural', 'PPH meds', 'Blood transfusion'];
 const refCat = title => MED_CARDS.includes(title) ? 'meds' : 'other';
 // Cards that can start a timed checklist
 const CARD_TIMERS = { 'Magnesium': ['mag'], 'Blood transfusion': ['blood'], 'Recovery fundals': ['rec-vag', 'rec-cs'] };
-// Default order: Meds A–Z; Other in the order below (cards you add go at the end of their section)
+// Default order: Meds A–Z; Policies & More in the order below (cards you add go at the end of their section)
 const OTHER_ORDER = ['Phone extensions', 'Admit / triage', 'Bands', 'Prenatals', 'Labs & blood draws', 'Swabs', 'Values', 'Gestational Policies', 'Temp', 'BP Tx',
   'Decels', 'IUPC / MVUs', 'Amnioinfusion', 'Cook balloon', 'QBL', 'JADA', 'Recovery fundals', 'Anesthesia staff', 'Surgical tech staff', 'C/S prep & OR', 'C/S timeout', 'After Delivery', 'Placenta/pathology form'];
 function sortRefs(list) {
@@ -1128,7 +1159,7 @@ if (ui.tab === 'callouts') ui.tab = 'more'; // call-outs moved into More
 function openSheet(html) { const s = $('#sheet'); s.innerHTML = '<div class="sheet-card">' + html + '</div>'; s.hidden = false; }
 function closeSheet() {
   ui.startPt = undefined;
-  $('#sheet').hidden = true; $('#sheet').innerHTML = ''; ui.draft = null; ui.todoSheet = null; ui.shiftDraft = null; ui.dlType = null; if (ui.qblSheet && ui.tab === 'shift') setTimeout(render, 0); ui.qblSheet = null; ui.timeoutSheet = null;
+  $('#sheet').hidden = true; $('#sheet').innerHTML = ''; ui.draft = null; ui.todoSheet = null; ui.todoEditing = false; ui.shiftDraft = null; ui.dlType = null; if (ui.qblSheet && ui.tab === 'shift') setTimeout(render, 0); ui.qblSheet = null; ui.timeoutSheet = null;
   if (ui.resetTimer) keepShift(); // closing the reset warning = keep the shift
 }
 $('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet') closeSheet(); });
@@ -1533,12 +1564,17 @@ const actions = {
       <span style="flex:1"></span><button class="btn primary" data-a="closeSheet">Done</button></div>`);
   },
   refSec(d) { ui.refSection = d.s; try { localStorage.setItem(KEY + '-refsec', d.s); } catch (e) {} render(); },
+  refStar(d) {
+    const st = state.starred = (state.starred || []).filter(id => state.refs.some(r => r.id === id));
+    if (st.includes(d.id)) st.splice(st.indexOf(d.id), 1); else st.push(d.id);
+    save(); render();
+  },
   refToggle(d) { ui.openRefs[d.id] = !ui.openRefs[d.id]; renderRefList(); },
   refEdit(d) {
-    const r = d.id === 'new' ? { id: 'new', title: '', body: '', cat: ui.refSection } : state.refs.find(x => x.id === d.id);
+    const r = d.id === 'new' ? { id: 'new', title: '', body: '', cat: ui.refSection === 'meds' ? 'meds' : 'other' } : state.refs.find(x => x.id === d.id);
     openSheet(`<h3>${d.id === 'new' ? 'New card' : 'Edit card'}</h3>
       <div class="grid2"><label class="f">Title<input id="r-title" value="${esc(r.title)}"></label>
-      <label class="f">Section<select id="r-cat"><option value="meds"${r.cat === 'meds' ? ' selected' : ''}>Meds</option><option value="other"${r.cat !== 'meds' ? ' selected' : ''}>Other</option></select></label></div>
+      <label class="f">Section<select id="r-cat"><option value="meds"${r.cat === 'meds' ? ' selected' : ''}>Meds</option><option value="other"${r.cat !== 'meds' ? ' selected' : ''}>Policies &amp; More</option></select></label></div>
       <label class="f">Content<textarea id="r-body" rows="16">${esc(r.body)}</textarea></label>
       ${d.id !== 'new' && timersFor(r).length ? `<div class="sec">Timed checks</div><div class="btn-row" style="margin-top:4px">${timersFor(r).map(p => `<button class="btn" data-a="protoEdit" data-id="${p.id}">Edit ${esc(p.short || '')} checks</button>`).join('')}</div>` : ''}
       <p class="muted small" style="margin-top:6px">Start a line with <b>#</b> for a heading, <b>-</b> for a bullet, and wrap words in <b>**</b> to bold them.</p>
@@ -1551,12 +1587,12 @@ const actions = {
     if (!title) { toast('Give it a title'); return; }
     if (d.id === 'new') { const r = { id: uid(), title, body, cat, updated: today() }; state.refs.push(r); ui.openRefs[r.id] = true; }
     else Object.assign(state.refs.find(x => x.id === d.id), { title, body, cat, updated: today() });
-    ui.refSection = cat;
+    if (!(ui.refSection === 'starred' && isStarred(d.id))) ui.refSection = cat; // editing from Starred stays there
     save(); closeSheet(); render(); toast('Saved');
   },
   refDelete(d) {
     if (!confirm('Delete this card?')) return;
-    state.refs = state.refs.filter(x => x.id !== d.id); save(); closeSheet(); render();
+    state.refs = state.refs.filter(x => x.id !== d.id); state.starred = (state.starred || []).filter(id => id !== d.id); save(); closeSheet(); render();
   },
   refMove(d) {
     // Swap with the nearest card in the same section
@@ -1574,7 +1610,7 @@ const actions = {
     const sd = ui.startDraft;
     const pts = sd.pts.filter(x => x.room.trim()).map(x => newPatient(x.room.trim(), x.kind));
     if (sd.pts.some(x => !x.room.trim()) && !confirm('Patients without a room number will be skipped. Start anyway?')) return;
-    state.shift = { startedAt: Date.now(), date: today(), type: sd.type, startMin: sd.start, endMin: sd.end, patients: pts, currentId: pts[0] ? pts[0].id : null };
+    state.shift = { startedAt: Date.now(), date: today(), type: sd.type, startMin: sd.start, endMin: sd.end, clockBase: state.clockBase != null ? state.clockBase : 30, patients: pts, currentId: pts[0] ? pts[0].id : null };
     pts.forEach(p => { p.tags = stripTags(false); });
     ui.startDraft = null; save(); render(); window.scrollTo(0, 0);
   },
@@ -1819,10 +1855,13 @@ const actions = {
     const p = curPt(d.p), label = $('#sc-label').value.trim(), every = +$('#sc-every').value, start = $('#sc-start').value, flag = $('#sc-flag').checked, remind = +$('#sc-remind').value || 0;
     if (!label) { toast('What are you adding?'); return; }
     const times = gridTimes(), s0 = sinceStart(start);
-    times.filter(t => sinceStart(t) >= s0 && (every ? (sinceStart(t) - s0) % every === 0 : t === start)).forEach(t => {
+    const at = times.filter(t => sinceStart(t) >= s0 && (every ? (sinceStart(t) - s0) % every === 0 : t === start));
+    at.forEach(t => {
       if (!p.tags.some(g => g.t === t && g.label.toLowerCase() === label.toLowerCase())) p.tags.push({ id: uid(), t, label, done: false, flag, remind });
     });
+    const nTemp = vsDropsTemp(p, label, at);
     save(); closeSheet(); render();
+    if (nTemp) toast(`Took Temp off ${nTemp} time${nTemp === 1 ? '' : 's'} — V/S includes it`);
   },
   schedRemove(d) {
     const p = curPt(d.p), label = $('#sc-label').value.trim().toLowerCase(), s0 = sinceStart($('#sc-start').value);
@@ -1835,7 +1874,8 @@ const actions = {
   rowAdd(d) {
     const p = curPt(ui.rowEdit.p), label = (d.label || $('#row-new').value).trim();
     if (!label) return;
-    p.tags.push({ id: uid(), t: ui.rowEdit.t, label, done: false, flag: !!(SCHED[label] && SCHED[label].flag), remind: (SCHED[label] && SCHED[label].remind) || 0 }); save(); renderRowEditor(); render();
+    p.tags.push({ id: uid(), t: ui.rowEdit.t, label, done: false, flag: !!(SCHED[label] && SCHED[label].flag), remind: (SCHED[label] && SCHED[label].remind) || 0 });
+    vsDropsTemp(p, label, [ui.rowEdit.t]); save(); renderRowEditor(); render();
   },
   remindClose(d) { curPt(d.p).tags.find(g => g.id === d.id).dismissed = true; save(); render(); },
   tagFlag(d) { const g = curPt(ui.rowEdit.p).tags.find(x => x.id === d.id); g.flag = !g.flag; save(); renderRowEditor(); render(); },
@@ -1919,6 +1959,7 @@ const actions = {
   laborToggle(d) { ui.showLabor[d.p] = !ui.showLabor[d.p]; render(); },
 
   // to-do
+  rowsEye() { state.hideDoneRows = !state.hideDoneRows; save(); render(); },
   todoEye() { state.hideDoneTodos = !state.hideDoneTodos; save(); renderTodoSheet(); },
   todoOpen(d) { ui.todoSheet = d.p; renderTodoSheet(); },
   todoAdd(d) {
@@ -1927,8 +1968,19 @@ const actions = {
     p.todos.push({ id: uid(), text, done: false }); save(); render(); renderTodoSheet();
     if (!d.text) setTimeout(() => $('#todo-new') && $('#todo-new').focus(), 0);
   },
+  refClear() { ui.refQuery = ''; const q = $('#ref-q'); q.value = ''; $('.search-x').hidden = true; renderRefList(); q.focus(); },
+  todoEdit() { ui.todoEditing = true; renderTodoSheet(); },
+  todoEditDone() {
+    const p = curPt(ui.todoSheet);
+    $$('[data-todoedit]').forEach(el => { const t = p.todos.find(x => x.id === el.dataset.todoedit); if (t) t.text = el.value.trim(); });
+    p.todos = p.todos.filter(t => t.text); // emptied out = deleted
+    ui.todoEditing = false; save(); render(); renderTodoSheet();
+  },
   todoTog(d) { const x = curPt(d.p).todos.find(t => t.id === d.id); x.done = !x.done; save(); render(); renderTodoSheet(); },
-  todoDel(d) { const p = curPt(d.p); p.todos = p.todos.filter(t => t.id !== d.id); save(); render(); renderTodoSheet(); },
+  todoDel(d) {
+    const p = curPt(d.p);
+    $$('[data-todoedit]').forEach(el => { const t = p.todos.find(x => x.id === el.dataset.todoedit); if (t) t.text = el.value; });
+    p.todos = p.todos.filter(t => t.id !== d.id); save(); render(); renderTodoSheet(); },
 
   listEdit(d) {
     openSheet(`<h3>Edit ${esc(BUNDLES[d.which].toLowerCase())}</h3>
@@ -1987,6 +2039,11 @@ const actions = {
       <div class="grid2"><label class="f">Usual start<select data-def="start">${timeOptions(shiftHours(ds.type || 'day')[0])}</select></label>
         <label class="f">Usual end<select data-def="end">${timeOptions(shiftHours(ds.type || 'day')[1])}</select></label></div>
       <p class="muted small" style="margin-top:6px">Starting a shift will be filled in with these. You can still change them each time.</p>
+      <div class="sec" style="margin-top:16px">Hourly clock rows on</div>
+      <div class="seg" style="margin-top:6px">
+        <button class="${state.clockBase === 0 ? '' : 'on'}" data-a="setClockBase" data-v="30">The :30s · ${hm(450)}</button>
+        <button class="${state.clockBase === 0 ? 'on' : ''}" data-a="setClockBase" data-v="0">The hour · ${hm(480)}</button></div>
+      <p class="muted small" style="margin-top:6px">Where the hourly strips go on each patient's clock.${state.shift && clockBase() !== (state.clockBase != null ? state.clockBase : 30) ? ' <b>Starts with your next shift.</b>' : ''}</p>
       <div class="sec" style="margin-top:16px">Time format</div>
       <div class="seg" style="margin-top:6px">
         <button class="${f === '24' ? 'on' : ''}" data-a="setTimeFmt" data-f="24">Military · 1430</button>
@@ -2002,6 +2059,7 @@ const actions = {
     state.defaultShift = { type: d.v, start: DEFAULT_HOURS[d.v][0], end: DEFAULT_HOURS[d.v][1] };
     ui.startDraft = null; save(); render(); actions.appSettings();
   },
+  setClockBase(d) { state.clockBase = +d.v; save(); render(); actions.appSettings(); },
   setTheme(d) { state.theme = d.v; save(); render(); actions.appSettings(); },
   setTimeFmt(d) { state.timeFormat = d.f; save(); render(); actions.appSettings(); },
   backupToggle() { state.backupHidden = !state.backupHidden; save(); render(); },
@@ -2122,22 +2180,30 @@ function renderRunning() {
 /* ---------- reference ---------- */
 function renderReference() {
   const sec = ui.refSection;
-  return VERIFY + `<div class="seg" style="margin-bottom:10px">
+  return VERIFY + `<button class="starred-btn${sec === 'starred' ? ' on' : ''}" data-a="refSec" data-s="starred">★ Starred${starredRefs().length ? ` · ${starredRefs().length}` : ''}</button>
+    <div class="seg" style="margin-bottom:10px">
       <button class="${sec === 'meds' ? 'on' : ''}" data-a="refSec" data-s="meds">Meds</button>
-      <button class="${sec === 'other' ? 'on' : ''}" data-a="refSec" data-s="other">Other</button></div>
-    <input class="search" type="search" id="ref-q" placeholder="Search all cards (e.g. TXA, GBS, printer)" value="${esc(ui.refQuery)}">
+      <button class="${sec === 'other' ? 'on' : ''}" data-a="refSec" data-s="other">Policies &amp; More</button></div>
+    <div class="search-wrap"><input class="search" type="search" id="ref-q" placeholder="Search all cards (e.g. TXA, GBS, printer)" value="${esc(ui.refQuery)}">
+      <button class="search-x" data-a="refClear" aria-label="Clear search"${ui.refQuery ? '' : ' hidden'}>✕</button></div>
     <div id="reflist"></div>
     <button class="btn block" data-a="refEdit" data-id="new">+ New card</button>`;
 }
+// Starred cards: their own order (drag to arrange in the Starred view)
+const isStarred = id => (state.starred || []).includes(id);
+const starredRefs = () => (state.starred || []).map(id => state.refs.find(r => r.id === id)).filter(Boolean);
 const timersFor = r => (r.protos || []).map(id => state.protocols.find(p => p.id === id)).filter(Boolean);
 function renderRefList() {
   const q = ui.refQuery.trim().toLowerCase();
   // Searching looks through both sections
-  const list = state.refs.filter(r => q ? (r.title + '\n' + r.body).toLowerCase().includes(q) : r.cat === ui.refSection);
+  const list = q ? state.refs.filter(r => (r.title + '\n' + r.body).toLowerCase().includes(q))
+    : ui.refSection === 'starred' ? starredRefs() : state.refs.filter(r => r.cat === ui.refSection);
+  if (!q && ui.refSection === 'starred' && !list.length) { $('#reflist').innerHTML = '<p class="empty">Tap ☆ on any card to keep it here.</p>'; return; }
   $('#reflist').innerHTML = list.length ? list.map(r => {
     const open = q || ui.openRefs[r.id];
     return `<div class="card ref${open ? ' open' : ''}" data-rid="${r.id}">
-      <button class="ref-h" data-a="refToggle" data-id="${r.id}"><span>${esc(r.title)}${q ? ` <span class="muted small" style="font-weight:500">· ${r.cat === 'meds' ? 'Meds' : 'Other'}</span>` : ''}</span><span class="chev">›</span></button>
+      <div class="ref-top"><button class="star-btn${isStarred(r.id) ? ' on' : ''}" data-a="refStar" data-id="${r.id}" aria-label="${isStarred(r.id) ? 'Unstar' : 'Star'}">${isStarred(r.id) ? '★' : '☆'}</button>
+      <button class="ref-h" data-a="refToggle" data-id="${r.id}"><span>${esc(r.title)}${q || ui.refSection === 'starred' ? ` <span class="muted small" style="font-weight:500">· ${r.cat === 'meds' ? 'Meds' : 'Policies &amp; More'}</span>` : ''}</span><span class="chev">›</span></button></div>
       ${open ? `<div class="ref-body">${fmt(r.body)}</div>
         ${r.title === 'QBL' ? `<div class="btn-row"><button class="btn primary" data-a="qblOpen" data-p="solo">▶ Open QBL tracker</button></div>` : ''}
         ${timersFor(r).length ? `<div class="btn-row">${timersFor(r).map(p => `<button class="btn primary" data-a="protoStart" data-id="${p.id}">▶ Start${timersFor(r).length > 1 ? ' ' + esc(p.short || p.name) : ' timer'}</button>`).join('')}</div>` : ''}
@@ -2150,20 +2216,34 @@ function renderRefList() {
 /* ---------- shift ---------- */
 const PENCIL_SVG = '<svg viewBox="0 0 24 24"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>';
 const PENCIL_MENU = [['Strip', 'Strip charting'], ['Pit', 'Pit'], ['Mag', 'Mag'], ['V/S', 'V/S'], ['Temp', 'Temp'], ['BG', 'BG'], ['', 'Something else (e.g. Miso)']];
-// Hourly strips at the :30s (from now, when a patient is added mid-shift)
+// The hourly rows: on the :30s (or the :00s — Settings → Clock rows), fixed for the shift once it starts
+const clockBase = () => state.shift ? (state.shift.clockBase != null ? state.shift.clockBase : 30) : (state.clockBase != null ? state.clockBase : 30);
+const hourTimes = () => {
+  const ts = gridTimes().filter(t => +t.slice(2) === clockBase());
+  const first = tStr(state.shift.startMin); // on the hour → a row right at shift start too (0700–1800)
+  return +first.slice(2) === clockBase() ? [first, ...ts] : ts;
+};
+// Hourly strips (from now, when a patient is added mid-shift)
 function stripTags(fromNow) {
-  return gridTimes().filter((_, i) => i % 2 === 0)
+  return hourTimes()
     .filter(t => !fromNow || slotMs(t) >= Date.now() - 5 * 60000) // mid-shift: only slots still coming up
     .map(t => ({ id: uid(), t, label: 'Strip', done: false }));
 }
 const SCHED = {
   'Strip': { every: 60 },
-  'Pit': { every: 30, remind: 5, hint: 'Strip charting q30min while on pit — adds the :00 times to the clock.' },
+  'Pit': { every: 30, remind: 5, hint: 'Strip charting q30min while on pit — adds the in-between half hours to the clock.' },
   'Mag': { every: 60, flag: true, hint: 'Hourly mag review.' },
   'V/S': { every: 240 },
   'Temp': { every: 240, hint: 'Temp: q4h if intact · q2h if ROM · q1h if > 99.0 (until < 99.0)' },
   'BG': { every: 60, flag: true, remind: 60, hint: 'BG per hospital policy = 70–110' },
 };
+// Adding V/S takes any unchecked Temp off those same times (V/S includes temp) — Temp can still be added back by hand
+function vsDropsTemp(p, label, times) {
+  if (label.toLowerCase() !== 'v/s') return 0;
+  const before = p.tags.length;
+  p.tags = p.tags.filter(g => !(times.includes(g.t) && !g.done && g.label.toLowerCase() === 'temp'));
+  return before - p.tags.length;
+}
 const curPt = id => state.shift.patients.find(x => x.id === id);
 const activePts = () => state.shift.patients.filter(p => !p.archivedAt);
 // Your usual hours (Settings → Default shift) for your usual shift type; standard hours otherwise
@@ -2211,15 +2291,20 @@ function itemHtml(p, key, label, opts = {}) {
     </div>${open ? bundleHtml(state.lists[infoKey]) : ''}`;
 }
 function clockHtml(p) {
-  const base = gridTimes().filter((_, i) => i % 2 === 0) // the :30s
+  const base = hourTimes()
     .filter(t => sinceStart(t) >= (p.clockFrom || 0)); // patients added mid-shift start from when they were added
   const inShift = p.tags.filter(g => sinceStart(g.t) < shiftLen());
   const times = [...new Set([...base, ...inShift.map(g => g.t)])].sort((a, b) => sinceStart(a) - sinceStart(b));
-  const now = Date.now();
-  return '<div class="clock">' + times.map(t => {
+  const now = Date.now(), hide = state.hideDoneRows;
+  const rowDone = t => { const tags = p.tags.filter(g => g.t === t); return tags.length && tags.every(g => g.done); };
+  // Empty half hours stay hidden until you drag something, so there's somewhere to drop it
+  const ghosts = [...new Set([...hourTimes(), ...gridTimes()])].filter(t => !times.includes(t) && sinceStart(t) >= (p.clockFrom || 0));
+  const rows = [...times.filter(t => !(hide && rowDone(t))), ...ghosts].sort((a, b) => sinceStart(a) - sinceStart(b));
+  return `<div class="clock" data-p="${p.id}">` + rows.map(t => {
+    if (ghosts.includes(t)) return `<div class="tr ghost" data-t="${t}"><span class="tt">${fmtT(t)}</span><span class="dash">–</span><span class="tags"></span></div>`;
     const tags = p.tags.filter(g => g.t === t);
     const done = tags.length && tags.every(g => g.done), due = !done && tags.length && slotMs(t) <= now;
-    return `<div class="tr${base.includes(t) ? '' : ' half'}">
+    return `<div class="tr${base.includes(t) ? '' : ' half'}" data-t="${t}">
       <button class="tt${done ? ' done' : due ? ' due' : ''}" data-a="rowEdit" data-p="${p.id}" data-t="${t}">${fmtT(t)}${done ? ' ✓' : ''}</button>
       <span class="dash">–</span>
       <span class="tags">${tags.map(g => `<button class="tag${g.done ? ' done' : ''}${g.flag ? ' flag' : ''}${g.flag && !g.done && slotMs(t) <= now ? ' missed' : ''}" data-a="tagTog" data-p="${p.id}" data-id="${g.id}">${esc(g.label)}</button>`).join('')}</span>
@@ -2392,8 +2477,13 @@ function renderTodoSheet() {
   if (!ui.todoSheet) return;
   const p = curPt(ui.todoSheet);
   const hide = state.hideDoneTodos, nDone = p.todos.filter(t => t.done).length;
+  if (ui.todoEditing) return openSheet(`<h3>Edit to-dos · ${esc(roomLabel(p))}</h3>
+    <div style="margin-top:8px">${p.todos.map(t => `<div class="todo"><input class="todo-edit" data-todoedit="${t.id}" value="${esc(t.text)}" autocomplete="off">
+      <button class="x" data-a="todoDel" data-p="${p.id}" data-id="${t.id}" aria-label="Delete">✕</button></div>`).join('') || '<p class="empty">No to-dos yet.</p>'}</div>
+    <div class="btn-row end"><button class="btn primary" data-a="todoEditDone">Save</button></div>`);
   openSheet(`<div class="h-row"><h3>To-do · ${esc(roomLabel(p))}</h3>
-    <button class="eye-btn" data-a="todoEye" aria-label="${hide ? 'Show' : 'Hide'} checked items">${hide ? EYE_OFF : EYE}</button></div>
+    <div class="h-btns">${p.todos.length ? '<button class="linkish" data-a="todoEdit">Edit</button>' : ''}
+    <button class="eye-btn" data-a="todoEye" aria-label="${hide ? 'Show' : 'Hide'} checked items">${hide ? EYE_OFF : EYE}</button></div></div>
     ${todoHtml(p, hide)}
     ${hide && nDone ? `<p class="muted small" style="margin-top:6px">${nDone} checked item${nDone === 1 ? '' : 's'} hidden</p>` : ''}
     <div class="btn-row end"><button class="btn primary" data-a="closeSheet">Done</button></div>`);
@@ -2522,7 +2612,7 @@ function overviewCard(p) {
     lines.push(`${esc(r.proto.name)}${due ? ` · <b class="due-txt">${due} due</b>` : ''}`);
   });
   return `<button class="card ov-card" data-a="selPt" data-id="${p.id}">
-    <div class="h-row"><span class="ov-room">${esc(roomLabel(p))}</span>
+    <div class="h-row"><span class="ov-room">${esc(roomLabel(p))}${p.blurb ? ` <span class="small" style="font-weight:700;letter-spacing:0">· ${esc(p.blurb)}</span>` : ''}</span>
       <span class="muted small">${KINDS[p.kind]}${p.deliveredAt ? ' · PP' : ''}${p.dischargedAt ? ' · D/C' : ''} ›</span></div>
     ${lines.length ? `<div class="ov-lines">${lines.map(l => `<div>${l}</div>`).join('')}</div>` : '<div class="ov-lines muted">Nothing due</div>'}</button>`;
 }
@@ -2534,7 +2624,7 @@ function renderShift() {
   const prevCount = sh.patients.filter(p => p.archivedAt).length;
   let h = '';
   h += `<div class="rooms">${activePts().map(p => `<button class="room-tab${cur && p.id === cur.id ? ' on' : ''}" data-a="selPt" data-id="${p.id}">
-      <span class="rn">${esc(roomLabel(p))}</span><span class="rk">${p.deliveredAt ? (isCsDelivery(p) ? 'PP · C/S' : 'PP') : p.dischargedAt ? 'D/C' : KIND_SHORT[p.kind]}</span></button>`).join('')}
+      <span class="rn">${esc(roomLabel(p))}</span><span class="rk">${p.deliveredAt ? (isCsDelivery(p) ? 'PP · C/S' : 'PP') : p.dischargedAt ? 'D/C' : KIND_SHORT[p.kind]}</span>${p.blurb ? `<span class="rb">${esc(p.blurb)}</span>` : ''}</button>`).join('')}
       <button class="room-tab add" data-a="patientEdit" data-id="new"><span class="rn">+</span><span class="rk">Add</span></button>
       ${prevCount ? `<button class="room-tab prev${cur && cur.archivedAt ? ' on' : ''}" data-a="previousPts"><span class="rn">↺ ${prevCount}</span><span class="rk">Previous</span></button>` : ''}</div>`;
   h += reminderBanner();
@@ -2543,9 +2633,11 @@ function renderShift() {
     h += `<div class="card pt-card${cur.archivedAt ? ' archived' : ''}">
       <div class="pt-head"><div>
         <button class="type-btn" data-a="patientEdit" data-id="${cur.id}">${KINDS[cur.kind]}${cur.admittedAt ? ' · from triage' : ''}${cur.deliveredAt ? (isCsDelivery(cur) ? ' · delivered by C/S' : ' · delivered') : ''}${cur.dischargedAt ? ' · discharged' : ''} ${PENCIL_SVG}</button>
-        ${cur.archivedAt ? '' : `<div class="pt-links"><button class="linkish" data-a="tools" data-p="${cur.id}">Tools</button></div>`}</div>
+        ${cur.archivedAt ? '' : `<div class="pt-links"><button class="linkish" data-a="tools" data-p="${cur.id}">Tools</button>
+          <button class="rows-eye${state.hideDoneRows ? ' on' : ''}" data-a="rowsEye" aria-label="${state.hideDoneRows ? 'Show' : 'Hide'} finished clock rows">${state.hideDoneRows ? EYE_OFF : EYE}</button></div>`}</div>
         <div class="pt-right">${cur.archivedAt ? '' : `<button class="pencil-btn" data-a="pencilMenu" data-p="${cur.id}" aria-label="Add what applies to this patient">＋ Add</button>`}
-        <button class="pt-room" data-a="roomEdit" data-id="${cur.id}" aria-label="Change room number">${esc(roomLabel(cur))}</button></div></div>`;
+        <button class="pt-room" data-a="roomEdit" data-id="${cur.id}" aria-label="Change room number">${esc(roomLabel(cur))}</button></div></div>
+      <label class="blurb-wrap"><span class="ic">🏷</span><input class="pt-blurb${cur.blurb ? '' : ' blank'}" data-ptblurb="${cur.id}" value="${esc(cur.blurb || '')}" maxlength="40" autocomplete="off" placeholder="+ Add a quick tag (e.g. GDM pt)"${cur.archivedAt ? ' disabled' : ''}></label>`;
     h += todoBar(cur);
     const ptRuns = state.runs.filter(r => r.ptId === cur.id && (!cur.archivedAt || r.finishedAt));
     h += [...ptRuns.filter(r => !r.finishedAt), ...ptRuns.filter(r => r.finishedAt)].map(r => renderRun(r, true)).join('');
@@ -2637,7 +2729,7 @@ function openItemEditor(list, id) {
 // Notes tab: codes as small tiles, then sticky notes that stay until you delete them
 const NOTE_COLORS = { yellow: '#fff3a8', pink: '#ffd3e2', blue: '#cfe6ff', green: '#d4f2d2', orange: '#ffdcb5', purple: '#e6d8ff' };
 function renderNotes() {
-  const codes = state.codes.map(c => `<button class="code-tile" data-a="itemEdit" data-list="codes" data-id="${c.id}">
+  const codes = state.codes.map(c => `<button class="code-tile" data-nid="${c.id}" data-a="itemEdit" data-list="codes" data-id="${c.id}">
       <span class="small muted">${esc(c.label)}</span><span class="code">${esc(c.code)}</span></button>`).join('');
   const notes = state.notes.map(n => `<button class="sticky" data-nid="${n.id}" style="background:${NOTE_COLORS[n.color] || NOTE_COLORS.yellow}" data-a="noteEdit" data-id="${n.id}">
       <span class="pre">${esc(n.text)}</span><span class="sticky-date">${niceDate(n.date)}</span></button>`).join('');
@@ -2710,6 +2802,26 @@ $('#import-file').addEventListener('change', e => {
 });
 
 /* ---------- events ---------- */
+/* ---------- while dragging, holding near the top/bottom edge scrolls (faster the closer you get) ---------- */
+const edge = { raf: 0, y: 0, box: null, onScroll: null };
+function edgeStart(box, y, onScroll) { Object.assign(edge, { box, y, onScroll }); if (!edge.raf) edge.raf = requestAnimationFrame(edgeTick); }
+function edgeStop() { cancelAnimationFrame(edge.raf); edge.raf = 0; edge.box = null; }
+function edgeTick() {
+  edge.raf = requestAnimationFrame(edgeTick);
+  const box = edge.box; if (!box) return;
+  const win = box === window, nav = $('nav');
+  const top = win ? 0 : box.getBoundingClientRect().top;
+  const bottom = win ? (nav ? nav.getBoundingClientRect().top : innerHeight) : box.getBoundingClientRect().bottom;
+  const zone = 70; let v = 0;
+  if (edge.y < top + zone) v = -Math.min(1, (top + zone - edge.y) / zone) * 16;
+  else if (edge.y > bottom - zone) v = Math.min(1, (edge.y - bottom + zone) / zone) * 16;
+  if (!v) return;
+  const before = win ? scrollY : box.scrollTop;
+  if (win) scrollBy(0, Math.round(v)); else box.scrollTop += Math.round(v);
+  const dy = (win ? scrollY : box.scrollTop) - before;
+  if (dy) edge.onScroll(dy);
+}
+
 /* ---------- press-and-hold to reorder to-dos ---------- */
 const drag = { row: null, timer: null, startY: 0, y0: 0, on: false };
 function dragCancel() { clearTimeout(drag.timer); drag.timer = null; if (!drag.on) drag.row = null; }
@@ -2720,26 +2832,29 @@ $('#sheet').addEventListener('pointerdown', e => {
   drag.timer = setTimeout(() => {           // held still long enough → start dragging
     drag.on = true; row.classList.add('dragging');
     $('.sheet-card').classList.add('no-scroll');
+    edgeStart($('.sheet-card'), drag.y0, dy => { drag.startY -= dy; dragMove(edge.y); });
     if (navigator.vibrate) navigator.vibrate(10);
   }, 300);
 });
+function dragMove(y) {
+  const row = drag.row;
+  const prev = row.previousElementSibling, next = row.nextElementSibling;
+  if (prev && y < prev.getBoundingClientRect().top + prev.offsetHeight / 2) {
+    row.parentNode.insertBefore(row, prev); drag.startY -= prev.offsetHeight;
+  } else if (next && y > next.getBoundingClientRect().top + next.offsetHeight / 2) {
+    row.parentNode.insertBefore(next, row); drag.startY += next.offsetHeight;
+  }
+  row.style.transform = `translateY(${y - drag.startY}px)`;
+}
 $('#sheet').addEventListener('pointermove', e => {
   if (!drag.row) return;
   if (!drag.on) { if (Math.abs(e.clientY - drag.y0) > 8) dragCancel(); return; } // moved first = scrolling
-  e.preventDefault();
-  const row = drag.row;
-  row.style.transform = `translateY(${e.clientY - drag.startY}px)`;
-  const prev = row.previousElementSibling, next = row.nextElementSibling, r = row.getBoundingClientRect();
-  if (prev && e.clientY < prev.getBoundingClientRect().top + prev.offsetHeight / 2) {
-    row.parentNode.insertBefore(row, prev); drag.startY -= prev.offsetHeight;
-  } else if (next && e.clientY > next.getBoundingClientRect().top + next.offsetHeight / 2) {
-    row.parentNode.insertBefore(next, row); drag.startY += next.offsetHeight;
-  }
-  row.style.transform = `translateY(${e.clientY - drag.startY}px)`;
+  e.preventDefault(); edge.y = e.clientY; dragMove(e.clientY);
 });
 $('#sheet').addEventListener('touchmove', e => { if (drag.on) e.preventDefault(); }, { passive: false });
 function dragEnd() {
   if (!drag.on) { dragCancel(); return; }
+  edgeStop();
   const list = drag.row.parentNode, p = curPt(list.dataset.p);
   const order = [...list.querySelectorAll('.todo')].map(el => el.dataset.tid);
   // Put the visible items in their new order; hidden (checked) ones keep their slots
@@ -2758,33 +2873,39 @@ const rd = { el: null, timer: null, y0: 0, startY: 0, on: false };
 function rdCancel() { clearTimeout(rd.timer); rd.timer = null; if (!rd.on) rd.el = null; }
 $('#main').addEventListener('pointerdown', e => {
   const el = e.target.closest('#reflist .ref');
-  if (!el || ui.refQuery.trim() || e.target.closest('.ref-body, .btn-row')) return; // not while searching or inside an open card's text
+  if (!el || ui.refQuery.trim() || e.target.closest('.ref-body, .btn-row, .star-btn')) return; // not while searching or inside an open card's text
   Object.assign(rd, { el, y0: e.clientY, startY: e.clientY });
   rd.timer = setTimeout(() => {
     rd.on = true; el.classList.add('dragging'); document.body.classList.add('no-scroll');
+    edgeStart(window, rd.y0, dy => { rd.startY -= dy; rdMove(edge.y); });
     if (navigator.vibrate) navigator.vibrate(10);
   }, 300);
 });
+function rdMove(y) {
+  const el = rd.el, prev = el.previousElementSibling, next = el.nextElementSibling;
+  if (prev && y < prev.getBoundingClientRect().top + prev.offsetHeight / 2) {
+    el.parentNode.insertBefore(el, prev); rd.startY -= prev.offsetHeight + 10;
+  } else if (next && y > next.getBoundingClientRect().top + next.offsetHeight / 2) {
+    el.parentNode.insertBefore(next, el); rd.startY += next.offsetHeight + 10;
+  }
+  el.style.transform = `translateY(${y - rd.startY}px)`;
+}
 $('#main').addEventListener('pointermove', e => {
   if (!rd.el) return;
   if (!rd.on) { if (Math.abs(e.clientY - rd.y0) > 8) rdCancel(); return; }
-  e.preventDefault();
-  const el = rd.el, prev = el.previousElementSibling, next = el.nextElementSibling;
-  if (prev && e.clientY < prev.getBoundingClientRect().top + prev.offsetHeight / 2) {
-    el.parentNode.insertBefore(el, prev); rd.startY -= prev.offsetHeight + 10;
-  } else if (next && e.clientY > next.getBoundingClientRect().top + next.offsetHeight / 2) {
-    el.parentNode.insertBefore(next, el); rd.startY += next.offsetHeight + 10;
-  }
-  el.style.transform = `translateY(${e.clientY - rd.startY}px)`;
+  e.preventDefault(); edge.y = e.clientY; rdMove(e.clientY);
 });
 document.addEventListener('touchmove', e => { if (rd.on) e.preventDefault(); }, { passive: false });
 function rdEnd() {
-  document.body.classList.remove('no-scroll');
   if (!rd.on) { rdCancel(); return; }
+  document.body.classList.remove('no-scroll'); edgeStop();
   // New order for this section; cards in the other section keep their places
   const order = [...rd.el.parentNode.querySelectorAll('.ref')].map(x => x.dataset.rid);
-  const inSec = new Set(order), byId = Object.fromEntries(state.refs.map(r => [r.id, r])); let k = 0;
-  state.refs = state.refs.map(r => inSec.has(r.id) ? byId[order[k++]] : r);
+  if (ui.refSection === 'starred') state.starred = order; // Starred has its own order
+  else {
+    const inSec = new Set(order), byId = Object.fromEntries(state.refs.map(r => [r.id, r])); let k = 0;
+    state.refs = state.refs.map(r => inSec.has(r.id) ? byId[order[k++]] : r);
+  }
   rd.on = false; rd.el = null; ui.suppressClick = true;
   save(); renderRefList();
   setTimeout(() => { ui.suppressClick = false; }, 400);
@@ -2792,29 +2913,33 @@ function rdEnd() {
 $('#main').addEventListener('pointerup', rdEnd);
 $('#main').addEventListener('pointercancel', rdEnd);
 
-/* ---------- press-and-hold to rearrange sticky notes (2-column grid) ---------- */
-const nd = { el: null, timer: null, x0: 0, y0: 0, on: false };
+/* ---------- press-and-hold to rearrange sticky notes and code tiles (grids) ---------- */
+const GRID_ITEM = '.sticky-grid .sticky, .code-grid .code-tile';
+const nd = { el: null, timer: null, x0: 0, y0: 0, x: 0, on: false };
 function ndCancel() { clearTimeout(nd.timer); nd.timer = null; if (!nd.on) nd.el = null; }
 $('#main').addEventListener('pointerdown', e => {
-  const el = e.target.closest('.sticky-grid .sticky');
+  const el = e.target.closest(GRID_ITEM);
   if (!el) return;
-  Object.assign(nd, { el, x0: e.clientX, y0: e.clientY });
+  Object.assign(nd, { el, x0: e.clientX, y0: e.clientY, x: e.clientX });
   nd.timer = setTimeout(() => {
     nd.on = true; el.classList.add('dragging'); document.body.classList.add('no-scroll');
+    edgeStart(window, nd.y0, dy => { nd.y0 -= dy; ndMove(nd.x, edge.y); });
     if (navigator.vibrate) navigator.vibrate(10);
   }, 300);
 });
 $('#main').addEventListener('pointermove', e => {
   if (!nd.el) return;
   if (!nd.on) { if (Math.hypot(e.clientX - nd.x0, e.clientY - nd.y0) > 8) ndCancel(); return; }
-  e.preventDefault();
-  const el = nd.el;
+  e.preventDefault(); nd.x = e.clientX; edge.y = e.clientY; ndMove(e.clientX, e.clientY);
+});
+function ndMove(x, y) {
+  const el = nd.el, e = { clientX: x, clientY: y };
   el.style.transform = `translate(${e.clientX - nd.x0}px, ${e.clientY - nd.y0}px)`;
   el.style.pointerEvents = 'none';
   const over = document.elementFromPoint(e.clientX, e.clientY);
   el.style.pointerEvents = '';
-  const target = over && over.closest('.sticky-grid .sticky');
-  if (target && target !== el) {
+  const target = over && over.closest(GRID_ITEM);
+  if (target && target !== el && target.parentNode === el.parentNode) {
     const r0 = el.getBoundingClientRect();
     const items = [...el.parentNode.children], from = items.indexOf(el), to = items.indexOf(target);
     el.parentNode.insertBefore(el, from < to ? target.nextSibling : target);
@@ -2822,20 +2947,65 @@ $('#main').addEventListener('pointermove', e => {
     nd.x0 += r1.left - r0.left; nd.y0 += r1.top - r0.top;
     el.style.transform = `translate(${e.clientX - nd.x0}px, ${e.clientY - nd.y0}px)`;
   }
-});
-document.addEventListener('touchmove', e => { if (nd.on) e.preventDefault(); }, { passive: false });
+}
+document.addEventListener('touchmove', e => { if (nd.on || td.on) e.preventDefault(); }, { passive: false });
 function ndEnd() {
-  document.body.classList.remove('no-scroll');
   if (!nd.on) { ndCancel(); return; }
+  document.body.classList.remove('no-scroll'); edgeStop();
   const order = [...nd.el.parentNode.children].map(x => x.dataset.nid);
-  state.notes.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+  (nd.el.classList.contains('code-tile') ? state.codes : state.notes).sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
   nd.on = false; nd.el = null; ui.suppressClick = true;
   save(); render();
   setTimeout(() => { ui.suppressClick = false; }, 400);
 }
 $('#main').addEventListener('pointerup', ndEnd);
 $('#main').addEventListener('pointercancel', ndEnd);
-$('#main').addEventListener('contextmenu', e => { if (e.target.closest('.sticky-grid')) e.preventDefault(); });
+$('#main').addEventListener('contextmenu', e => { if (e.target.closest('.sticky-grid, .code-grid, .clock')) e.preventDefault(); });
+
+/* ---------- press-and-hold a clock item, drag it to another time ---------- */
+const td = { el: null, timer: null, x0: 0, y0: 0, x: 0, on: false, row: null };
+function tdCancel() { clearTimeout(td.timer); td.timer = null; if (!td.on) td.el = null; }
+$('#main').addEventListener('pointerdown', e => {
+  const el = e.target.closest('.clock .tag');
+  if (!el) return;
+  Object.assign(td, { el, x0: e.clientX, y0: e.clientY, x: e.clientX, row: null });
+  td.timer = setTimeout(() => {
+    td.on = true; document.body.classList.add('no-scroll');
+    const r0 = el.getBoundingClientRect();
+    el.classList.add('dragging'); el.closest('.clock').classList.add('tag-drag'); // empty half hours show up faintly
+    const r1 = el.getBoundingClientRect(); // rows above may have shifted it
+    td.x0 += r1.left - r0.left; td.y0 += r1.top - r0.top;
+    edgeStart(window, e.clientY, dy => { td.y0 -= dy; tdMove(td.x, edge.y); });
+    tdMove(td.x, e.clientY);
+    if (navigator.vibrate) navigator.vibrate(10);
+  }, 300);
+});
+$('#main').addEventListener('pointermove', e => {
+  if (!td.el) return;
+  if (!td.on) { if (Math.hypot(e.clientX - td.x0, e.clientY - td.y0) > 8) tdCancel(); return; }
+  e.preventDefault(); td.x = e.clientX; edge.y = e.clientY; tdMove(e.clientX, e.clientY);
+});
+function tdMove(x, y) {
+  const el = td.el;
+  el.style.transform = `translate(${x - td.x0}px, ${y - td.y0}px)`;
+  el.style.pointerEvents = 'none';
+  const over = document.elementFromPoint(x, y);
+  el.style.pointerEvents = '';
+  const row = over && over.closest('.clock .tr');
+  const ok = row && row.parentNode === el.closest('.clock') ? row : null;
+  if (ok !== td.row) { if (td.row) td.row.classList.remove('drop'); if (ok) ok.classList.add('drop'); td.row = ok; }
+}
+function tdEnd() {
+  if (!td.on) { tdCancel(); return; }
+  document.body.classList.remove('no-scroll'); edgeStop();
+  const p = curPt(td.el.closest('.clock').dataset.p), g = p && p.tags.find(x => x.id === td.el.dataset.id);
+  if (g && td.row && td.row.dataset.t !== g.t) { g.t = td.row.dataset.t; g.dismissed = false; toast(`${g.label} moved to ${fmtT(g.t)}`); }
+  td.on = false; td.el = null; td.row = null; ui.suppressClick = true;
+  save(); render();
+  setTimeout(() => { ui.suppressClick = false; }, 400);
+}
+$('#main').addEventListener('pointerup', tdEnd);
+$('#main').addEventListener('pointercancel', tdEnd);
 
 document.addEventListener('click', e => {
   if (ui.suppressClick) { ui.suppressClick = false; e.stopPropagation(); e.preventDefault(); return; }
@@ -2846,6 +3016,7 @@ document.addEventListener('click', e => {
 document.addEventListener('change', e => {
   const t = e.target;
   if (t.matches('[data-f="kind"]') && ui.draft) { readDraft(); renderProtoEditor(); return; }
+  if (t.dataset.ptblurb) { save(); render(); return; } // room buttons pick up the new tag
   if (t.dataset.sdKind) { ui.startDraft.pts[+t.dataset.sdKind].kind = t.value; return; }
   if (t.dataset.remind) { const g = curPt(ui.rowEdit.p).tags.find(x => x.id === t.dataset.remind); g.remind = +t.value || 0; save(); render(); return; }
   if (t.dataset.sdTime) { ui.startDraft[t.dataset.sdTime] = +t.value; return; }
@@ -2857,8 +3028,9 @@ document.addEventListener('change', e => {
 });
 document.addEventListener('input', e => {
   const t = e.target;
-  if (t.id === 'ref-q') { ui.refQuery = t.value; renderRefList(); }
+  if (t.id === 'ref-q') { ui.refQuery = t.value; $('.search-x').hidden = !t.value; renderRefList(); }
   else if (t.dataset.sdRoom) ui.startDraft.pts[+t.dataset.sdRoom].room = t.value;
+  else if (t.dataset.ptblurb) { curPt(t.dataset.ptblurb).blurb = t.value.trim(); t.classList.toggle('blank', !t.value.trim()); saveSoon(); }
   else if (t.dataset.ptnotes) { curPt(t.dataset.ptnotes).notes = t.value; saveSoon(); }
   else if (t.dataset.qbl) { qblData(qblOwner())[t.dataset.qbl] = t.value; updateQblTotals(); saveSoon(); }
   else if (t.dataset.qr) { qblData(qblOwner()).rows[+t.dataset.qr].g = t.value; updateQblTotals(); saveSoon(); }
@@ -2872,6 +3044,7 @@ document.addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
   if (e.target.id === 'todo-new') { e.preventDefault(); actions.todoAdd({ p: e.target.dataset.p }); }
   else if (e.target.id === 'row-new') { e.preventDefault(); actions.rowAdd({}); }
+  else if (e.target.dataset.ptblurb || e.target.dataset.todoedit) { e.preventDefault(); e.target.blur(); }
 });
 window.addEventListener('pagehide', save);
 
