@@ -77,6 +77,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;width:100%;min-height:42px}
 textarea{resize:vertical;line-height:1.45}
 label.f{display:block;font-size:13px;color:var(--muted);font-weight:600;margin:10px 0 0}
+label.f[hidden]{display:none}
 label.f>input,label.f>select,label.f>textarea{margin-top:4px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
@@ -147,6 +148,8 @@ details>summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:14p
 .chk input{width:22px;height:22px;min-height:0;flex:none;margin:0;accent-color:var(--done)}
 .chk.on span{color:var(--muted);text-decoration:line-through}
 .sec{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);font-weight:700;margin:12px 0 2px}
+.notes-toggle{display:flex;gap:5px;width:100%;text-align:left;padding:4px 0;white-space:nowrap;overflow:hidden}
+.notes-toggle .peek{min-width:0;overflow:hidden;text-overflow:ellipsis;text-transform:none;letter-spacing:0;color:var(--muted);font-weight:500;font-size:13px}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .chip{min-width:58px;min-height:36px;padding:0 8px;border-radius:9px;border:1px solid var(--line);font-variant-numeric:tabular-nums;font-weight:600;font-size:14px}
 .chip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
@@ -186,10 +189,8 @@ details>summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:14p
 .room-tab.prev{color:var(--muted)}
 .room-tab.prev.on{background:var(--muted);border-color:var(--muted);color:var(--card)}
 .room-tab.prev.on .rk{color:var(--card)}
-.pt-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
 .pt-room{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1;padding:2px 2px 6px 10px;border-left:3px solid var(--ink);border-bottom:3px solid var(--ink);border-bottom-left-radius:4px}
 .linkish{color:var(--accent);font-weight:600;font-size:14px;padding:4px 0}
-.pt-links{display:flex;gap:16px}
 .type-btn{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--muted);text-align:left;padding:2px 0}
 .type-btn svg{width:14px;height:14px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .it{display:flex;align-items:center;gap:6px;border-top:1px solid var(--line)}
@@ -205,25 +206,23 @@ details>summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:14p
 .info-btn.on{background:var(--accent);color:var(--accent-ink)}
 ul.bundle{margin:0 0 8px;padding:8px 12px 8px 30px;background:var(--bg);border-radius:10px;font-size:14px}
 ul.bundle li.sub{margin-left:16px;list-style:circle;color:var(--muted)}
-.pt-right{display:flex;align-items:center;gap:10px}
-.pt-head>div:first-child{flex:1;min-width:0}
-.pt-right{flex:none}
-.blurb-wrap{position:relative;display:block;margin:0 0 10px}
-.blurb-wrap .ic{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none}
-.pt-blurb{min-height:34px;padding:5px 11px 5px 32px;border-radius:999px;font-weight:700;font-size:15px;background:var(--accent-soft);color:var(--accent);border:1px solid transparent}
-.pt-blurb::placeholder{color:var(--muted);font-weight:500;font-size:14px}
-.pt-blurb.blank{background:transparent;border:1.5px dashed var(--line)}
-.pt-blurb:focus{outline:none;border-color:var(--accent)}
+.pt-id{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.pt-id .pt-room{flex:none}
+.tag-pill{min-width:0;max-width:100%;padding:5px 12px;margin-bottom:6px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tag-add{padding:4px 0;margin-bottom:6px;color:var(--muted);font-size:13px;font-weight:600}
+.pt-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px;margin:6px 0 10px}
+.pt-ctl .sep{color:var(--muted)}
+.ctl-group{flex:1;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.pt-ctl .pt-add{margin-left:auto;font-weight:700}
+/* when a long type pushes the group to its own line, drop the leading dot */
+.ctl-group.wrapped>.sep:first-child{display:none}
 .room-tab .rb{font-size:11px;font-weight:600;max-width:96px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pt-links{align-items:center}
 .rows-eye{width:30px;height:30px;display:grid;place-items:center;color:var(--muted);border-radius:8px}
 .rows-eye.on{color:var(--accent)}
 .rows-eye svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .todo-edit{flex:1;min-height:38px;padding:6px 10px;margin:4px 0}
 .h-btns{display:flex;align-items:center;gap:4px}
-.pt-room,.pencil-btn{white-space:nowrap}
-.pencil-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:9px;border:1px solid var(--accent);color:var(--accent);font-weight:700;font-size:14px}
-.pencil-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pt-room{white-space:nowrap}
 .todo-add+.chips .chip,.sheet-card .chip{min-width:0;padding:0 12px}
 .clock{border-top:1px solid var(--line);padding:4px 0}
 .tr{display:flex;align-items:center;gap:8px;min-height:44px;border-bottom:1px dashed var(--line)}
@@ -1187,6 +1186,7 @@ function render() {
   main.innerHTML = ({ reference: renderReference, running: renderRunning, shift: renderShift, notes: renderNotes, more: renderMore })[ui.tab]();
   updateRunBadge();
   if (ui.tab === 'reference') renderRefList();
+  if (ui.tab === 'shift') markCtlWrap();
 }
 
 /* ---------- protocols ---------- */
@@ -1688,10 +1688,12 @@ const actions = {
       <label class="f">Type<select id="pt-kind">${kindOptions(p.kind)}</select></label></div>`
       : `<label class="f">Type<select id="pt-kind">${kindOptions(p.kind)}</select></label>`}
       ${d.id === 'new' ? `<div class="sec" style="margin-top:14px">Time slots</div>
-      <div class="seg" id="add-from" style="margin-top:6px">
+      <div class="seg seg3" id="add-from" style="margin-top:6px">
         <button class="on" data-a="addFrom" data-v="now">From now</button>
-        <button data-a="addFrom" data-v="all">Whole shift</button></div>` : ''}
-      ${!p.archivedAt && p.clockFrom ? `<button class="btn block" style="margin-top:12px" data-a="showAllSlots" data-id="${p.id}">Show earlier time slots</button>` : ''}
+        <button data-a="addFrom" data-v="pick">Pick a time</button>
+        <button data-a="addFrom" data-v="all">Whole shift</button></div>
+      <label class="f" id="add-at" hidden>Clock starts at<select id="pt-from">${clockFromOptions(nowSlot())}</select></label>` : ''}
+      ${d.id !== 'new' && !p.archivedAt ? `<label class="f" style="margin-top:12px">Clock starts at<select id="pt-from">${clockFromOptions(p.clockFrom || 0)}</select></label>` : ''}
       ${p.deliveredAt ? `<button class="btn block" style="margin-top:12px" data-a="undeliver" data-id="${p.id}">Undo delivered</button>` : ''}
       ${p.dischargedAt ? `<button class="btn block" style="margin-top:12px" data-a="undischarge" data-id="${p.id}">Undo discharge</button>` : ''}
       ${p.archivedAt ? `<button class="btn block" style="margin-top:12px" data-a="patientRestore" data-id="${p.id}">Bring back to my rooms</button>` : ''}
@@ -1700,29 +1702,35 @@ const actions = {
       <button class="btn primary" data-a="patientSave" data-id="${p.id}">${d.id === 'new' ? 'Add' : 'Save'}</button></div>`);
     if (d.id === 'new') $('#pt-room').focus();
   },
-  addFrom(d) { $$('#add-from button').forEach(b => b.classList.toggle('on', b.dataset.v === d.v)); },
-  showAllSlots(d) {
-    const p = curPt(d.id); p.clockFrom = 0;
-    stripTags(false).forEach(g => { if (!p.tags.some(x => x.t === g.t && x.label === 'Strip')) p.tags.push(g); });
-    save(); closeSheet(); render();
-  },
+  addFrom(d) { $$('#add-from button').forEach(b => b.classList.toggle('on', b.dataset.v === d.v)); $('#add-at').hidden = d.v !== 'pick'; },
   patientSave(d) {
     const room = $('#pt-room') ? $('#pt-room').value.trim() : curPt(d.id).room, kind = $('#pt-kind').value;
     if (!room) { toast('Add a room number'); return; }
     if (d.id === 'new') {
-      const p = newPatient(room, kind), fromNow = !$('#add-from [data-v="all"]').classList.contains('on');
-      p.tags = stripTags(fromNow);
-      // From now: hide the clock rows before the first slot that's still coming up
-      if (fromNow) { const first = gridTimes().find(t => slotMs(t) >= Date.now() - 5 * 60000); p.clockFrom = first ? sinceStart(first) : 0; }
+      const p = newPatient(room, kind), mode = $('#add-from .on').dataset.v;
+      // From now: the clock starts at the first slot that's still coming up
+      const first = gridTimes().find(t => slotMs(t) >= Date.now() - 5 * 60000);
+      setClockFrom(p, mode === 'all' ? 0 : mode === 'pick' ? +$('#pt-from').value : first ? sinceStart(first) : 0);
       state.shift.patients.push(p); state.shift.currentId = p.id;
     }
     else {
       const p = curPt(d.id);
+      if ($('#pt-from') && +$('#pt-from').value !== (p.clockFrom || 0)) setClockFrom(p, +$('#pt-from').value);
       if (p.kind !== kind) defaultTodos(kind).forEach(t => { if (!p.todos.some(x => x.text === t.text)) p.todos.push(t); });
       Object.assign(p, { room, kind });
     }
     save(); closeSheet(); render();
   },
+  blurbEdit(d) {
+    const p = curPt(d.id);
+    openSheet(`<h3>Quick tag · ${esc(roomLabel(p))}</h3>
+      <label class="f">Something to tell rooms apart<input id="blurb-in" value="${esc(p.blurb || '')}" maxlength="40" autocomplete="off" placeholder="e.g. GDM pt, epidural pt"></label>
+      <div class="btn-row">${p.blurb ? `<button class="btn danger" data-a="blurbSave" data-id="${p.id}" data-clear="1">Remove</button>` : ''}
+      <span style="flex:1"></span><button class="btn" data-a="closeSheet">Cancel</button>
+      <button class="btn primary" data-a="blurbSave" data-id="${p.id}">Save</button></div>`);
+    ui.blurbFor = p.id; const i = $('#blurb-in'); i.focus(); i.select();
+  },
+  blurbSave(d) { curPt(d.id).blurb = d.clear ? '' : $('#blurb-in').value.trim(); save(); closeSheet(); render(); },
   roomEdit(d) {
     const p = curPt(d.id);
     openSheet(`<h3>Change room</h3>
@@ -2016,6 +2024,7 @@ const actions = {
     openSheet(`<h3>${esc(l.label)}</h3><p class="pre" style="margin-top:8px">${esc(l.note)}</p>
       <div class="btn-row end"><button class="btn primary" data-a="closeSheet">Done</button></div>`);
   },
+  ptNotesToggle() { state.ptNotesHidden = !state.ptNotesHidden; save(); render(); },
   asNeededToggle() { state.asNeededHidden = !state.asNeededHidden; save(); render(); },
   appSettings() {
     const f = state.timeFormat === '12' ? '12' : '24';
@@ -2290,6 +2299,19 @@ function itemHtml(p, key, label, opts = {}) {
       ${infoKey ? `<button class="info-btn${open ? ' on' : ''}" data-a="info" data-p="${p.id}" data-k="${infoKey}" aria-label="What's included">i</button>` : ''}
     </div>${open ? bundleHtml(state.lists[infoKey]) : ''}`;
 }
+// Where a patient's clock starts (minutes after shift start). Earlier rows are hidden; checked-off items always stay.
+function setClockFrom(p, from) {
+  p.clockFrom = from;
+  p.tags = p.tags.filter(g => g.done || g.label !== 'Strip' || sinceStart(g.t) >= from);
+  hourTimes().filter(t => sinceStart(t) >= from).forEach(t => {
+    if (!p.tags.some(g => g.t === t && g.label === 'Strip')) p.tags.push({ id: uid(), t, label: 'Strip', done: false });
+  });
+}
+// Every half hour in the shift, from shift start to 30 min before the end
+const clockFromOptions = cur => Array.from({ length: shiftLen() / 30 }, (_, i) => i * 30)
+  .map(m => `<option value="${m}"${m === cur ? ' selected' : ''}>${fmtT(tStr(state.shift.startMin + m))}</option>`).join('');
+// The most recent half hour (for "Pick a time")
+const nowSlot = () => Math.max(0, Math.min(shiftLen() - 30, Math.floor((Date.now() - slotMs(tStr(state.shift.startMin))) / 1800e3) * 30));
 function clockHtml(p) {
   const base = hourTimes()
     .filter(t => sinceStart(t) >= (p.clockFrom || 0)); // patients added mid-shift start from when they were added
@@ -2617,6 +2639,11 @@ function overviewCard(p) {
     ${lines.length ? `<div class="ov-lines">${lines.map(l => `<div>${l}</div>`).join('')}</div>` : '<div class="ov-lines muted">Nothing due</div>'}</button>`;
 }
 
+// Hide the leading "·" when Tools/👁/+Add wrap under a long patient type
+function markCtlWrap() {
+  const g = $('.ctl-group'), t = g && g.previousElementSibling;
+  if (g) g.classList.toggle('wrapped', g.offsetTop > t.offsetTop + 4);
+}
 function renderShift() {
   const sh = state.shift;
   if (!sh) return renderShiftStart();
@@ -2631,13 +2658,15 @@ function renderShift() {
   if (cur) {
     if (cur.archivedAt) h += `<div class="verify">Previous patient · ${cur.done.handoff ? 'handed off' + (cur.handedOffTo ? ' to ' + esc(cur.handedOffTo) : '') : 'removed'} ${hhmm(cur.archivedAt)}</div>`;
     h += `<div class="card pt-card${cur.archivedAt ? ' archived' : ''}">
-      <div class="pt-head"><div>
+      <div class="pt-id">
+        ${cur.blurb ? `<button class="tag-pill" data-a="blurbEdit" data-id="${cur.id}"${cur.archivedAt ? ' disabled' : ''}>🏷 ${esc(cur.blurb)}</button>`
+          : cur.archivedAt ? '<span></span>' : `<button class="tag-add" data-a="blurbEdit" data-id="${cur.id}">+ tag</button>`}
+        <button class="pt-room" data-a="roomEdit" data-id="${cur.id}" aria-label="Change room number">${esc(roomLabel(cur))}</button></div>
+      <div class="pt-ctl">
         <button class="type-btn" data-a="patientEdit" data-id="${cur.id}">${KINDS[cur.kind]}${cur.admittedAt ? ' · from triage' : ''}${cur.deliveredAt ? (isCsDelivery(cur) ? ' · delivered by C/S' : ' · delivered') : ''}${cur.dischargedAt ? ' · discharged' : ''} ${PENCIL_SVG}</button>
-        ${cur.archivedAt ? '' : `<div class="pt-links"><button class="linkish" data-a="tools" data-p="${cur.id}">Tools</button>
-          <button class="rows-eye${state.hideDoneRows ? ' on' : ''}" data-a="rowsEye" aria-label="${state.hideDoneRows ? 'Show' : 'Hide'} finished clock rows">${state.hideDoneRows ? EYE_OFF : EYE}</button></div>`}</div>
-        <div class="pt-right">${cur.archivedAt ? '' : `<button class="pencil-btn" data-a="pencilMenu" data-p="${cur.id}" aria-label="Add what applies to this patient">＋ Add</button>`}
-        <button class="pt-room" data-a="roomEdit" data-id="${cur.id}" aria-label="Change room number">${esc(roomLabel(cur))}</button></div></div>
-      <label class="blurb-wrap"><span class="ic">🏷</span><input class="pt-blurb${cur.blurb ? '' : ' blank'}" data-ptblurb="${cur.id}" value="${esc(cur.blurb || '')}" maxlength="40" autocomplete="off" placeholder="+ Add a quick tag (e.g. GDM pt)"${cur.archivedAt ? ' disabled' : ''}></label>`;
+        ${cur.archivedAt ? '' : `<span class="ctl-group"><span class="sep">·</span><button class="linkish" data-a="tools" data-p="${cur.id}">Tools</button>
+          <span class="sep">·</span><button class="rows-eye${state.hideDoneRows ? ' on' : ''}" data-a="rowsEye" aria-label="${state.hideDoneRows ? 'Show' : 'Hide'} finished clock rows">${state.hideDoneRows ? EYE_OFF : EYE}</button>
+          <button class="linkish pt-add" data-a="pencilMenu" data-p="${cur.id}" aria-label="Add what applies to this patient">＋ Add</button></span>`}</div>`;
     h += todoBar(cur);
     const ptRuns = state.runs.filter(r => r.ptId === cur.id && (!cur.archivedAt || r.finishedAt));
     h += [...ptRuns.filter(r => !r.finishedAt), ...ptRuns.filter(r => r.finishedAt)].map(r => renderRun(r, true)).join('');
@@ -2652,8 +2681,9 @@ function renderShift() {
           <button class="btn primary" data-a="admit" data-p="${cur.id}">Admit →</button></div>`;
       else h += `<button class="btn primary block" style="margin-top:14px" data-a="deliver" data-p="${cur.id}">Delivered →</button>`;
     }
-    h += `<div class="sec">Notes</div>
-      <textarea rows="4" data-ptnotes="${cur.id}" style="margin-top:6px" placeholder="Notes for ${esc(roomLabel(cur))}">${esc(cur.notes || '')}</textarea>
+    const nPeek = (cur.notes || '').trim().split('\n')[0];
+    h += `<button class="sec notes-toggle" data-a="ptNotesToggle">${state.ptNotesHidden ? '▸' : '▾'} Notes${state.ptNotesHidden && nPeek ? `<span class="peek">· ${esc(nPeek)}</span>` : ''}</button>
+      ${state.ptNotesHidden ? '' : `<textarea rows="4" data-ptnotes="${cur.id}" style="margin-top:6px" placeholder="Notes for ${esc(roomLabel(cur))}">${esc(cur.notes || '')}</textarea>`}
       ${cur.archivedAt ? '' : `<button class="btn block" style="margin-top:14px" data-a="handoff" data-p="${cur.id}">Hand off ${esc(roomLabel(cur))}</button>`}</div>`;
   } else if (activePts().length) {
     h += activePts().map(overviewCard).join('');
@@ -3016,7 +3046,6 @@ document.addEventListener('click', e => {
 document.addEventListener('change', e => {
   const t = e.target;
   if (t.matches('[data-f="kind"]') && ui.draft) { readDraft(); renderProtoEditor(); return; }
-  if (t.dataset.ptblurb) { save(); render(); return; } // room buttons pick up the new tag
   if (t.dataset.sdKind) { ui.startDraft.pts[+t.dataset.sdKind].kind = t.value; return; }
   if (t.dataset.remind) { const g = curPt(ui.rowEdit.p).tags.find(x => x.id === t.dataset.remind); g.remind = +t.value || 0; save(); render(); return; }
   if (t.dataset.sdTime) { ui.startDraft[t.dataset.sdTime] = +t.value; return; }
@@ -3030,7 +3059,6 @@ document.addEventListener('input', e => {
   const t = e.target;
   if (t.id === 'ref-q') { ui.refQuery = t.value; $('.search-x').hidden = !t.value; renderRefList(); }
   else if (t.dataset.sdRoom) ui.startDraft.pts[+t.dataset.sdRoom].room = t.value;
-  else if (t.dataset.ptblurb) { curPt(t.dataset.ptblurb).blurb = t.value.trim(); t.classList.toggle('blank', !t.value.trim()); saveSoon(); }
   else if (t.dataset.ptnotes) { curPt(t.dataset.ptnotes).notes = t.value; saveSoon(); }
   else if (t.dataset.qbl) { qblData(qblOwner())[t.dataset.qbl] = t.value; updateQblTotals(); saveSoon(); }
   else if (t.dataset.qr) { qblData(qblOwner()).rows[+t.dataset.qr].g = t.value; updateQblTotals(); saveSoon(); }
@@ -3044,9 +3072,11 @@ document.addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
   if (e.target.id === 'todo-new') { e.preventDefault(); actions.todoAdd({ p: e.target.dataset.p }); }
   else if (e.target.id === 'row-new') { e.preventDefault(); actions.rowAdd({}); }
-  else if (e.target.dataset.ptblurb || e.target.dataset.todoedit) { e.preventDefault(); e.target.blur(); }
+  else if (e.target.id === 'blurb-in') { e.preventDefault(); actions.blurbSave({ id: ui.blurbFor }); }
+  else if (e.target.dataset.todoedit) { e.preventDefault(); e.target.blur(); }
 });
 window.addEventListener('pagehide', save);
+window.addEventListener('resize', markCtlWrap);
 
 // Hospital max is 18 hrs, so a shift resets on its own after that (with a chance to cancel)
 const SHIFT_MAX = 18 * 3600e3;
