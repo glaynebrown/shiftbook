@@ -210,16 +210,15 @@ ul.bundle li.sub{margin-left:16px;list-style:circle;color:var(--muted)}
 .pt-id .pt-room{flex:none}
 .tag-pill{min-width:0;max-width:100%;padding:5px 12px;margin-bottom:6px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tag-add{padding:4px 0;margin-bottom:6px;color:var(--muted);font-size:13px;font-weight:600}
-.pt-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px;margin:6px 0 10px}
-.pt-ctl .sep{color:var(--muted)}
-.ctl-group{flex:1;display:flex;align-items:center;gap:8px;white-space:nowrap}
-.pt-ctl .pt-add{margin-left:auto;font-weight:700}
-/* when a long type pushes the group to its own line, drop the leading dot */
-.ctl-group.wrapped>.sep:first-child{display:none}
-.room-tab .rb{font-size:11px;font-weight:600;max-width:96px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rows-eye{width:30px;height:30px;display:grid;place-items:center;color:var(--muted);border-radius:8px}
-.rows-eye.on{color:var(--accent)}
-.rows-eye svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pt-ctl{display:flex;align-items:flex-start;gap:12px;margin:6px 0 10px}
+.pt-ctl .type-btn{flex:0 1 auto;min-width:0}
+.pt-ctl .type-btn span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pt-ctl .linkish{flex:none;margin-left:auto;padding:2px 0;font-weight:700}
+.fold-bar{display:flex;align-items:center;gap:8px;min-height:36px;margin-top:2px}
+.fold-ctl{margin-left:auto;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.fold-ctl .pt-add{font-weight:700}
+.done-fold{display:inline-flex;align-items:center;gap:6px;min-height:34px;margin:2px 0;padding:4px 0;color:var(--muted);font-weight:500;font-size:13px}
+.done-fold .chev{font-size:12px}
 .todo-edit{flex:1;min-height:38px;padding:6px 10px;margin:4px 0}
 .h-btns{display:flex;align-items:center;gap:4px}
 .pt-room{white-space:nowrap}
@@ -370,7 +369,7 @@ nav button.on{color:var(--accent)}
 /* sheet */
 #sheet{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:10;display:flex;align-items:flex-end;justify-content:center}
 #sheet[hidden]{display:none}
-.sheet-card{background:var(--card);width:100%;max-width:680px;max-height:92vh;max-height:calc(100dvh - 16px - env(safe-area-inset-top));overflow:auto;border-radius:18px 18px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch}
+.sheet-card{background:var(--card);width:100%;max-width:680px;max-height:92vh;max-height:calc(100dvh - 16px - env(safe-area-inset-top) - var(--kb, 0px));overflow:auto;border-radius:18px 18px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch}
 .step-ed{border:1px solid var(--line);border-radius:12px;padding:10px;margin-top:10px}
 .step-ed .h-row button{min-width:34px;min-height:34px;border-radius:8px;border:1px solid var(--line);font-size:15px}
 .hide{display:none!important}
@@ -1162,6 +1161,16 @@ function closeSheet() {
   if (ui.resetTimer) keepShift(); // closing the reset warning = keep the shift
 }
 $('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet') closeSheet(); });
+// iPhone's keyboard slides over the page instead of shrinking it, so lift popups to sit just above it
+function fitSheet() {
+  const vv = window.visualViewport, s = $('#sheet'); if (!vv) return;
+  const kb = Math.max(0, Math.round(innerHeight - vv.height - vv.offsetTop));
+  s.style.bottom = kb ? kb + 'px' : ''; s.style.top = kb ? vv.offsetTop + 'px' : '';
+  s.style.setProperty('--kb', kb + 'px');
+}
+if (window.visualViewport) { visualViewport.addEventListener('resize', fitSheet); visualViewport.addEventListener('scroll', fitSheet); }
+// Once the keyboard is up, make sure the box you're typing in is in view
+$('#sheet').addEventListener('focusin', e => { if (/INPUT|TEXTAREA/.test(e.target.tagName)) setTimeout(() => { fitSheet(); e.target.scrollIntoView({ block: 'nearest' }); }, 350); });
 
 /* ---------- render ---------- */
 const TITLES = { reference: 'Reference', running: 'Running', shift: 'Shift', notes: 'Notes', more: 'More' };
@@ -1186,7 +1195,6 @@ function render() {
   main.innerHTML = ({ reference: renderReference, running: renderRunning, shift: renderShift, notes: renderNotes, more: renderMore })[ui.tab]();
   updateRunBadge();
   if (ui.tab === 'reference') renderRefList();
-  if (ui.tab === 'shift') markCtlWrap();
 }
 
 /* ---------- protocols ---------- */
@@ -1762,7 +1770,7 @@ const actions = {
   },
   tools(d) {
     const p = curPt(d.p), t = qblTotal(p);
-    openSheet(`<h3>Tools · ${esc(roomLabel(p))}</h3>
+    openSheet(`<h3>Quick Tools · ${esc(roomLabel(p))}</h3>
       <div style="margin-top:6px">
         <button class="item" data-a="qblOpen" data-p="${p.id}"><span class="grow"><b>QBL tracker</b></span><span class="${qblOver(p) ? 'qbl-over' : 'muted'}">${t ? (qblOver(p) ? '⚠ ' : '') + t + ' mL' : ''} ›</span></button>
         <button class="item" data-a="timeoutOpen" data-p="${p.id}"><span class="grow"><b>Timeout</b></span><span class="muted">›</span></button>
@@ -1967,7 +1975,8 @@ const actions = {
   laborToggle(d) { ui.showLabor[d.p] = !ui.showLabor[d.p]; render(); },
 
   // to-do
-  rowsEye() { state.hideDoneRows = !state.hideDoneRows; save(); render(); },
+  doneFold() { state.doneRowsOpen = !state.doneRowsOpen; save(); render(); },
+  setDoneRows(d) { state.doneRowsMode = d.v; save(); render(); actions.appSettings(); },
   todoEye() { state.hideDoneTodos = !state.hideDoneTodos; save(); renderTodoSheet(); },
   todoOpen(d) { ui.todoSheet = d.p; renderTodoSheet(); },
   todoAdd(d) {
@@ -2053,6 +2062,11 @@ const actions = {
         <button class="${state.clockBase === 0 ? '' : 'on'}" data-a="setClockBase" data-v="30">The :30s · ${hm(450)}</button>
         <button class="${state.clockBase === 0 ? 'on' : ''}" data-a="setClockBase" data-v="0">The hour · ${hm(480)}</button></div>
       <p class="muted small" style="margin-top:6px">Where the hourly strips go on each patient's clock.${state.shift && clockBase() !== (state.clockBase != null ? state.clockBase : 30) ? ' <b>Starts with your next shift.</b>' : ''}</p>
+      <div class="sec" style="margin-top:16px">Completed charting</div>
+      <div class="seg" style="margin-top:6px">
+        <button class="${state.doneRowsMode === 'show' ? '' : 'on'}" data-a="setDoneRows" data-v="fold">Fold into one line</button>
+        <button class="${state.doneRowsMode === 'show' ? 'on' : ''}" data-a="setDoneRows" data-v="show">Always show</button></div>
+      <p class="muted small" style="margin-top:6px">Fold tucks checked-off items and clock rows behind “View completed charting.”</p>
       <div class="sec" style="margin-top:16px">Time format</div>
       <div class="seg" style="margin-top:6px">
         <button class="${f === '24' ? 'on' : ''}" data-a="setTimeFmt" data-f="24">Military · 1430</button>
@@ -2292,6 +2306,7 @@ function bundleHtml(text) {
 }
 function itemHtml(p, key, label, opts = {}) {
   const on = !!p.done[key], infoKey = opts.bundle;
+  if (on && opts.fold && hidingDone()) return ''; // tucked behind "View completed charting"
   const open = infoKey && ui.openInfo[p.id + infoKey];
   return `<div class="it${on ? ' done' : ''}${opts.due && !on ? ' due' : ''}">
       <button class="it-main" data-a="ptItem" data-p="${p.id}" data-k="${key}"><span class="dot">${on ? '✓' : ''}</span>
@@ -2312,13 +2327,16 @@ const clockFromOptions = cur => Array.from({ length: shiftLen() / 30 }, (_, i) =
   .map(m => `<option value="${m}"${m === cur ? ' selected' : ''}>${fmtT(tStr(state.shift.startMin + m))}</option>`).join('');
 // The most recent half hour (for "Pick a time")
 const nowSlot = () => Math.max(0, Math.min(shiftLen() - 30, Math.floor((Date.now() - slotMs(tStr(state.shift.startMin))) / 1800e3) * 30));
-function clockHtml(p) {
+function clockTimes(p) {
   const base = hourTimes()
     .filter(t => sinceStart(t) >= (p.clockFrom || 0)); // patients added mid-shift start from when they were added
   const inShift = p.tags.filter(g => sinceStart(g.t) < shiftLen());
-  const times = [...new Set([...base, ...inShift.map(g => g.t)])].sort((a, b) => sinceStart(a) - sinceStart(b));
-  const now = Date.now(), hide = state.hideDoneRows;
-  const rowDone = t => { const tags = p.tags.filter(g => g.t === t); return tags.length && tags.every(g => g.done); };
+  return { base, times: [...new Set([...base, ...inShift.map(g => g.t)])].sort((a, b) => sinceStart(a) - sinceStart(b)) };
+}
+const clockRowDone = (p, t) => { const tags = p.tags.filter(g => g.t === t); return tags.length && tags.every(g => g.done); };
+function clockHtml(p, fold) {
+  const { base, times } = clockTimes(p), rowDone = t => clockRowDone(p, t);
+  const now = Date.now(), hide = fold && hidingDone();
   // Empty half hours stay hidden until you drag something, so there's somewhere to drop it
   const ghosts = [...new Set([...hourTimes(), ...gridTimes()])].filter(t => !times.includes(t) && sinceStart(t) >= (p.clockFrom || 0));
   const rows = [...times.filter(t => !(hide && rowDone(t))), ...ghosts].sort((a, b) => sinceStart(a) - sinceStart(b));
@@ -2334,13 +2352,36 @@ function clockHtml(p) {
     </div>`;
   }).join('') + '</div>';
 }
-function laborHtml(p) {
+function laborHtml(p, fold) {
   const bundle = { labor: 'start', admit: 'admission', cs: 'admission', triage: 'triage' }[p.kind];
-  return itemHtml(p, 'report1', 'Report received')
-    + (p.admittedAt ? itemHtml(p, 'triage', BUNDLES.triage, { bundle: 'triage', time: 'admitted ' + hhmm(p.admittedAt) }) : '')
-    + itemHtml(p, 'start', BUNDLES[bundle], { bundle })
-    + clockHtml(p)
-    + itemHtml(p, 'report2', 'Report given');
+  return itemHtml(p, 'report1', 'Report received', { fold })
+    + (p.admittedAt ? itemHtml(p, 'triage', BUNDLES.triage, { bundle: 'triage', time: 'admitted ' + hhmm(p.admittedAt), fold }) : '')
+    + itemHtml(p, 'start', BUNDLES[bundle], { bundle, fold })
+    + clockHtml(p, fold)
+    + itemHtml(p, 'report2', 'Report given', { fold });
+}
+/* ---------- "View completed charting": checked-off items fold behind one line (Settings → Always show turns it off) ---------- */
+const hidingDone = () => state.doneRowsMode !== 'show' && !state.doneRowsOpen;
+const LABOR_KEYS = ['report1', 'triage', 'start', 'report2'], PP_KEYS = ['pp:delivery', 'pp:cscharting', 'pp:pph', 'pp:charge', 'pp:report'];
+const fundalKeys = p => fundalOffsets(p).flat().map((_, i) => 'pp:fundal' + i);
+function anyDone(p) {
+  if (p.deliveredAt) return PP_KEYS.some(k => p.done[k]) || fundalKeys(p).every(k => p.done[k]);
+  if (p.dischargedAt) return !!p.done['dc:charting'];
+  return LABOR_KEYS.some(k => p.done[k]) || clockTimes(p).times.some(t => clockRowDone(p, t));
+}
+// Patient type line under the room number — kept short enough for one line
+function typeLabel(p) {
+  if (p.deliveredAt) return KINDS[p.kind] + (p.kind !== 'cs' && isCsDelivery(p) ? ' – C/S delivery' : ' – delivered');
+  if (p.dischargedAt) return KINDS[p.kind] + ' – discharged';
+  return KINDS[p.kind] + (p.admittedAt ? ' · from triage' : '');
+}
+// The row under the to-do bar: the fold line on the left, ＋ Add on the right
+function foldBar(p) {
+  const fold = state.doneRowsMode !== 'show' && anyDone(p), hide = hidingDone();
+  const canAdd = !p.archivedAt && !p.deliveredAt && !p.dischargedAt; // after delivery, timers start from the Running tab
+  if (!fold && !canAdd) return '';
+  return `<div class="fold-bar">${fold ? `<button class="done-fold" data-a="doneFold">✓ ${hide ? 'View' : 'Hide'} completed charting<span class="chev">${hide ? '▸' : '▾'}</span></button>` : ''}
+    ${!canAdd ? '' : `<span class="fold-ctl"><button class="linkish pt-add" data-a="pencilMenu" data-p="${p.id}" aria-label="Add what applies to this patient">＋ Add</button></span>`}</div>`;
 }
 const isCsDelivery = p => (p.deliveryType || (p.kind === 'cs' ? 'cs' : 'vaginal')) === 'cs';
 // Fundal times (minutes after the first one): q15 ×8 for 2 hrs, vaginal and C/S alike
@@ -2461,10 +2502,12 @@ function ppHtml(p) {
   let h = `<div class="sec">Postpartum recovery · delivered ${hhmm(p.deliveredAt)}</div>`;
   const b = isCsDelivery(p) ? 'cs' : 'vaginal';
   // Both just say "Delivery charting" on the page; each keeps its own list behind the i
-  if (b === 'cs') h += itemHtml(p, 'pp:delivery', 'Delivery charting', { bundle: 'csDelivery' }) + itemHtml(p, 'pp:cscharting', BUNDLES.cs, { bundle: 'cs' });
-  else h += itemHtml(p, 'pp:delivery', 'Delivery charting', { bundle: 'vaginal' });
+  if (b === 'cs') h += itemHtml(p, 'pp:delivery', 'Delivery charting', { bundle: 'csDelivery', fold: true }) + itemHtml(p, 'pp:cscharting', BUNDLES.cs, { bundle: 'cs', fold: true });
+  else h += itemHtml(p, 'pp:delivery', 'Delivery charting', { bundle: 'vaginal', fold: true });
   // Fundals march out from the first one, in two columns like on paper
   const first = p.fundalStart || p.deliveredAt + 15 * 60000;
+  const fundalsDone = fundalKeys(p).every(k => p.done[k]);
+  if (!(fundalsDone && hidingDone())) {
   h += `<div class="fundals"><div class="h-row"><button class="fund-h" data-a="fundalPolicy" data-p="${p.id}">Fundals${b === 'cs' ? ' · C/S' : ''} <span class="info-btn sm">i</span></button>
     <button class="linkish fedit" data-a="fundalTime" data-p="${p.id}">first at ${hhmm(first)} ${PENCIL_SVG}</button></div>`;
   let i = 0;
@@ -2478,13 +2521,14 @@ function ppHtml(p) {
     h += '</div>';
   });
   h += '</div>';
+  }
   h += `<button class="item" data-a="qblOpen" data-p="${p.id}"><span class="grow"><b>QBL tracker</b></span><span class="${qblOver(p) ? 'qbl-over' : 'muted'}">${qblTotal(p) ? (qblOver(p) ? '⚠ ' : '') + qblTotal(p) + ' mL' : ''} ›</span></button>`;
-  h += itemHtml(p, 'pp:pph', 'PPH paper') + itemHtml(p, 'pp:charge', 'Charge sheet') + itemHtml(p, 'pp:report', 'Report given');
+  h += itemHtml(p, 'pp:pph', 'PPH paper', { fold: true }) + itemHtml(p, 'pp:charge', 'Charge sheet', { fold: true }) + itemHtml(p, 'pp:report', 'Report given', { fold: true });
   return h;
 }
 function dcHtml(p) {
   return `<div class="sec">Discharged · ${hhmm(p.dischargedAt)}</div>`
-    + itemHtml(p, 'dc:charting', BUNDLES.discharge, { bundle: 'discharge' })
+    + itemHtml(p, 'dc:charting', BUNDLES.discharge, { bundle: 'discharge', fold: true })
     + (p.archivedAt ? '' : `<button class="btn block" style="margin:10px 0 4px" data-a="patientDelete" data-id="${p.id}">Remove ${esc(roomLabel(p))} from my list</button>`);
 }
 // Compact to-do bar at the top of the page; the full list opens as a popup
@@ -2639,11 +2683,6 @@ function overviewCard(p) {
     ${lines.length ? `<div class="ov-lines">${lines.map(l => `<div>${l}</div>`).join('')}</div>` : '<div class="ov-lines muted">Nothing due</div>'}</button>`;
 }
 
-// Hide the leading "·" when Tools/👁/+Add wrap under a long patient type
-function markCtlWrap() {
-  const g = $('.ctl-group'), t = g && g.previousElementSibling;
-  if (g) g.classList.toggle('wrapped', g.offsetTop > t.offsetTop + 4);
-}
 function renderShift() {
   const sh = state.shift;
   if (!sh) return renderShiftStart();
@@ -2651,7 +2690,7 @@ function renderShift() {
   const prevCount = sh.patients.filter(p => p.archivedAt).length;
   let h = '';
   h += `<div class="rooms">${activePts().map(p => `<button class="room-tab${cur && p.id === cur.id ? ' on' : ''}" data-a="selPt" data-id="${p.id}">
-      <span class="rn">${esc(roomLabel(p))}</span><span class="rk">${p.deliveredAt ? (isCsDelivery(p) ? 'PP · C/S' : 'PP') : p.dischargedAt ? 'D/C' : KIND_SHORT[p.kind]}</span>${p.blurb ? `<span class="rb">${esc(p.blurb)}</span>` : ''}</button>`).join('')}
+      <span class="rn">${esc(roomLabel(p))}</span><span class="rk">${p.deliveredAt ? (isCsDelivery(p) ? 'PP · C/S' : 'PP') : p.dischargedAt ? 'D/C' : KIND_SHORT[p.kind]}</span></button>`).join('')}
       <button class="room-tab add" data-a="patientEdit" data-id="new"><span class="rn">+</span><span class="rk">Add</span></button>
       ${prevCount ? `<button class="room-tab prev${cur && cur.archivedAt ? ' on' : ''}" data-a="previousPts"><span class="rn">↺ ${prevCount}</span><span class="rk">Previous</span></button>` : ''}</div>`;
   h += reminderBanner();
@@ -2663,19 +2702,17 @@ function renderShift() {
           : cur.archivedAt ? '<span></span>' : `<button class="tag-add" data-a="blurbEdit" data-id="${cur.id}">+ tag</button>`}
         <button class="pt-room" data-a="roomEdit" data-id="${cur.id}" aria-label="Change room number">${esc(roomLabel(cur))}</button></div>
       <div class="pt-ctl">
-        <button class="type-btn" data-a="patientEdit" data-id="${cur.id}">${KINDS[cur.kind]}${cur.admittedAt ? ' · from triage' : ''}${cur.deliveredAt ? (isCsDelivery(cur) ? ' · delivered by C/S' : ' · delivered') : ''}${cur.dischargedAt ? ' · discharged' : ''} ${PENCIL_SVG}</button>
-        ${cur.archivedAt ? '' : `<span class="ctl-group"><span class="sep">·</span><button class="linkish" data-a="tools" data-p="${cur.id}">Tools</button>
-          <span class="sep">·</span><button class="rows-eye${state.hideDoneRows ? ' on' : ''}" data-a="rowsEye" aria-label="${state.hideDoneRows ? 'Show' : 'Hide'} finished clock rows">${state.hideDoneRows ? EYE_OFF : EYE}</button>
-          <button class="linkish pt-add" data-a="pencilMenu" data-p="${cur.id}" aria-label="Add what applies to this patient">＋ Add</button></span>`}</div>`;
-    h += todoBar(cur);
+        <button class="type-btn" data-a="patientEdit" data-id="${cur.id}"><span>${typeLabel(cur)}</span>${PENCIL_SVG}</button>
+        ${cur.archivedAt ? '' : `<button class="linkish" data-a="tools" data-p="${cur.id}">Quick Tools</button>`}</div>`;
+    h += todoBar(cur) + foldBar(cur);
     const ptRuns = state.runs.filter(r => r.ptId === cur.id && (!cur.archivedAt || r.finishedAt));
     h += [...ptRuns.filter(r => !r.finishedAt), ...ptRuns.filter(r => r.finishedAt)].map(r => renderRun(r, true)).join('');
     if (cur.deliveredAt || cur.dischargedAt) {
       h += (cur.deliveredAt ? ppHtml(cur) : dcHtml(cur))
         + `<button class="labor-toggle" data-a="laborToggle" data-p="${cur.id}">${ui.showLabor[cur.id] ? '▾' : '▸'} ${cur.kind === 'triage' ? 'Triage' : 'Labor'} charting</button>`;
-      if (ui.showLabor[cur.id]) h += `<div class="labor-old">${laborHtml(cur)}</div>`;
+      if (ui.showLabor[cur.id]) h += `<div class="labor-old">${laborHtml(cur, false)}</div>`; // looking back shows everything
     } else {
-      h += laborHtml(cur);
+      h += laborHtml(cur, true);
       if (cur.kind === 'triage') h += `<div class="grid2" style="margin-top:14px">
           <button class="btn" data-a="discharge" data-p="${cur.id}">Discharge</button>
           <button class="btn primary" data-a="admit" data-p="${cur.id}">Admit →</button></div>`;
@@ -3076,7 +3113,6 @@ document.addEventListener('keydown', e => {
   else if (e.target.dataset.todoedit) { e.preventDefault(); e.target.blur(); }
 });
 window.addEventListener('pagehide', save);
-window.addEventListener('resize', markCtlWrap);
 
 // Hospital max is 18 hrs, so a shift resets on its own after that (with a chance to cancel)
 const SHIFT_MAX = 18 * 3600e3;
