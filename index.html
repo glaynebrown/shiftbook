@@ -846,6 +846,7 @@ const BUNDLES = {
   todos_cs: 'To-dos: Scheduled C/S',
   todos_triage: 'To-dos: Triage',
   todos_cspp: 'To-dos: After C/S delivery',
+  todos_vagpp: 'To-dos: After vaginal delivery',
 };
 const DEFAULT_LISTS = {
   start:
@@ -954,9 +955,13 @@ Prep OR`,
 iPad (*94515)`,
   // Added to the to-do list when a patient delivers by C/S
   todos_cspp:
-`Connect SCDs`,
+`Connect SCDs
+Give Tylenol`,
+  // Added to the to-do list when a patient delivers vaginally
+  todos_vagpp:
+`Give Tylenol and Ibuprofen`,
 };
-const LISTS_VERSION = 5;
+const LISTS_VERSION = 6;
 
 function defaultTodos(kind) {
   return (state.lists['todos_' + kind] || '').split('\n').map(l => l.trim()).filter(Boolean).map(text => ({ id: uid(), text, done: false }));
@@ -1118,6 +1123,10 @@ function load() {
   if ((state.listsVersion || 0) < 5) { // v5: to-dos split by patient type
     if (state.lists.todos) state.lists.todos_labor = state.lists.todos;
     delete state.lists.todos;
+  }
+  if ((state.listsVersion || 0) < 6) { // v6: Tylenol on the after-delivery to-dos
+    const cspp = (state.lists.todos_cspp || '').trim();
+    if (!/tylenol/i.test(cspp)) state.lists.todos_cspp = (cspp ? cspp + '\n' : '') + 'Give Tylenol';
   }
   state.listsVersion = LISTS_VERSION;
   if (state.shift && state.shift.startMin == null) [state.shift.startMin, state.shift.endMin] = DEFAULT_HOURS[state.shift.type || 'day'];
@@ -1914,7 +1923,7 @@ const actions = {
   deliverSave(d) {
     const p = curPt(d.p), v = $('#dl-time').value;
     p.deliveredAt = v ? timeInputToMs(v) : Date.now(); p.deliveryType = ui.dlType;
-    if (ui.dlType === 'cs') p.todos.unshift(...defaultTodos('cspp').filter(t => !p.todos.some(x => x.text === t.text))); // top of the list
+    p.todos.unshift(...defaultTodos(ui.dlType === 'cs' ? 'cspp' : 'vagpp').filter(t => !p.todos.some(x => x.text === t.text))); // top of the list
     ui.dlType = null; save(); closeSheet(); render();
   },
 
