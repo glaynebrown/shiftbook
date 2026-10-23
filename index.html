@@ -700,7 +700,8 @@ Supplies: separate IV, blood consent, blood, NS, blood tubing, pump
 - Disconnect from vacuum, leave in place, monitor 30 min
 - Confirm tone and remove JADA`),
     R('QBL',
-`Dry weights (g)
+`**1 g = 1 mL**
+Dry weights (g)
 - Thin blue chux — ~40
 - Green chux — 37
 - Peripad — 11
@@ -713,7 +714,9 @@ Supplies: separate IV, blood consent, blood, NS, blood tubing, pump
 - Lap — 19
 - White chux — 118
 - Disposable OR sheet — 285
-- Disposable draw sheet — 120`),
+- Disposable draw sheet — 120
+
+Note: Items here show up in the QBL tracker.`),
     R('Swabs',
 `# AmniSure (ROM)
 New ROM kit (as of Nov 2024) kept at nurses station. 15 sec in vagina (2–3 in insertion), then break swab in vial. Label date, time, initials, "vaginal" and walk to lab.
@@ -1004,7 +1007,7 @@ function defaults() {
     notes: [],
     links: clone(DEFAULT_LINKS),
     lastBackup: null,
-    refsVersion: 10,
+    refsVersion: 11,
   };
 }
 
@@ -1113,6 +1116,16 @@ function load() {
       state.refs.splice(at < 0 ? 0 : at + 1, 0, defaultRefs().find(r => r.title === 'Blood transfusion reaction'));
     }
     state.refsVersion = 10;
+  }
+  if (state.refsVersion < 11) { // v11: QBL card explains itself (moved off the tracker)
+    const q = state.refs.find(r => r.title === 'QBL');
+    if (q) {
+      let body = q.body.trim();
+      if (!/1 g = 1 mL/.test(body)) body = '**1 g = 1 mL**\n' + body;
+      if (!/show up in the QBL tracker/.test(body)) body += '\n\nNote: Items here show up in the QBL tracker.';
+      q.body = body;
+    }
+    state.refsVersion = 11;
   }
   state.refs.forEach(r => { if (r.title === 'Blood transfusion reaction') r.body = r.body.replace('- Notify the provider and blood bank\n- Send the bag and tubing back to the lab\n- Labs/urine per policy', '- Notify the provider\n- Follow orders for Tx/Interventions'); });
   state.refs.forEach(r => { if (r.title === 'Magnesium toxicity') r.body = r.body.replace(' Keep it at the bedside while mag is running.', ''); });
@@ -2471,7 +2484,6 @@ function renderQblSheet() {
       <button class="btn block" style="margin-top:8px" data-a="qblAddRow">+ Another weighing</button>
       <div class="qhead qtot"><span>Total Wet <b id="qbl-wet">${Math.round(parts.wet)}</b></span><span>Total Dry / Subtract <b id="qbl-dry">${Math.round(parts.dry)}</b></span></div>
     </div>
-    <p class="muted small" style="margin-top:8px">Wet − Dry / Subtract · 1 g = 1 mL · Dry weights come from Reference → QBL.</p>
     <div class="btn-row"><button class="btn danger" data-a="qblClear">Clear</button><span style="flex:1"></span>
     <button class="btn primary" data-a="closeSheet">Done</button></div>`);
 }
